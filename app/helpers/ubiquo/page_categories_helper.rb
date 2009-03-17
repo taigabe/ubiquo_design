@@ -1,0 +1,2 @@
+module Ubiquo::PageCategoriesHelper
+end

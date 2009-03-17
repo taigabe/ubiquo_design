@@ -1,0 +1,17 @@
+<h1><%= render :partial => 'title' %></h1>
+<h2>
+  <%= render :partial => "submenu" %>
+</h2>
+<%= render(:partial => "shared/ubiquo/feedback") %>
+
+<% form_for([:ubiquo, @menu_item]) do |f| %>
+	<%= render :partial => 'form', :locals => {:f => f} %>
+	  <p class="form_buttons">
+	    <%= f.submit t('ubiquo.create') %>
+			<input type="button" value="<%= t('ubiquo.back_to_index') %>" onclick="document.location.href='<%= ubiquo_menu_items_path %>'" />
+	  </p>
+<% end %>
+
+<% # content_for :sidebar do %>
+	
+<% # end %>

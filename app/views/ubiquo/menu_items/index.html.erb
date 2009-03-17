@@ -1,0 +1,29 @@
+<h1><%= render :partial => 'title' %></h1>
+<h2>
+	<%= render :partial => 'submenu' %>
+</h2>
+<%= render :partial => "shared/ubiquo/feedback" %>
+
+<%= link_to t('ubiquo.design.new_section'), new_ubiquo_menu_item_path, :class => "new" %>
+
+<% if @menu_items.size > 0 %>
+    <table id="menu_items_list_titles" width="100%" border="1" cellspacing="0" cellpadding="3">
+      <tr>
+        <th><%= t('ubiquo.design.title') %></th>
+        <th class="actions"><%= t('ubiquo.design.actions') %></th>
+      </tr>
+    </table>
+    <ul id="menu_items_list">
+      <%= build_list(@menu_items, 'menu_items_list') %>
+    </ul>
+<% else %>
+	
+	<p id="empty">
+	  <%= t('ubiquo.design.empty_sitemap') %>
+	</p>
+	
+<% end %>
+
+<% content_for :sidebar do %>
+  <%= help_block_sidebar(t("ubiquo.helpmsg.design.menu_items.index")) %>
+<% end %>

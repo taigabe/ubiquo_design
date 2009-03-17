@@ -1,0 +1,20 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  id: 10000
+  name: Big banner
+  key: block_a
+  can_use_default_block: true
+
+two:
+  id: 10001
+  name: Last articles
+  key: block_b
+  can_use_default_block: true
+  
+without_default:
+  id: 10002
+  name: Block without default
+  key: block_c
+  can_use_default_block: false
+  

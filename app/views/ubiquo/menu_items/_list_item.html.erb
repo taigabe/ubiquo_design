@@ -1,0 +1,19 @@
+<% menu_item = list_item %>
+
+<table class="line <%= cycle('odd', 'even') %>" width="100%" border="1" cellspacing="0" cellpadding="3">
+  <tr>
+    <td class="handle"><%= ubiquo_image_tag('updownarrows.gif') %></td>
+    <td><%= menu_item.caption %></td>
+    <td class="actions">
+      <%= link_to(t('ubiquo.edit'), edit_ubiquo_menu_item_path(menu_item)) %>
+      |
+      <%= link_to(t('ubiquo.remove'), [:ubiquo, menu_item],  
+          :confirm => t('ubiquo.design.confirm_sitemap_removal'), 
+          :method => :delete) %>
+      <% if menu_item.can_have_children? %>
+        |
+        <%= link_to(t('ubiquo.design.new_subsection'), new_ubiquo_menu_item_path(:parent_id => menu_item)) %>
+      <% end %>     
+    </td>
+  </tr>
+</table>

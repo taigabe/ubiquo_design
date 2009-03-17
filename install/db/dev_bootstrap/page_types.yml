@@ -1,0 +1,9 @@
+page_type_001:
+  id: 1
+  name: None
+  key: ""
+
+page_type_002:
+  id: 2
+  name: Test a deep path
+  key: "test"

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: news
+  url_name: ""
+  id: 10000
+
+two:
+  name: sports
+  url_name: sports
+  id: 10001

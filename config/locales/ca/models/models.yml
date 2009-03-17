@@ -1,0 +1,24 @@
+ca:
+  activerecord:
+    models:
+      page: Pàgina
+      page_category: "Categoria de pàgina"
+      "menu item": "Element de menú"
+      banner_flash: "Banner Flash"
+    attributes:
+      page:
+        name: "Nom"
+        url_name: "Nom de pàgina"
+        page_template: "plantilla"
+      page_category:
+        name: "Nom"
+        url_name: "Nom url"
+      menu_item:
+        caption: "Títol"
+        is_linkable: "¿és linkable?"
+        url: "Url"
+        description: "Descripció"
+        is_active: "¿està actiu?"
+        menu_generator: "Generador de menú"
+      banner_flash:
+        flash_file: "fitxer flash"

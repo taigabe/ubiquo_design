@@ -1,0 +1,10 @@
+free:
+  name: Free component
+  key: free
+  is_configurable: true
+  subclass_type: Free
+assets_automatic_menu:
+  name: Menu automàtic per recursos
+  key: assets_automatic_menu
+  is_configurable: true
+  subclass_type: AssetsAutomaticMenu

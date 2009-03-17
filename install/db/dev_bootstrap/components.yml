@@ -1,0 +1,89 @@
+--- 
+components_004: 
+  name: Free component
+  options: "--- \n\
+    :content: bloc top portada\n"
+  updated_at: 2008-07-29 13:35:27
+  block_id: "10"
+  type: Free
+  id: "5"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:27
+components_005: 
+  name: Free component
+  options: "--- \n\
+    :content: Block banners portada\n"
+  updated_at: 2008-07-29 13:35:27
+  block_id: "11"
+  type: Free
+  id: "6"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:33
+components_006: 
+  name: Free component
+  options: "--- \n\
+    :content: block col1 portada\n"
+  updated_at: 2008-07-29 13:35:27
+  block_id: "12"
+  type: Free
+  id: "7"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:30
+components_007: 
+  name: Free component
+  options: "--- \n\
+    :content: \"Llistat de not\\xC3\\xADcies\"\n"
+  updated_at: 2008-07-29 13:44:26
+  block_id: "3"
+  type: Free
+  id: "8"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:44:14
+components_008: 
+  name: Free component
+  options: "--- \n\
+    :content: \"Llistat de not\\xC3\\xADcies\"\n"
+  updated_at: 2008-07-29 13:44:29
+  block_id: "14"
+  type: Free
+  id: "9"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:44:14
+components_001: 
+  name: Free component
+  options: "--- \n\
+    :content: bloc top portada\n"
+  updated_at: 2008-07-29 13:34:45
+  block_id: "4"
+  type: Free
+  id: "2"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:27
+components_002: 
+  name: Free component
+  options: "--- \n\
+    :content: block col1 portada\n"
+  updated_at: 2008-07-29 13:35:11
+  block_id: "6"
+  type: Free
+  id: "3"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:30
+components_003: 
+  name: Free component
+  options: "--- \n\
+    :content: Block banners portada\n"
+  updated_at: 2008-07-29 13:35:25
+  block_id: "5"
+  type: Free
+  id: "4"
+  component_type_id: "1068423630"
+  position: "1"
+  created_at: 2008-07-29 13:34:33

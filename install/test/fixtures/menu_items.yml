@@ -1,0 +1,38 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  id: <%= :one.object_id %>
+  parent_id: 0
+  caption: MyString
+  url: MyString
+  description: MyText
+  is_linkable: false
+  is_active: true
+  automatic_menu_id: 1
+
+one_child1:
+  parent_id: <%= :one.object_id %>
+  caption: MyString
+  url: MyString
+  description: MyText
+  is_linkable: true
+  is_active: true
+  automatic_menu_id: 1
+
+one_child2:
+  parent_id: <%= :one.object_id %>
+  caption: MyString
+  url: MyString
+  description: MyText
+  is_linkable: true
+  is_active: false
+  automatic_menu_id: 1
+
+two:
+  parent_id: 0
+  caption: MyString
+  url: MyString
+  description: MyText
+  is_linkable: false
+  is_active: false
+  automatic_menu_id: 2

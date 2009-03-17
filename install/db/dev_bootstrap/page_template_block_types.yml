@@ -1,0 +1,18 @@
+page_template_block_type_001:
+  page_template: simple
+  block_type: top
+page_template_block_type_002:
+  page_template: simple
+  block_type: banners
+page_template_block_type_003:
+  page_template: simple
+  block_type: col1  
+page_template_block_type_004:
+  page_template: interior
+  block_type: top
+page_template_block_type_005:
+  page_template: interior
+  block_type: banners
+page_template_block_type_006:
+  page_template: interior
+  block_type: col1

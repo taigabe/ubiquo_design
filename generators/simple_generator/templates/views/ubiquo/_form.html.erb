@@ -1,0 +1,10 @@
+<%%= component_header component %>
+<%% component_form(page, component) do |f| %>
+  <% attributes.each do |attribute| -%>
+    <p>
+      <%%= f.label(:<%= attribute.name %>, class_name.constantize.human_attribute_name(attribute_column.to_s) %><br />
+      <%%= f.<%= attribute.field_type %> :<%= attribute.name %> %>
+    </p>
+  <% end -%>
+  <%%= component_submit %>
+<%% end %>

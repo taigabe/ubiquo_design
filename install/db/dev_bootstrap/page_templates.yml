@@ -1,0 +1,11 @@
+simple:
+  name: Simple template
+  key: simple
+  layout: main
+  thumbnail_file_name: simple.png
+
+interior:
+  name: Interior template
+  key: interior
+  layout: main
+  thumbnail_file_name: interior.png

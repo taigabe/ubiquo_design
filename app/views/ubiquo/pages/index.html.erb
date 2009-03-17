@@ -1,0 +1,36 @@
+<h1><%= render :partial => 'title' %></h1>
+<h2>
+	<%= render :partial => 'submenu' %>
+</h2>
+<%= render :partial => "shared/ubiquo/feedback" %>
+
+<%= link_to t('ubiquo.design.new_page'), new_ubiquo_page_path, :class => "new" %>
+
+<%= pages_filters_info(params) %>
+
+<%= render(:partial => "shared/ubiquo/list", :locals=>{
+      :name=>'page',
+      :headers=>[:name, :url_name],
+      :rows=>@pages.collect{|page| 
+        {
+          :id=>page.id, 
+          :columns=>[
+             page.is_linkable? ? link_to_page(page.name, page) : page.name,
+             page.url_name.blank? ? t('ubiquo.design.no_name') : page.url_name,
+          ],
+          :actions=>[
+            link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page)),
+            link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
+            link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete)
+          ]
+        }
+      },
+      :pages=>@pages_pages,
+			:actions_width => 200
+    }      
+) %>
+
+<% content_for :sidebar do %>
+  <%= pages_filters %>
+  <%= help_block_sidebar(t("ubiquo.helpmsg.design.page.index")) %>
+<% end %>

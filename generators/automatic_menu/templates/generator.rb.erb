@@ -1,0 +1,13 @@
+def <%= name %>_generator(options = {})
+  menu_items = [
+    MenuItem.new(
+      :caption => "Automatic menu item",
+      :url => "#",
+      :is_linkable => false)
+	]
+  locals = {
+    :menu_items => menu_items,
+  }
+  render_options = {}
+  [locals, render_options]
+end

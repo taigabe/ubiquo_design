@@ -1,0 +1,28 @@
+<h4>
+  <%= page.name %>
+  <% if page.is_published? %>
+	  <% if page.published.is_linkable? %>
+	    <%= link_to_page("[%s]" % t('ubiquo.design.open'), page, {}, :popup => true) %>
+	  <% end %>
+  <% end %>
+</h4>
+<% 
+  is_published, page_status = case 
+    when page.is_published? && !page.is_modified?
+      [true, t('ubiquo.design.published')]
+    when page.is_published? && page.is_modified?
+      [false, t('ubiquo.design.pending_publish')]
+    else
+      [false, t('ubiquo.design.non_published')]  
+  end       
+%>
+<p class="<%= is_published ? 'published_page' : 'non_published_page' %>">
+    <%= page_status %>
+    <% unless is_published || page.has_required_params? %>
+	    <%= link_to "[%s]" % t('ubiquo.design.preview'), preview_ubiquo_page_design_path(page), :popup => true %>
+    <% end %>
+</p>
+
+<% unless is_published %>
+    <%= button_to t('ubiquo.design.publish'), publish_ubiquo_page_design_path(page), :method => :put %>
+<% end %>

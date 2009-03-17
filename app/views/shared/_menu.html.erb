@@ -1,0 +1,17 @@
+<ul>
+  <% menu.each do |root, children, current| %>  
+    <li>
+      <% options = current ? {:class => 'current'} : {} %>
+      <%= link_to(root.caption, root.is_linkable? ? root.url : "javascript:void(0)", options) %>
+      <% unless children.empty? %>
+        <ul class="submenu">
+          <% children.each do |child| %>  
+            <li>
+              <%= link_to(child.caption, child.is_linkable? ? child.url : "javascript:void(0)") %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </li>    
+  <% end %>
+</ul>

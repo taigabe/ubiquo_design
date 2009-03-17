@@ -1,0 +1,15 @@
+en:
+  ubiquo:
+    helpmsg:
+      design:
+        menu_items:
+          index: "Here you can see and modify the application site map. You can create new sections and subsections and reorder them with the arrows icon found at the left side of the section name."
+          form: "Here you can create or change a sitemap entry. One sitemap entry can be clickable (then you should specify an URL). If it is a root node you could, optionally, select an automatic menu. In this case, you won't be able to add subsections to it.1"
+        pagecategories:
+          edit: "Here you can edit the selected page category."
+          new: "Here you can create the new page category. This is like a prefix for the pages url and let you to make groups of pages."
+          index: "Here you can see all available page categories for the application."
+        page:
+          edit: "Here you can set options for this page. The url name, section and category are fields to determine the URL for this page."
+          new: "Here you can set options for this page. The url name, section and category are fields to determine the URL for this page."
+          index: "Here you can see, modify and design the application pages."

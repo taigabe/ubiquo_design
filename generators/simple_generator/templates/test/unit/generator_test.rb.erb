@@ -1,0 +1,30 @@
+require File.dirname(__FILE__) + '/../test_helper'
+<% model_name = name.classify -%>
+
+class <%= model_name %>Test < ActiveSupport::TestCase
+  
+  def test_should_create_<%= name %>
+    assert_difference '<%= model_name %>.count' do
+      <%= name %> = create_<%= name %>
+      assert !<%= name %>.new_record?, "#{<%= name %>.errors.full_messages.to_sentence}"
+    end
+  end
+
+  private
+  
+  def create_<%= name %>(options = {}, component_type_options = {})
+    component_type_options.reverse_merge!({
+      :name => "Test <%= name %>",
+      :key => "<%= name %>", 
+      :subclass_type => "<%= model_name %>",
+    })  
+    component_type = ComponentType.create!(component_type_options)    
+    default_options = {
+      :name => "Test <%= name %>", 
+      :block => blocks(:one),
+      :component_type => component_type,
+      # Insert other options for component here      
+    }
+    <%= model_name %>.create(default_options.merge(options))
+  end
+end
