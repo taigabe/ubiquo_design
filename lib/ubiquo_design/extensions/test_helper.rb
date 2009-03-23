@@ -63,7 +63,7 @@ module UbiquoDesign
         component = component_model.new(component_options)
         page_category = PageCategory.create!(:name => "Test category Name", 
                                              :url_name => 'test_category')
-        thumbnail_template = File.join(ActiveSupport::TestCase.fixture_path, "templates", "template1.png")                                         
+        thumbnail_template = Tempfile.new("template1.png")
         page_template = PageTemplate.create!(:name => "Test template", 
                                              :key => 'test', 
                                              :thumbnail => thumbnail_template)
