@@ -59,7 +59,7 @@ es:
       title: "Título"
       actions: "Acciones"
       empty_sitemap: "No hay entradas del mapa web que mostrar"
-      confirm_sitemap_removal: "Estas seguro de querer eliminar esta entrada el mapa web (y sus nodos hijos)?"
+      confirm_sitemap_removal: "Estás seguro de querer eliminar esta entrada el mapa web (y sus nodos hijos)?"
       new_subsection: "Nueva subsección"
       subsections: "Subsecciones"
       sitemap_created: "Elemento de menú creado con éxito"
