@@ -3,8 +3,8 @@ Description:
   Create a scaffold to implement a simple_generator. It creates the following code:
 
   controller code: app/generators/NAME/generator.rb
-  public partials: app/generators/NAME/views/_show.rhtml
-  ubiquo partials: app/generators/NAME/views/ubiquo/_form.rhtml
+  public partials: app/generators/NAME/views/_show.html.erb
+  ubiquo partials: app/generators/NAME/views/ubiquo/_form.html.erb
   component class: app/models/NAME.rb
 
 Examples:

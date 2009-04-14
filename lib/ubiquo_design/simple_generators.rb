@@ -26,7 +26,7 @@
 #
 #* template: defines the template file to render. By default, the template file is located at <tt>app/generators/NAME/views/_show.html.erb</tt>.
 #
-#The local namespace is available on the generator view, by default at <tt>app/generators/notices/views/_show.rhtml</tt>.
+#The local namespace is available on the generator view, by default at <tt>app/generators/notices/views/_show.html.erb</tt>.
 #
 #== Creating the component type 
 #
@@ -84,7 +84,7 @@
 #
 #As the component is configurable, we have to prepare a ubiquo view, which could look like this: 
 #
-#  # app/generators/last_news/views/ubiquo/_form.rhtml
+#  # app/generators/last_news/views/ubiquo/_form.html.erb
 #  <%= component_header component %>
 #  <% component_form(page, component) do |f| %>
 #      <%= f.label :default_news_to_show, t("Contents") %><br/>
@@ -191,7 +191,7 @@ module UbiquoDesign
     
     def search_template(generator, name)
       generator_path = generator_directory(generator)
-      template_path = File.join(generator_path, "views", "_#{name}.rhtml")
+      template_path = File.join(generator_path, "views", "_#{name}.html.erb")
       raise GeneratorTemplateNotFound.new("template file not found: #{name}") unless File.exists?(template_path)   
       template_path
     end

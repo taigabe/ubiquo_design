@@ -13,8 +13,8 @@ class SimpleGeneratorGenerator < Rails::Generator::NamedBase
       m.directory(File.join('test/functional/generators/ubiquo'))
       
       m.template('generator.rb.erb', File.join('app/generators', @name, "generator.rb"))
-      m.template('views/_show.rhtml', File.join('app/generators', @name, "views", "_show.rhtml"))
-      m.template('views/ubiquo/_form.rhtml', File.join('app/generators', @name, "views", "ubiquo", "_form.rhtml"))
+      m.template('views/_show.html.erb', File.join('app/generators', @name, "views", "_show.html.erb"))
+      m.template('views/ubiquo/_form.html.erb', File.join('app/generators', @name, "views", "ubiquo", "_form.html.erb"))
       m.template('models/component.rb.erb', File.join('app/models', "#{@name}.rb"))
 
       m.template('test/unit/generator_test.rb.erb', File.join('test/unit', "#{@name}_test.rb"))

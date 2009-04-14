@@ -7,7 +7,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @page = Page.find(params[:page_id])
     @component = Component.find(params[:id])
 
-    template_path = "%s/views/ubiquo/_form.rhtml" % generator_directory(@component.component_type.key)
+    template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.component_type.key)
     render :file => template_path, :locals => {:page => @page, :component => @component}
   end
 
