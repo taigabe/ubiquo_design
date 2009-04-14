@@ -1,10 +1,12 @@
 require 'ubiquo_design'
 
-default_per_page = Ubiquo::Config.get(:elements_per_page)
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   
-  config.add :page_categories_elements_per_page, default_per_page
-  config.add :pages_elements_per_page, default_per_page
+  config.add :page_categories_elements_per_page
+  config.add_inheritance :page_categories_elements_per_page, :elements_per_page
+  
+  config.add :pages_elements_per_page
+  config.add_inheritance :pages_elements_per_page, :elements_per_page
 
   config.add :design_access_control, lambda{
     access_control :DEFAULT => "design_management"
