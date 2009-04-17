@@ -2,9 +2,9 @@
 portada_privada: 
   name: Portada
   page_category_id: "2"
-  is_modified: f
+  is_modified: false
   updated_at: 2008-07-29 13:35:27
-  is_public: f
+  is_public: false
   url_name: ""
   page_template: simple
   page_type_id: "1"
@@ -12,9 +12,9 @@ portada_privada:
 portada_publica: 
   name: Portada
   page_category_id: "2"
-  is_modified: t
+  is_modified: true
   updated_at: 2008-07-29 13:35:27
-  is_public: t
+  is_public: true
   url_name: ""
   page_template: simple
   page_type_id: "1"

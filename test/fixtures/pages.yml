@@ -7,7 +7,7 @@ one:
   page_template_id: 10000
   page_type_id: 10000
   page_category_id: 10000
-  is_public: t
+  is_public: true
 
 two:
   id: 10001
@@ -15,7 +15,7 @@ two:
   url_name: "article"
   page_template_id: 10001
   page_type_id: 10000
-  is_public: t
+  is_public: true
   page_category_id: 10001
 
 only_menu:
@@ -25,7 +25,7 @@ only_menu:
   page_template_id: 10002
   page_type_id: 10000
   page_category_id: 10000
-  is_public: t
+  is_public: true
 
 
 one_design:
@@ -34,9 +34,9 @@ one_design:
   url_name: ""
   page_template_id: 10000
   page_type_id: 10000
-  is_public: f
+  is_public: false
   page_category_id: 10000
-  is_modified: f
+  is_modified: false
 
 two_design:
   id: 10004
@@ -45,8 +45,8 @@ two_design:
   page_template_id: 10001
   page_type_id: 10000
   page_category_id: 10000
-  is_public: f
-  is_modified: f
+  is_public: false
+  is_modified: false
 
 only_menu_design:
   id: 10005
@@ -54,9 +54,9 @@ only_menu_design:
   url_name: "menu_page"
   page_template_id: 10002
   page_type_id: 10000
-  is_public: f
+  is_public: false
   page_category_id: 10000
-  is_modified: f
+  is_modified: false
 
 test_page:
   name: TestPage
@@ -65,7 +65,7 @@ test_page:
   page_type_id: "10001"
   page_template_id: "10000"
   url_name: test_page
-  is_public: t
+  is_public: true
   page_category_id: 10000
   created_at: 2008-06-03 09:06:35.571694
 
