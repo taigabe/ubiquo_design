@@ -8,7 +8,7 @@
 
 <%= pages_filters_info(params) %>
 
-<%= render(:partial => "shared/ubiquo/list", :locals=>{
+<%= render(:partial => "shared/ubiquo/lists/standard", :locals=>{
       :name=>'page',
       :headers=>[:name, :url_name],
       :rows=>@pages.collect{|page| 

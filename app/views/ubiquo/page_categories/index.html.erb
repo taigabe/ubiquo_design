@@ -6,7 +6,7 @@
 
 <%= link_to t('ubiquo.design.page_category_new'), new_ubiquo_page_category_path, :class => "new" %>
 
-<%= render(:partial => "shared/ubiquo/list", :locals=>{
+<%= render(:partial => "shared/ubiquo/lists/standard", :locals=>{
       :name=>'page_category',
       :headers=>[:name, :url_name],
       :rows=>@page_categories.collect{|page_category| 
