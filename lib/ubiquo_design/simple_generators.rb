@@ -10,11 +10,11 @@
 #
 #Let's see an example of a generator that displays the last news. The first step is using the _simple_generator_ generator to build the skeleton:
 #
-#  script/generate simple_generator last_news size:integer
+#  script/generate simple_generator last_news default_news_to_show:integer
 #
-#This will create the directory <tt>app/generators/notices</tt>, the generator main file <tt>app/generators/notices/generator.rb</tt>, the views and tests. The file <tt>generator.rb</tt> looks like this:
+#This will create the directory <tt>app/generators/last_news</tt>, the generator main file <tt>app/generators/last_news/generator.rb</tt>, the views and tests. The file <tt>generator.rb</tt> looks like this:
 #
-#  def notices_generator(component, options):
+#  def last_news_generator(component, options):
 #    ...
 #    locals = {
 #    }
@@ -26,7 +26,7 @@
 #
 #* template: defines the template file to render. By default, the template file is located at <tt>app/generators/NAME/views/_show.html.erb</tt>.
 #
-#The local namespace is available on the generator view, by default at <tt>app/generators/notices/views/_show.html.erb</tt>.
+#The local namespace is available on the generator view, by default at <tt>app/generators/last_news/views/_show.html.erb</tt>.
 #
 #== Creating the component type 
 #
@@ -36,7 +36,7 @@
 #  news:
 #    id: 1
 #    name: Last news
-#    key: notices
+#    key: last_news
 #    is_configurable: true
 #    subclass_type: LastNews
 #
@@ -47,7 +47,7 @@
 #  # db/dev/bootstrap/page_template_component_types.yml
 #  page_template_component_type_001:
 #    page_template: simple
-#    component_type: news
+#    component_type: last_news
 #
 #== Creating the component
 #
@@ -67,10 +67,10 @@
 #
 #Edit <tt>generator.rb</tt>:
 #
-#  def notices_generator(component, options):
+#  def last_news_generator(component, options):
 #    ...
 #    locals = {
-#      :notices => component.last_notices(options[:max_notices])
+#      :last_news => component.last_news(options[:max_news])
 #    }
 #    render_options = {}
 #    [locals, render_options]
@@ -78,8 +78,8 @@
 #
 #And use the locals namespace on the view:
 #
-#  <% notices.each do |notice| %>
-#    <p><%= notice.body %></p>
+#  <% last_news.each do |news| %>
+#    <p><%= news.body %></p>
 #  <% end %> 
 #
 #As the component is configurable, we have to prepare a ubiquo view, which could look like this: 
@@ -96,9 +96,9 @@
 # 
 #The last parameter of the generator (_options_) is a hash containing a filtered copy of the controller _params_. Only the component params associated with a given component type will be received on the component:
 #
-#  # db/dev_bootstrap/controller_params.yml
+#  # db/dev_bootstrap/component_params.yml
 #  component_params_001: 
-#    name: max_notices
+#    name: max_news
 #    id: "1"
 #    component_type_id: "1"
 #    is_required: f
