@@ -23,6 +23,7 @@ class SimpleGeneratorGenerator < Rails::Generator::NamedBase
       puts "Notes:
       
   - Create a component type for this generator: db/dev_bootstrap/component_types.yml
+  - Relate it with a page template in: db/dev_bootstrap/page_template_component_types.yml
   - Create component params if needed for this component type: db/dev_bootstrap/component_params.yml
   - Remember to update the tests for the component model, the generator 
     controller and the ubiquo controller.
