@@ -1915,10 +1915,11 @@ lightwindow.prototype = {
 	},
 	
 	// Insert TinyMCE
-	_putTinyMCE : function(id){
-		if($(id))
-			tinyMCE.execCommand('mceAddControl', true, id);
-	}
+	_putTinyMCE : function(reference){
+	  $$("'."+reference+", #"+reference+"'").each(function(v) {
+	    tinyMCE.execCommand('mceAddControl', true, $(v).id);
+	  });
+        }
 }
 
 /*-----------------------------------------------------------------------------------------------*/
