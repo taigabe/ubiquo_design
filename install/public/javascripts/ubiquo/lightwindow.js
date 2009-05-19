@@ -1916,7 +1916,7 @@ lightwindow.prototype = {
 	
 	// Insert TinyMCE
 	_putTinyMCE : function(reference){
-	  $$("'."+reference+", #"+reference+"'").each(function(v) {
+	  $$("."+reference+", #"+reference).each(function(v) {
 	    tinyMCE.execCommand('mceAddControl', true, $(v).id);
 	  });
         }
