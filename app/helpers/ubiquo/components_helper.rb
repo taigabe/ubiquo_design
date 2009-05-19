@@ -1,16 +1,17 @@
 module Ubiquo::ComponentsHelper
   def component_form(page, component, &block)
     form_remote_for(
-    :component, component,
-    {:url => ubiquo_page_design_component_path(page, component),
-      :method => :put,
-      :name => "component_edit_form",
-      :before => "killeditor()"
-    }, &block)
+      :component, 
+      component,
+      :url => ubiquo_page_design_component_path(page, component),
+      :before => "killeditor()",
+      :html => {  
+        :method => :put,
+        :name => "component_edit_form"
+      }, &block)
   end
-
+  
   def component_submit
-    
     %{
       <p class="form_buttons">
         <input type="submit" class="button" value="%s" />
