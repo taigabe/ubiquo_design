@@ -44,17 +44,15 @@ class Page < ActiveRecord::Base
   #
   # options: find_options  
   def self.filtered_search(filters = {}, options = {})
-    filter_text = unless filters[:text].blank?
-      args = ["%#{filters[:text]}%"]
-      condition = "pages.name LIKE ?"
-      {:find => {:conditions => [condition] + args}}
-    else
-      {}
-    end
-    with_scope(filter_text) do
-      with_scope(:find => options) do
-        Page.find(:all)
+    scopes = create_scopes(filters) do |filter, value|
+      case filter
+        when :text
+          { :conditions => ["upper(pages.name) LIKE upper(?)", "%#{value}%"] }
       end
+    end
+    
+    apply_find_scopes(scopes) do
+      find(:all, options)
     end
   end
 
