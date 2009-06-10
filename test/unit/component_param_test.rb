@@ -31,11 +31,19 @@ class ComponentParamTest < ActiveSupport::TestCase
     end
   end
 
-  def test_should_require_uniqueness_of_name
+  def test_should_require_uniqueness_of_name_on_same_scope
     component_param = create_component_param :name => "test"
-    assert_no_difference "PageType.count" do
+    assert_no_difference "ComponentParam.count" do
       component_param = create_component_param :name => "test"
       assert component_param.errors.on(:name)
+    end
+  end
+  
+  def test_shouldnt_require_uniqueness_of_name_on_different_scope
+    component_param = create_component_param :name => "test"
+    assert_difference "ComponentParam.count" do
+      component_param = create_component_param :name => "test", :component_type_id => component_types(:two).id
+      assert !component_param.new_record?, "#{component_param.errors.full_messages.to_sentence}"
     end
   end
 
