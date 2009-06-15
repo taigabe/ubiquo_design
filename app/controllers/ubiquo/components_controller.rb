@@ -5,8 +5,8 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   helper "ubiquo/designs"
   def show
     @page = Page.find(params[:page_id])
-    @component = Component.find(params[:id])
-
+    @component = uhook_find_component
+      
     template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.component_type.key)
     render :file => template_path, :locals => {:page => @page, :component => @component}
   end
@@ -20,6 +20,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @component.block = @block
     @component.component_type = @component_type
     @component.name = @component_type.name
+    @component = uhook_prepare_component(@component)
     # TODO: don't do this!!
     @component.save_without_validation
 
@@ -46,7 +47,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @component = Component.find(params[:id])
     @page = Page.find(params[:page_id])
 
-    @component.destroy
+    uhook_destroy_component(@component)
 
     #TODO: Afegir el nou component al block de la pagina
     respond_to do |format|    
@@ -66,12 +67,9 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   end
   
   def update
-    @component = Component.find(params[:id])
-    @page = Page.find(params[:page_id])   
-    params[:component].each do |field, value|
-      @component.send("#{field}=", value)
-    end
-    if @component.save
+    @page = Page.find(params[:page_id])
+    @component = uhook_update_component
+    if @component.valid?
       respond_to do |format|
         format.html { redirect_to(ubiquo_page_design_path(@page))}
         format.js {

@@ -19,9 +19,7 @@ class Ubiquo::PagesController < UbiquoAreaController
     per_page = Ubiquo::Config.context(:ubiquo_design).get(:pages_elements_per_page)
 
     @pages_pages, @pages = Page.paginate(:page => params[:page], :per_page => per_page) do
-      Page.public_scope(false) do
-        Page.filtered_search(filters, :order => order_by + " " + sort_order)
-      end
+      uhook_find_private_pages(filters, order_by, sort_order)
     end
     
     respond_to do |format|
@@ -35,7 +33,7 @@ class Ubiquo::PagesController < UbiquoAreaController
   # GET /pages/new
   # GET /pages/new.xml
   def new
-    @page = Page.new
+    @page = uhook_new_page
 
     respond_to do |format|
       format.html # new.html.erb
@@ -51,10 +49,10 @@ class Ubiquo::PagesController < UbiquoAreaController
   # POST /pages
   # POST /pages.xml
   def create
-    @page = Page.new(params[:page])
+    @page = uhook_create_page
 
     respond_to do |format|
-      if @page.save
+      if @page.valid?
         flash[:notice] = t('ubiquo.design.page_created')
         format.html { redirect_to(ubiquo_pages_path) }
         format.xml  { render :xml => @page, :status => :created, :location => @page }
@@ -72,7 +70,7 @@ class Ubiquo::PagesController < UbiquoAreaController
     @page = Page.find(params[:id])
 
     respond_to do |format|
-      if @page.update_attributes(params[:page])
+      if uhook_update_page(@page)
         flash[:notice] = t('ubiquo.design.page_edited')
         format.html { redirect_to(ubiquo_pages_path) }
         format.xml  { head :ok }
@@ -88,7 +86,7 @@ class Ubiquo::PagesController < UbiquoAreaController
   # DELETE /pages/1.xml
   def destroy
     @page = Page.find(params[:id])
-    if @page.destroy
+    if uhook_destroy_page(@page)
       flash[:notice] = t('ubiquo.design.page_removed')
     else
       flash[:error] = t('ubiquo.design.page_remove_error')
