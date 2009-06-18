@@ -4,12 +4,39 @@ module UbiquoDesign
       
       # loads this connector. It's called if that connector is used
       def self.load!
+        ::Page.send(:include, Page)
         ::PagesController.send(:include, PagesController)
         ::Ubiquo::ComponentsController.send(:include, UbiquoComponentsController)
         ::Ubiquo::MenuItemsController.send(:include, UbiquoMenuItemsController)
         ::Ubiquo::PagesController.send(:include, UbiquoPagesController)
       end
       
+      module Page
+        def self.included(klass)
+          klass.send(:include, InstanceMethods)
+        end
+        module InstanceMethods
+          
+          def uhook_publish_block_components(block, new_block)
+            block.components.each do |component|
+              new_component = component.clone
+              new_component.block = new_block
+              new_component.save_without_validation!
+              yield component, new_component
+              new_component.save! # must validate now
+            end
+          end
+          def uhook_publish_component_asset_relations(component, new_component)
+            if component.respond_to?(:asset_relations)
+              component.asset_relations.each do |asset_relation|
+                new_asset_relation = asset_relation.clone
+                new_asset_relation.related_object = new_component
+                new_asset_relation.save!
+              end
+            end
+          end
+        end
+      end
       module PagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)

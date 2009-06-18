@@ -136,18 +136,8 @@ class Page < ActiveRecord::Base
           new_block = block.clone
           new_block.page = public_page
           new_block.save!
-          block.components.each do |component|
-            new_component = component.clone
-            new_component.block = new_block
-            new_component.save_without_validation!
-            if component.respond_to?(:asset_relations)
-              component.asset_relations.each do |asset_relation|
-                new_asset_relation = asset_relation.clone
-                new_asset_relation.related_object = new_component
-                new_asset_relation.save!
-              end
-            end
-            new_component.save! # must validate now
+          uhook_publish_block_components(block, new_block) do |component, new_component|
+            uhook_publish_component_asset_relations(component, new_component)
           end
         end
         self.update_modified(false)
