@@ -1,6 +1,6 @@
 class CreatePages < ActiveRecord::Migration
   def self.up
-    create_table :pages do |t|
+    uhook_create_pages_table do |t|
       t.string :name
       t.string :url_name
       t.integer :page_template_id

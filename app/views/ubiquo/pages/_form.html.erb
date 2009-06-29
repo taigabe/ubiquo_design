@@ -1,5 +1,6 @@
 <%= error_messages_for 'page' %>
 <div class="form_box">
+  <%= uhook_form_top f %>
 	<p>
 		<%= f.label :name, Page.human_attribute_name("name") %> 
 		<%= f.text_field :name %>

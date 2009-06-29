@@ -1,20 +1,17 @@
 module UbiquoDesign
   module Connectors
-    class Standard
+    class Standard < Base
       
-      # loads this connector. It's called if that connector is used
-      def self.load!
-        ::Page.send(:include, Page)
-        ::PagesController.send(:include, PagesController)
-        ::Ubiquo::ComponentsController.send(:include, UbiquoComponentsController)
-        ::Ubiquo::MenuItemsController.send(:include, UbiquoMenuItemsController)
-        ::Ubiquo::PagesController.send(:include, UbiquoPagesController)
-      end
       
       module Page
+        
         def self.included(klass)
-          klass.send(:include, InstanceMethods)
+          klass.send(:include, self::InstanceMethods)
         end
+        
+        module ClassMethods
+        end
+        
         module InstanceMethods
           
           def uhook_publish_block_components(block, new_block)
@@ -46,7 +43,7 @@ module UbiquoDesign
           # Can use params[:category] and params[:url_name] to decide what page to show.
           # Must returns the expected Page instance.
           def uhook_load_page
-            Page.find_public(params[:category], params[:url_name])
+            ::Page.find_public(params[:category], params[:url_name])
           end
         end
       end
@@ -66,7 +63,7 @@ module UbiquoDesign
           # modify the created component and return it. It's executed in drag-drop.
           def uhook_prepare_component(component)
             component
-          end
+         end
           
           # Destroys a component
           def uhook_destroy_component(component)
@@ -131,24 +128,45 @@ module UbiquoDesign
       module UbiquoPagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
+          klass.send(:helper, Helper)
+        end
+        
+        module Helper
+          def uhook_page_actions(page)
+            [
+              link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page)),
+              link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
+              link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete)
+            ]
+          end
+          
+          def uhook_edit_sidebar
+            ""
+          end
+          def uhook_new_sidebar
+            ""
+          end
+          def uhook_form_top(form)
+            ""
+          end
         end
         module InstanceMethods
           
           # Returns all private pages
           def uhook_find_private_pages(filters, order_by, sort_order)
-            Page.public_scope(false) do
-              Page.filtered_search(filters, :order => order_by + " " + sort_order)
+            ::Page.public_scope(false) do
+              ::Page.filtered_search(filters, :order => order_by + " " + sort_order)
             end            
           end
           
           # initializes a new instance of page.
           def uhook_new_page
-            Page.new
+            ::Page.new
           end
           
           # create a new instance of page.
           def uhook_create_page
-            p = Page.new(params[:page])
+            p = ::Page.new(params[:page])
             p.save
             p
           end
@@ -160,7 +178,22 @@ module UbiquoDesign
 
           #destroys a page isntance. returns a boolean that means if the destroy was done.
           def uhook_destroy_page(page)
-            @page.destroy
+            page.destroy
+          end
+        end
+      end
+      
+      module Migration
+        
+        def self.included(klass)
+          klass.send(:extend, ClassMethods)
+        end
+        
+        module ClassMethods
+          def uhook_create_pages_table
+            create_table :pages do |t|
+              yield t
+            end
           end
         end
       end

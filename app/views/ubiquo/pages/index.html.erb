@@ -18,15 +18,11 @@
              page.is_linkable? ? link_to_page(page.name, page) : page.name,
              page.url_name.blank? ? t('ubiquo.design.no_name') : page.url_name,
           ],
-          :actions=>[
-            link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page)),
-            link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
-            link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete)
-          ]
+          :actions => uhook_page_actions(page)
         }
       },
       :pages=>@pages_pages,
-			:actions_width => 200
+      :actions_width => 200
     }      
 ) %>
 
