@@ -1,5 +1,6 @@
 require 'ubiquo_design'
 
+
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   
   config.add :page_categories_elements_per_page

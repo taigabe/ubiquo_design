@@ -27,7 +27,6 @@ only_menu:
   page_category_id: 10000
   is_public: true
 
-
 one_design:
   id: 10003
   name: Start page
@@ -68,4 +67,3 @@ test_page:
   is_public: true
   page_category_id: 10000
   created_at: 2008-06-03 09:06:35.571694
-

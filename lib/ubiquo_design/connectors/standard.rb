@@ -3,13 +3,15 @@ module UbiquoDesign
     class Standard < Base
       
       
+      module Component
+        def self.included(klass)
+        end
+      end
+      
       module Page
         
         def self.included(klass)
           klass.send(:include, self::InstanceMethods)
-        end
-        
-        module ClassMethods
         end
         
         module InstanceMethods
@@ -34,6 +36,7 @@ module UbiquoDesign
           end
         end
       end
+
       module PagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
@@ -57,7 +60,7 @@ module UbiquoDesign
           # returns the component for the lightwindow. 
           # Will be rendered in their ubiquo/_form view
           def uhook_find_component
-            @component = Component.find(params[:id])
+            @component = ::Component.find(params[:id])
           end
           
           # modify the created component and return it. It's executed in drag-drop.
@@ -74,7 +77,7 @@ module UbiquoDesign
           # Fields can be found in params[:component] and component_id in params[:id]
           # must returns the updated component
           def uhook_update_component
-            component = Component.find(params[:id])
+            component = ::Component.find(params[:id])
             params[:component].each do |field, value|
               component.send("#{field}=", value)
             end
@@ -93,17 +96,17 @@ module UbiquoDesign
           
           # gets Menu items instances for the list and return it
           def uhook_find_menu_items
-            MenuItem.roots
+            ::MenuItem.roots
           end
           
           # initialize a new instance of menu item
           def uhook_new_menu_item
-            MenuItem.new(:parent_id => (params[:parent_id] || 0), :is_active => true)
+            ::MenuItem.new(:parent_id => (params[:parent_id] || 0), :is_active => true)
           end
           
           # creates a new instance of menu item
           def uhook_create_menu_item
-            mi = MenuItem.new(params[:menu_item])
+            mi = ::MenuItem.new(params[:menu_item])
             mi.save
             mi
           end
@@ -120,7 +123,7 @@ module UbiquoDesign
 
           # loads all automatic menu items
           def uhook_load_automatic_menus
-            AutomaticMenu.find(:all, :order => 'name ASC')  
+            ::AutomaticMenu.find(:all, :order => 'name ASC')  
           end
         end
       end
@@ -192,6 +195,11 @@ module UbiquoDesign
         module ClassMethods
           def uhook_create_pages_table
             create_table :pages do |t|
+              yield t
+            end
+          end
+          def uhook_create_components_table
+            create_table :components do |t|
               yield t
             end
           end
