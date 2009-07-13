@@ -85,6 +85,50 @@ module Connectors
        assert_equal_set AutomaticMenu.all, Ubiquo::MenuItemsController.new.uhook_load_automatic_menus
     end
     
+    test "ubiquo pages_controller find pages" do 
+      assert_equal_set Page.all.select{|p| !p.is_public?}, Ubiquo::PagesController.new.uhook_find_private_pages({}, 'name', 'asc')
+    end
+    
+    test "ubiquo pages_controller new page" do 
+      assert Ubiquo::PagesController.new.uhook_new_page.new_record?
+    end
+
+    test "ubiquo pages_controller create page" do 
+      attributes = create_page.attributes
+      attributes[:url_name] = "test"
+      Ubiquo::PagesController.any_instance.stubs(:params => {:page => attributes})
+      p = nil
+      assert_difference "Page.count" do 
+        p = Ubiquo::PagesController.new.uhook_create_page
+      end
+      assert !p.new_record?, p.errors.full_messages.to_sentence
+    end
+    
+    test "ubiquo pages_controller update page" do 
+      page = create_page
+      attributes = page.attributes
+      attributes[:name] = "test"
+      Ubiquo::PagesController.any_instance.stubs(:params => {:page => attributes})
+      Ubiquo::PagesController.new.uhook_update_page(page)
+      assert_equal "test", page.reload.name
+    end
+    
+    test "ubiquo pages_controller destroy page" do 
+      page = create_page
+      assert_difference "Page.count", -1 do 
+        Ubiquo::PagesController.new.uhook_destroy_page(page)
+      end
+    end
+    
+    test "create page migration" do
+      ActiveRecord::Migration.expects(:create_table).with(:pages).once
+      ActiveRecord::Migration.uhook_create_pages_table
+    end
+    test "create components migration" do
+      ActiveRecord::Migration.expects(:create_table).with(:components).once
+      ActiveRecord::Migration.uhook_create_components_table
+    end
+    
     private 
     
     def create_page(options = {})
