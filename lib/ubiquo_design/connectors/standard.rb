@@ -2,16 +2,11 @@ module UbiquoDesign
   module Connectors
     class Standard < Base
       
-      
-      module Component
-        def self.included(klass)
-        end
-      end
-      
       module Page
         
         def self.included(klass)
           klass.send(:include, self::InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
         end
         
         module InstanceMethods
@@ -40,6 +35,7 @@ module UbiquoDesign
       module PagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
         end
         module InstanceMethods
           # Loads the page for the public part. 
@@ -54,6 +50,7 @@ module UbiquoDesign
       module UbiquoComponentsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
         end
         module InstanceMethods
           
@@ -91,6 +88,7 @@ module UbiquoDesign
       module UbiquoMenuItemsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
         end
         module InstanceMethods
           
@@ -131,6 +129,7 @@ module UbiquoDesign
       module UbiquoPagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
         
@@ -190,6 +189,7 @@ module UbiquoDesign
         
         def self.included(klass)
           klass.send(:extend, ClassMethods)
+          Standard.register_uhooks klass, ClassMethods
         end
         
         module ClassMethods
