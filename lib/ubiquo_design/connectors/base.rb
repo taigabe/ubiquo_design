@@ -5,22 +5,22 @@ module UbiquoDesign
       # loads this connector. It's called if that connector is used
       def self.load!
         begin
-          ::Page.send(:include, self::Page)
+          ::Page.send(:include, self::Page) if self.constants.include?("Page")
         rescue NameError; end
         begin
-          ::PagesController.send(:include, self::PagesController)
+          ::PagesController.send(:include, self::PagesController) if self.constants.include?("PagesController")
         rescue NameError; end
         begin
-          ::Ubiquo::ComponentsController.send(:include, self::UbiquoComponentsController)
+          ::Ubiquo::ComponentsController.send(:include, self::UbiquoComponentsController) if self.constants.include?("UbiquoComponentsController")
         rescue NameError; end
         begin
-          ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController)
+          ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController) if self.constants.include?("UbiquoMenuItemsController")
         rescue NameError; end
         begin
-          ::Ubiquo::PagesController.send(:include, self::UbiquoPagesController)
+          ::Ubiquo::PagesController.send(:include, self::UbiquoPagesController) if self.constants.include?("UbiquoPagesController")
         rescue NameError; end
         begin
-          ::ActiveRecord::Migration.send(:include, self::Migration)
+          ::ActiveRecord::Migration.send(:include, self::Migration) if self.constants.include?("Migration")
         rescue NameError; end
       end
       

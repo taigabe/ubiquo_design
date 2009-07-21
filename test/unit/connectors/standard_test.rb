@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + "/../../../../../../test/test_helper.rb"
 
 module Connectors
   class StandardTest < ActiveSupport::TestCase
+    def setup
+      UbiquoDesign::Connectors::Standard.load!
+    end
+    
     test "should publish components" do
       page = create_page :page_template_id => page_templates(:one).id
       page.blocks << pages(:one).blocks
@@ -124,6 +128,7 @@ module Connectors
       ActiveRecord::Migration.expects(:create_table).with(:pages).once
       ActiveRecord::Migration.uhook_create_pages_table
     end
+
     test "create components migration" do
       ActiveRecord::Migration.expects(:create_table).with(:components).once
       ActiveRecord::Migration.uhook_create_components_table
