@@ -8,6 +8,9 @@ module UbiquoDesign
           ::Page.send(:include, self::Page) if self.constants.include?("Page")
         rescue NameError; end
         begin
+          ::Component.send(:include, self::Component) if self.constants.include?("Component")
+        rescue NameError; end
+        begin
           ::PagesController.send(:include, self::PagesController) if self.constants.include?("PagesController")
         rescue NameError; end
         begin
