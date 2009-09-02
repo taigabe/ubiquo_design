@@ -3,7 +3,7 @@ class Component < ActiveRecord::Base
   INACCEPTABLE_OPTIONS = %w{options component_type component_type_id block block_id position options options_object update_position prepare_yaml define_method_accessors allowed_options_storage name}
   
   belongs_to :component_type
-  belongs_to :block
+  belongs_to :block#, :translation_shared => true
 
   after_save :update_page
   after_destroy :update_page

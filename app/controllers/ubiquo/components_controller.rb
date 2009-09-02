@@ -26,7 +26,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
 
     #TODO: Afegir el nou component al block de la pagina
     respond_to do |format|
-      format.html { redirect_to(ubiquo_page_design_path(@page))}
+      format.html { redirect_to(ubiquo_page_design_path(@page)) }
       format.js {
         render :update do |page|
           page.insert_html :bottom, "block_type_holder_#{@block.block_type.id}", :partial => "ubiquo/components/component", :object => @component
@@ -74,10 +74,12 @@ class Ubiquo::ComponentsController < UbiquoAreaController
         format.html { redirect_to(ubiquo_page_design_path(@page))}
         format.js {
           render :update do |page|
-            page << 'myLightWindow.deactivate();'
-            page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
-                                           :locals => { :page => @page.reload })
-            page.call "update_error_on_components", @page.wrong_components_ids
+            self.uhook_extra_rjs_on_update(page, true) do |page|
+              page << 'myLightWindow.deactivate();'
+              page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+                :locals => { :page => @page.reload })
+              page.call "update_error_on_components", @page.wrong_components_ids
+            end
           end
         }
       end
@@ -86,9 +88,11 @@ class Ubiquo::ComponentsController < UbiquoAreaController
         format.html { redirect_to(ubiquo_page_design_component_path(@page, @component))}
         format.js {
           render :update do |page|
-            page.replace_html('error_messages', :partial => 'ubiquo/designs/error_messages',
-                                                :locals => {:component => @component})
-            page << "reviveEditor();"
+            self.uhook_extra_rjs_on_update(page, false) do |page|
+              page.replace_html('error_messages', :partial => 'ubiquo/designs/error_messages',
+                :locals => {:component => @component})
+              page << "reviveEditor();"
+            end
           end
         }
       end

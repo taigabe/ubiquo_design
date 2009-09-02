@@ -135,7 +135,8 @@ module Ubiquo::DesignsHelper
   end
 
   def components_for_block_type_holder(block)
-    render :partial => "ubiquo/components/component", :collection => block.components
+    components = uhook_load_components(block)
+    render :partial => "ubiquo/components/component", :collection => components
   end
 
   def sortable_block_type_holder_options(id, url, containments=[])

@@ -35,6 +35,7 @@ es:
       # Unknown
       use_frontpage_block: "Utiliza el bloque de la página principal"
       # Components
+      component_translate: "traducir"
       component_removal: "eliminar"
       confirm_component_removal: "Estás seguro de que quieres eliminar este componente?"
       component_move: "mover"

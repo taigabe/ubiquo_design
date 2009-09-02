@@ -35,6 +35,7 @@ en:
       # Unknown
       use_frontpage_block: "Use frontpage block"
       # Components
+      component_translate: "translate"
       component_removal: "remove"
       confirm_component_removal: "Are you sure you want to remove this component?"
       component_move: "move"

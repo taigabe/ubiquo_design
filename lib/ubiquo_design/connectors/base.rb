@@ -14,6 +14,11 @@ module UbiquoDesign
           ::PagesController.send(:include, self::PagesController) if self.constants.include?("PagesController")
         rescue NameError; end
         begin
+          ::Ubiquo::DesignsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
+          ::Ubiquo::BlockTypesController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
+          ::Ubiquo::ComponentsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
+        rescue NameError; end
+        begin
           ::Ubiquo::ComponentsController.send(:include, self::UbiquoComponentsController) if self.constants.include?("UbiquoComponentsController")
         rescue NameError; end
         begin
@@ -24,6 +29,9 @@ module UbiquoDesign
         rescue NameError; end
         begin
           ::ActiveRecord::Migration.send(:include, self::Migration) if self.constants.include?("Migration")
+        rescue NameError; end
+        begin
+          ::UbiquoDesign::RenderPage.send(:include, self::RenderPage) if self.constants.include?("RenderPage")
         rescue NameError; end
       end
       

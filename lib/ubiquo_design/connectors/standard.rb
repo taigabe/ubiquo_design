@@ -31,11 +31,11 @@ module UbiquoDesign
           end
         end
       end
-
       module PagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
+          klass.send(:helper, Helper)
         end
         module InstanceMethods
           # Loads the page for the public part. 
@@ -46,11 +46,23 @@ module UbiquoDesign
           end
         end
       end
+
+      module UbiquoDesignsHelper
+        def self.included(klass)
+          klass.send(:helper, Helper)
+        end
+        module Helper
+          def uhook_link_to_edit_component(component)
+            link_to t('ubiquo.design.component_edit'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}"
+          end
+        end        
+      end
       
       module UbiquoComponentsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
+          klass.send(:helper, Helper)
         end
         module InstanceMethods
           
@@ -81,7 +93,11 @@ module UbiquoDesign
             component.save
             component
           end
-          
+        end
+        module Helper
+          def uhook_extra_rjs_on_update(page, valid)
+            yield page
+          end
         end
       end
 
@@ -181,6 +197,20 @@ module UbiquoDesign
           #destroys a page isntance. returns a boolean that means if the destroy was done.
           def uhook_destroy_page(page)
             page.destroy
+          end
+        end
+      end
+      
+      module RenderPage
+        
+        def self.included(klass)
+          klass.send(:include, InstanceMethods)
+          Standard.register_uhooks klass, InstanceMethods
+        end
+        
+        module InstanceMethods
+          def uhook_collect_components(b, &block)
+            b.components.collect(&block)
           end
         end
       end

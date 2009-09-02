@@ -60,6 +60,30 @@ module Connectors
         Ubiquo::ComponentsController.new.uhook_find_component
       end
     end
+    
+    test "component_controller must set locale on the prepare component with configurable component" do 
+      c = components(:one)
+      c.component_type.update_attribute :is_configurable, true
+      Ubiquo::ComponentsController.any_instance.stubs(
+        :session => {:locale => 'es'},
+        :params => {}
+        )
+      assert_equal nil, c.locale
+      Ubiquo::ComponentsController.new.uhook_prepare_component(c)
+      assert_equal 'es', c.locale
+    end
+    
+    test "component_controller must set locale on the prepare component with non configurable component" do 
+      c = components(:one)
+      c.component_type.update_attribute :is_configurable, false
+      Ubiquo::ComponentsController.any_instance.stubs(
+        :session => {:locale => 'es'},
+        :params => {}
+        )
+      assert_equal nil, c.locale
+      Ubiquo::ComponentsController.new.uhook_prepare_component(c)
+      assert_equal 'any', c.locale
+    end
 
     private 
     
