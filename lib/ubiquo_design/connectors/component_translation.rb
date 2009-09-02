@@ -14,7 +14,6 @@ module UbiquoDesign
         
         def self.included(klass)
           klass.send :translatable, :options
-          Free.send :translatable, :options
         end
       end
       
