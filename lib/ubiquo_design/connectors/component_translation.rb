@@ -3,8 +3,7 @@ module UbiquoDesign
     class ComponentTranslation < Base
       
       def self.load!
-        Standard.load!
-        
+        Standard.load!        
         ::PagesController.send(:include, UbiquoI18n::Extensions::LocaleChanger)
         ::PagesController.send(:helper, UbiquoI18n::Extensions::Helpers)
         super
@@ -13,6 +12,7 @@ module UbiquoDesign
       module Component
         
         def self.included(klass)
+          klass.send :belongs_to, :block, :translation_shared => true
           klass.send :translatable, :options
         end
       end

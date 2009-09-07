@@ -2,6 +2,14 @@ module UbiquoDesign
   module Connectors
     class Standard < Base
       
+      
+      module Component
+        
+        def self.included(klass)
+          klass.send :belongs_to, :block
+        end
+      end
+      
       module Page
         
         def self.included(klass)
@@ -54,6 +62,9 @@ module UbiquoDesign
         module Helper
           def uhook_link_to_edit_component(component)
             link_to t('ubiquo.design.component_edit'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}"
+          end
+          def uhook_load_components(block)
+            block.components
           end
         end        
       end
