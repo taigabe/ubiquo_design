@@ -22,13 +22,13 @@
 
 <% content_for :sidebar do %>
 <div class="sidebar_box">
-  <h3><%= t('ubiquo.design.page_info') %></h3>
+  <div class="sidebar_title"><h3><%= t('ubiquo.design.page_info') %></h3></div>
   <div id="page_info">
     <%= render :partial => 'pageinfo_sidebar', :locals => { :page => @page } %>
   </div>
 </div>
 <div class="sidebar_box">
-	<h3><%= t('ubiquo.design.avaliable_components') %></h3>
+  <div class="sidebar_title"><h3><%= t('ubiquo.design.avaliable_components') %></h3></div>
 	<ul>
 		<%= render :partial => "component_sidebar", :collection => @component_types %>
 	</ul>
