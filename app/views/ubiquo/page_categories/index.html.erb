@@ -4,8 +4,6 @@
 </h2>
 <%= render :partial => "shared/ubiquo/feedback" %>
 
-<%= link_to t('ubiquo.design.page_category_new'), new_ubiquo_page_category_path, :class => "new" %>
-
 <%= render(:partial => "shared/ubiquo/lists/standard", :locals=>{
       :name=>'page_category',
       :headers=>[:name, :url_name],
@@ -22,7 +20,8 @@
           ]
         }
       },
-      :pages=>@page_categories_pages
+      :pages=>@page_categories_pages,
+      :link_to_new => link_to(t('ubiquo.design.page_category_new'), new_ubiquo_page_category_path, :class => 'new'),
     }      
 ) %>
 

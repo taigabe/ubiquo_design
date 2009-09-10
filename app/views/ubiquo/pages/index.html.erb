@@ -4,8 +4,6 @@
 </h2>
 <%= render :partial => "shared/ubiquo/feedback" %>
 
-<%= link_to t('ubiquo.design.new_page'), new_ubiquo_page_path, :class => "new" %>
-
 <%= pages_filters_info(params) %>
 
 <%= render(:partial => "shared/ubiquo/lists/standard", :locals=>{
@@ -25,8 +23,9 @@
           ]
         }
       },
-      :pages=>@pages_pages,
-			:actions_width => 200
+      :pages => @pages_pages,
+      :actions_width => 200,
+      :link_to_new => link_to(t('ubiquo.design.new_page'), new_ubiquo_page_path, :class => 'new'),
     }      
 ) %>
 
