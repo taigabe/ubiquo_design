@@ -95,6 +95,14 @@ class MenuItemTest < ActiveSupport::TestCase
     active_children = root1.active_children
     assert_equal [menu_items(:one_child1)], active_children
   end
+  
+  def test_should_clear_url_if_not_linkable
+    mi = menu_items(:one)
+    mi.update_attributes :url => "http://www.google.com", :is_linkable => true
+    assert_equal "http://www.google.com", mi.url
+    mi.update_attributes :is_linkable => false
+    assert_equal "", mi.url
+  end
 
   private
   

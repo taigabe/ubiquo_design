@@ -2,7 +2,9 @@ class MenuItem < ActiveRecord::Base
   validates_presence_of :caption, :parent_id
   validates_presence_of :url, :if => Proc.new { |menuitem| menuitem.is_linkable } 
   validates_uniqueness_of :caption, :scope => :parent_id
+
   before_validation_on_create :initialize_position
+  before_validation :clear_url
  
   has_many :children,
            :class_name => "MenuItem",
@@ -39,6 +41,10 @@ class MenuItem < ActiveRecord::Base
   # Return active children for a node
   def active_children
     self.children.select(&:is_active?) 
+  end
+  
+  def clear_url
+    self.url = "" unless self.is_linkable?
   end
 
   private
