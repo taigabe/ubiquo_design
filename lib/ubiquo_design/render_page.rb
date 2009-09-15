@@ -15,7 +15,7 @@ module UbiquoDesign
     # Render all components contained on a block (calling the configured
     # generator) as string
     def render_block(block)
-      block.components.collect do |component|      
+      uhook_collect_components(block) do |component| 
         # Build a hash containing the options for this component (get info
         # from params). Copy only those keys found in component_params,
         # checking also that the required params are present.

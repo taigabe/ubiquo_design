@@ -4,7 +4,7 @@
 
 	<a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.component_move') %></a>
 	<% if component.component_type.is_configurable? %>
-		<%= link_to t('ubiquo.design.component_edit'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}" %>
+	  <%= uhook_link_to_edit_component(component) %>
 	<% end %>
 	<div class="wrap">
 			<h4 id="component_name_field_<%= component.id %>"><%= component.name %></h4>

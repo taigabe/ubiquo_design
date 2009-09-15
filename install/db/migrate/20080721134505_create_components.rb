@@ -1,6 +1,6 @@
 class CreateComponents < ActiveRecord::Migration
   def self.up
-    create_table :components do |t|
+    uhook_create_components_table do |t|
       t.text :options
       t.integer :component_type_id
       t.integer :block_id

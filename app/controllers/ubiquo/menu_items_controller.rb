@@ -7,7 +7,7 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   # GET /menu_items
   # GET /menu_items.xml
   def index
-    @menu_items = MenuItem.roots
+    @menu_items = uhook_find_menu_items
 
     respond_to do |format|
       format.html {} # index.html.erb  
@@ -20,7 +20,7 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   # GET /menu_items/new
   # GET /menu_items/new.xml
   def new
-    @menu_item = MenuItem.new(:parent_id => (params[:parent_id] || 0), :is_active => true)
+    @menu_item = uhook_new_menu_item
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,10 +36,10 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   # POST /menu_items
   # POST /menu_items.xml
   def create
-    @menu_item = MenuItem.new(params[:menu_item])
+    @menu_item = uhook_create_menu_item
 
     respond_to do |format|
-      if @menu_item.save
+      if @menu_item.valid?
         flash[:notice] = t('ubiquo.design.sitemap_created')
         format.html { redirect_to(ubiquo_menu_items_path) }
         format.xml  { render :xml => @menu_item, :status => :created, :location => @menu_item }
@@ -57,7 +57,7 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
     @menu_item = MenuItem.find(params[:id])
 
     respond_to do |format|
-      if @menu_item.update_attributes(params[:menu_item])
+      if uhook_update_menu_item(@menu_item)
         flash[:notice] = t('ubiquo.design.sitemap_updated')
         format.html { redirect_to(ubiquo_menu_items_path) }
         format.xml  { head :ok }
@@ -73,7 +73,7 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   # DELETE /menu_items/1.xml
   def destroy
     @menu_item = MenuItem.find(params[:id])
-    if @menu_item.destroy
+    if uhook_destroy_menu_item(@menu_item)
       flash[:notice] = t('ubiquo.design.sitemap_removed')
     else
       flash[:error] = t('ubiquo.design.sitemap_remove_error')
@@ -100,6 +100,6 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   private
   
   def load_automatic_menus
-    @automatic_menus = AutomaticMenu.find(:all, :order => 'name ASC')  
+    @automatic_menus = uhook_load_automatic_menus
   end
 end

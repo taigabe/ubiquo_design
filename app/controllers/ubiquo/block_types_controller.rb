@@ -27,6 +27,8 @@ class Ubiquo::BlockTypesController < UbiquoAreaController
             id, opts=sortable_block_type_holder_options(block.block_type.id, change_order_ubiquo_page_design_components_path(@page), ids)
             page.sortable(id, opts)
           end
+          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+                                         :locals => { :page => @page.reload })
           
         end
       }

@@ -35,6 +35,7 @@ ca:
       # Unknown
       use_frontpage_block: "Utilitza el bloc de la pàgina principal"
       # Components
+      component_translate: "traduir"
       component_removal: "eliminar"
       confirm_component_removal: "Estàs segur de voler eliminar aquest component?"
       component_move: "moure"

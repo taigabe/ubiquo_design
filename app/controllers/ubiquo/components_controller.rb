@@ -5,8 +5,8 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   helper "ubiquo/designs"
   def show
     @page = Page.find(params[:page_id])
-    @component = Component.find(params[:id])
-
+    @component = uhook_find_component
+      
     template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.component_type.key)
     render :file => template_path, :locals => {:page => @page, :component => @component}
   end
@@ -20,12 +20,13 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @component.block = @block
     @component.component_type = @component_type
     @component.name = @component_type.name
+    @component = uhook_prepare_component(@component)
     # TODO: don't do this!!
     @component.save_without_validation
 
     #TODO: Afegir el nou component al block de la pagina
     respond_to do |format|
-      format.html { redirect_to(ubiquo_page_design_path(@page))}
+      format.html { redirect_to(ubiquo_page_design_path(@page)) }
       format.js {
         render :update do |page|
           page.insert_html :bottom, "block_type_holder_#{@block.block_type.id}", :partial => "ubiquo/components/component", :object => @component
@@ -46,7 +47,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @component = Component.find(params[:id])
     @page = Page.find(params[:page_id])
 
-    @component.destroy
+    uhook_destroy_component(@component)
 
     #TODO: Afegir el nou component al block de la pagina
     respond_to do |format|    
@@ -66,20 +67,19 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   end
   
   def update
-    @component = Component.find(params[:id])
-    @page = Page.find(params[:page_id])   
-    params[:component].each do |field, value|
-      @component.send("#{field}=", value)
-    end
-    if @component.save
+    @page = Page.find(params[:page_id])
+    @component = uhook_update_component
+    if @component.valid?
       respond_to do |format|
         format.html { redirect_to(ubiquo_page_design_path(@page))}
         format.js {
           render :update do |page|
-            page << 'myLightWindow.deactivate();'
-            page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
-                                           :locals => { :page => @page.reload })
-            page.call "update_error_on_components", @page.wrong_components_ids
+            self.uhook_extra_rjs_on_update(page, true) do |page|
+              page << 'myLightWindow.deactivate();'
+              page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+                :locals => { :page => @page.reload })
+              page.call "update_error_on_components", @page.wrong_components_ids
+            end
           end
         }
       end
@@ -88,9 +88,11 @@ class Ubiquo::ComponentsController < UbiquoAreaController
         format.html { redirect_to(ubiquo_page_design_component_path(@page, @component))}
         format.js {
           render :update do |page|
-            page.replace_html('error_messages', :partial => 'ubiquo/designs/error_messages',
-                                                :locals => {:component => @component})
-            page << "reviveEditor();"
+            self.uhook_extra_rjs_on_update(page, false) do |page|
+              page.replace_html('error_messages', :partial => 'ubiquo/designs/error_messages',
+                :locals => {:component => @component})
+              page << "reviveEditor();"
+            end
           end
         }
       end

@@ -127,14 +127,10 @@ class PageTest < ActiveSupport::TestCase
       Page.find_public(page.page_category.url_name, page.url_name)
     end
     num_blocks = page.blocks.size
-    num_components = page.blocks.map(&:components).flatten.size
     assert num_blocks > 0
-    assert num_components > 0
     assert_difference "Page.count" do #New page
       assert_difference "Block.count", num_blocks do # cloned blocks
-        assert_difference "Component.count",num_components do # cloned components
-          assert page.publish
-        end
+        assert page.publish
       end
     end
     published = Page.find_public(page.page_category.url_name, page.url_name)

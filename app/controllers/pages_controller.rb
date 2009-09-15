@@ -59,8 +59,8 @@ class PagesController < ApplicationController
   # A page is formed of many blocks, each with containing components. Each
   # component use a generator to get the final HTML code
   def show
-    page = Page.find_public(params[:category], params[:url_name])
-    render_page(page)
+    page = uhook_load_page
+    render_page page
   end
   
 end
