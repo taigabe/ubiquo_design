@@ -5,11 +5,14 @@
 		<%= f.label :name, Page.human_attribute_name("name") %> 
 		<%= f.text_field :name %>
 	</p>
-
+        <% if @page_types.size == 1 %>
+          <%= f.hidden_field :page_type_id, :value => @page_types.first.id %>
+        <% else %>
 	<p>
 		<%= f.label :page_type_id, t('ubiquo.design.section') %> 
 		<%= f.collection_select :page_type_id, @page_types, :id, :name %>
 	</p>
+        <% end %>
 	
 	<fieldset>
 		<legend><%= t('ubiquo.design.situation') %></legend>
