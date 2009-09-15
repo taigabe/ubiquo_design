@@ -1,5 +1,8 @@
 require 'ubiquo_design'
 
+config.after_initialize do
+  UbiquoDesign::Connectors.load!
+end
 
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   
@@ -28,8 +31,8 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :page_categories_default_sort_order, 'desc'
   config.add :pages_default_order_field, 'pages.url_name'
   config.add :pages_default_sort_order, 'ASC'
-  
-  #config.add :test, 5
+
+  config.add :connector, :standard
 end
 
 groups = Ubiquo::Config.get :model_groups
