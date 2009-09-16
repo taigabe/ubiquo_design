@@ -1,6 +1,0 @@
-<%= component_header component %>
-<% component_form(page, component) do |f| %>
-	<p><%= f.label :content, t('ubiquo.generators.free.contents') %></p>
-	<%= f.text_area :content, :id => 'visual_editor' %>
-	<%= component_submit %>
-<% end %>
