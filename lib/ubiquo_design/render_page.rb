@@ -52,7 +52,7 @@ module UbiquoDesign
       current_menuitem = menu_items.sort_by { |mi| -mi.url.size }.detect do |mi|
         request.path =~ /^#{mi.url}/
       end
-      MenuItem.active_roots.collect do |root|
+      uhook_root_menu_items.collect do |root|
         is_current_root = ([root] + root.children).include?(current_menuitem)
         children = if root.automatic_menu
                      locals, render_options = run_generator(root.automatic_menu.generator)

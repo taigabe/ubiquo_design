@@ -152,6 +152,13 @@ module UbiquoDesign
             mi
           end
           
+          def uhook_edit_menu_item(menu_item)
+            unless menu_item.locale?(current_locale)
+              redirect_to(ubiquo_menu_items_path)
+              false
+            end   
+          end
+          
           # creates a new instance of menu item
           def uhook_create_menu_item
             mi = ::MenuItem.new(params[:menu_item])
@@ -229,6 +236,11 @@ module UbiquoDesign
           def uhook_collect_components(b, &block)
             b.components.locale(current_locale).collect(&block)
           end
+          
+          def uhook_root_menu_items
+            ::MenuItem.locale(current_locale).roots.active.all
+          end
+          
         end
       end
       

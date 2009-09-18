@@ -134,6 +134,10 @@ module UbiquoDesign
           def uhook_new_menu_item
             ::MenuItem.new(:parent_id => (params[:parent_id] || 0), :is_active => true)
           end
+          def uhook_edit_menu_item(menu_item)
+            true
+          end
+            
           
           # creates a new instance of menu item
           def uhook_create_menu_item
@@ -246,6 +250,11 @@ module UbiquoDesign
           def uhook_collect_components(b, &block)
             b.components.collect(&block)
           end
+          
+          def uhook_root_menu_items
+            ::MenuItem.active_roots.all
+          end
+          
         end
       end
       

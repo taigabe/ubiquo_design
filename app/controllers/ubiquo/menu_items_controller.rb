@@ -31,6 +31,9 @@ class Ubiquo::MenuItemsController < UbiquoAreaController
   # GET /menu_items/1/edit
   def edit
     @menu_item = MenuItem.find(params[:id])
+    
+    return if uhook_edit_menu_item(@menu_item) == false
+    
   end
 
   # POST /menu_items
