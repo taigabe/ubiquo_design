@@ -1,7 +1,6 @@
 class MenuItem < ActiveRecord::Base
   validates_presence_of :caption, :parent_id
-  validates_presence_of :url, :if => Proc.new { |menuitem| menuitem.is_linkable } 
-  validates_uniqueness_of :caption, :scope => :parent_id
+  validates_presence_of :url, :if => Proc.new { |menuitem| menuitem.is_linkable }
 
   before_validation_on_create :initialize_position
   before_validation :clear_url
@@ -9,13 +8,17 @@ class MenuItem < ActiveRecord::Base
   has_many :children,
            :class_name => "MenuItem",
            :foreign_key => :parent_id,
-           :order => :position
+           :order => :position,
+           :dependent => :destroy
 
   belongs_to :parent,
              :class_name => "MenuItem",
              :foreign_key => :parent_id
 
   belongs_to :automatic_menu
+  
+  named_scope :active, :conditions => {:is_active => true}
+  named_scope :roots, :conditions => {:parent_id => 0}, :order => "position ASC"
   
   # Returns true if is a root node
   def is_root?
@@ -28,19 +31,14 @@ class MenuItem < ActiveRecord::Base
     (self.is_root? && !self.automatic_menu_id)  
   end
 
-  # Return an array containing root (first-level) menu items
-  def self.roots
-    find(:all, :conditions => ['parent_id = 0'], :order => "position ASC") 
-  end    
-
   # Return an array containing active root (first-level) menu items 
   def self.active_roots
-    self.roots.select(&:is_active?) 
+    self.roots.active
   end    
   
   # Return active children for a node
   def active_children
-    self.children.select(&:is_active?) 
+    self.children.active
   end
   
   def clear_url

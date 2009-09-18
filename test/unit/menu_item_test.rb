@@ -30,14 +30,6 @@ class MenuItemTest < ActiveSupport::TestCase
     end
   end
   
-  def test_caption_should_be_unique
-    menu_item = create_menu_item(:caption => "a_new_caption")
-    assert_no_difference 'MenuItem.count' do
-      menu_item_with_same_new = create_menu_item(:caption => "a_new_caption")
-      assert menu_item_with_same_new.errors.on(:caption)
-    end
-  end
-  
   def test_should_get_root_menu_items_ordered_by_position
     MenuItem.delete_all
     root1 = create_menu_item(:caption => 'caption1', :position => 1)

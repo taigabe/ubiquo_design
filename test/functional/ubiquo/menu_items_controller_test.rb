@@ -52,8 +52,9 @@ class Ubiquo::MenuItemsControllerTest < ActionController::TestCase
 
   def test_should_destroy_menu_item
     login_as
-    assert_difference('MenuItem.count', -1) do
-      delete :destroy, :id => menu_items(:one).id
+    mi = menu_items(:one)
+    assert_difference('MenuItem.count', -1*(1+mi.children.size)) do
+      delete :destroy, :id => mi.id
     end
 
     assert_redirected_to ubiquo_menu_items_path

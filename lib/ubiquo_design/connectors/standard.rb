@@ -4,9 +4,14 @@ module UbiquoDesign
       
       
       module Component
-        
         def self.included(klass)
           klass.send :belongs_to, :block
+        end
+      end
+
+      module MenuItem
+        def self.included(klass)
+          
         end
       end
       
@@ -116,6 +121,7 @@ module UbiquoDesign
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
+          klass.send(:helper, Helper)
         end
         module InstanceMethods
           
@@ -149,6 +155,23 @@ module UbiquoDesign
           # loads all automatic menu items
           def uhook_load_automatic_menus
             ::AutomaticMenu.find(:all, :order => 'name ASC')  
+          end
+        end
+        module Helper
+          def uhook_extra_hidden_fields(form)
+          end
+          def uhook_menu_item_links(menu_item)
+            links = []
+            
+            links << link_to(t('ubiquo.edit'), edit_ubiquo_menu_item_path(menu_item))
+            links << link_to(t('ubiquo.remove'), [:ubiquo, menu_item],  
+              :confirm => t('ubiquo.design.confirm_sitemap_removal'), 
+              :method => :delete)
+            if menu_item.can_have_children?
+              links << link_to(t('ubiquo.design.new_subsection'), new_ubiquo_menu_item_path(:parent_id => menu_item))
+            end
+            
+            links.join(" | ")
           end
         end
       end
@@ -236,6 +259,11 @@ module UbiquoDesign
         module ClassMethods
           def uhook_create_pages_table
             create_table :pages do |t|
+              yield t
+            end
+          end
+          def uhook_create_menu_items_table
+            create_table :menu_items do |t|
               yield t
             end
           end

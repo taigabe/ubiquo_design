@@ -11,6 +11,9 @@ module UbiquoDesign
           ::Component.send(:include, self::Component) if self.constants.include?("Component")
         rescue NameError; end
         begin
+          ::MenuItem.send(:include, self::MenuItem) if self.constants.include?("MenuItem")
+        rescue NameError; end
+        begin
           ::PagesController.send(:include, self::PagesController) if self.constants.include?("PagesController")
         rescue NameError; end
         begin

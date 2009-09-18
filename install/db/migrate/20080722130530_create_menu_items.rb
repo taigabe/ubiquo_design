@@ -1,6 +1,6 @@
 class CreateMenuItems < ActiveRecord::Migration
   def self.up
-    create_table :menu_items do |t|
+    uhook_create_menu_items_table do |t|
       t.integer :parent_id
       t.string :caption
       t.string :url

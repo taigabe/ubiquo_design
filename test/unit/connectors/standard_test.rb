@@ -80,8 +80,9 @@ module Connectors
     end
     
     test "menu_items_controller destroy menu item" do 
-      assert_difference "MenuItem.count", -1 do 
-        Ubiquo::MenuItemsController.new.uhook_destroy_menu_item(menu_items(:one))
+      mi = menu_items(:one)
+      assert_difference "MenuItem.count", -1*(1+mi.children.size) do 
+        Ubiquo::MenuItemsController.new.uhook_destroy_menu_item(mi)
       end
     end
     

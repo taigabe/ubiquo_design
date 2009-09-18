@@ -3,17 +3,34 @@ module UbiquoDesign
     class ComponentTranslation < Base
       
       def self.load!
-        Standard.load!        
+        Standard.load!
         ::PagesController.send(:include, UbiquoI18n::Extensions::LocaleChanger)
         ::PagesController.send(:helper, UbiquoI18n::Extensions::Helpers)
         super
       end
       
       module Component
-        
         def self.included(klass)
           klass.send :belongs_to, :block, :translation_shared => true
           klass.send :translatable, :options
+        end
+      end
+
+      module MenuItem
+        def self.included(klass)
+          klass.send :translatable, :caption
+          
+          klass.reflections[:children].options[:translation_shared] = true
+          klass.reflections[:parent].options[:translation_shared] = true
+          
+#           klass.send :after_create do |menu_item|
+#             if menu_item.is_root?
+#               Locale.active.each do |locale|
+#                 next if locale.iso_code == menu_item.locale || menu_item.translations.map(&:locale).include?(locale.iso_code)
+#                 menu_item.translate(locale, :copy_all => true).save!
+#               end
+#             end
+#           end
         end
       end
       
@@ -114,6 +131,93 @@ module UbiquoDesign
         end
       end
 
+      module UbiquoMenuItemsController
+        def self.included(klass)
+          klass.send(:include, InstanceMethods)
+          ComponentTranslation.register_uhooks klass, InstanceMethods
+          klass.send(:helper, Helper)
+        end
+        module InstanceMethods
+          
+          # gets Menu items instances for the list and return it
+          def uhook_find_menu_items
+            ::MenuItem.locale(current_locale, :ALL).roots.all
+          end
+          
+          # initialize a new instance of menu item
+          def uhook_new_menu_item
+            mi = ::MenuItem.translate(params[:from], current_locale, :copy_all => true)
+            mi.parent_id = params[:parent_id] || 0
+            mi.is_active = true
+            mi
+          end
+          
+          # creates a new instance of menu item
+          def uhook_create_menu_item
+            mi = ::MenuItem.new(params[:menu_item])
+            mi.locale = current_locale
+            if mi.is_root?
+              mi.save
+            elsif mi.content_id.to_i == 0
+              root = mi.parent
+              mi.parent_id = nil
+              root.children << mi
+              root.save
+            else
+              mi.save
+            end
+            mi
+          end
+          
+          #updates a menu item instance. returns a boolean that means if update was done.
+          def uhook_update_menu_item(menu_item)
+            menu_item.update_attributes(params[:menu_item])
+          end
+          
+          #destroys a menu item instance. returns a boolean that means if destroy was done.
+          def uhook_destroy_menu_item(menu_item)
+            menu_item.destroy_content
+          end
+
+          # loads all automatic menu items
+          def uhook_load_automatic_menus
+            ::AutomaticMenu.find(:all, :order => 'name ASC')  
+          end
+        end
+        
+        module Helper
+          def uhook_extra_hidden_fields(form)
+            form.hidden_field :content_id
+          end
+          def uhook_menu_item_links(menu_item)
+            links = []
+            
+            if menu_item.locale?(current_locale)
+              links << link_to(t("ubiquo.edit"), [:edit, :ubiquo, menu_item])
+            else
+              links << link_to(
+                t("ubiquo.edit"), 
+                new_ubiquo_menu_item_path(
+                  :from => menu_item.content_id
+                  )
+                )
+            end
+            links << link_to(t("ubiquo.remove"), 
+              ubiquo_menu_item_path(menu_item, :destroy_content => true), 
+              :confirm => t("ubiquo.design.confirm_sitemap_removal"), :method => :delete
+              )
+            if menu_item.can_have_children?
+              links << link_to(t('ubiquo.design.new_subsection'), new_ubiquo_menu_item_path(:parent_id => menu_item))
+            end
+            
+            
+            links.join(" | ")
+          end
+        end
+      end
+
+
+
       module RenderPage
         
         def self.included(klass)
@@ -138,6 +242,11 @@ module UbiquoDesign
         module ClassMethods
           def uhook_create_components_table
             create_table :components, :translatable => true do |t|
+              yield t
+            end
+          end
+          def uhook_create_menu_items_table
+            create_table :menu_items, :translatable => true do |t|
               yield t
             end
           end

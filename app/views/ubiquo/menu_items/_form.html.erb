@@ -17,6 +17,7 @@
 <div class="form_box">
 
   <%= f.hidden_field :parent_id %>
+  <%= uhook_extra_hidden_fields(f) %>
   
 	<p>
 		<%= f.label :caption, MenuItem.human_attribute_name("caption") %>
