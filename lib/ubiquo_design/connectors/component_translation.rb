@@ -91,7 +91,7 @@ module UbiquoDesign
           # returns the component for the lightwindow. 
           # Will be rendered in their ubiquo/_form view
           def uhook_find_component
-            @component = ::Component.locale(current_locale).find(params[:id])
+            @component = ::Component.locale(current_locale, :ALL).find(params[:id])
           end
           
           # modify the created component and return it. It's executed in drag-drop.
@@ -126,6 +126,7 @@ module UbiquoDesign
             yield page
             if @component.id
               page.replace "edit_component_#{params[:id]}", uhook_link_to_edit_component(@component)
+              page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component.component_type.is_configurable?
             end
           end
         end
