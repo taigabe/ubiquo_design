@@ -14,7 +14,7 @@ module Ubiquo::MenuItemsHelper
       item_as_parent_id = item_id + '_list'
       html += tag('ul', {:id => item_as_parent_id}, true)
       html += build_list(item.children, item_as_parent_id)
-      html +="</ul"
+      html +="</ul>"
     end
     html += "</li>"
   end
