@@ -1,6 +1,6 @@
 class MenuItem < ActiveRecord::Base
   validates_presence_of :caption, :parent_id
-  validates_presence_of :url, :if => Proc.new { |menuitem| menuitem.is_linkable }
+  validates_presence_of :url, :if => :is_linkable?
 
   before_validation_on_create :initialize_position
   before_validation :clear_url
