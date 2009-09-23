@@ -75,7 +75,7 @@ module UbiquoDesign
             end
           end
           def uhook_load_components(block)
-            block.components.locale(current_locale, :ALL).all
+            block.components.locale(current_locale, :ALL)
           end
         end        
       end
@@ -142,7 +142,7 @@ module UbiquoDesign
           
           # gets Menu items instances for the list and return it
           def uhook_find_menu_items
-            ::MenuItem.locale(current_locale, :ALL).roots.all
+            ::MenuItem.locale(current_locale, :ALL).roots
           end
           
           # initialize a new instance of menu item
@@ -239,7 +239,7 @@ module UbiquoDesign
           end
           
           def uhook_root_menu_items
-            ::MenuItem.locale(current_locale).roots.active.all
+            ::MenuItem.locale(current_locale).roots.active
           end
           
         end
