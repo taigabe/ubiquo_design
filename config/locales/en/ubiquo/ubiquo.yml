@@ -1,5 +1,11 @@
 en:
   ubiquo:
+    page:
+      empty_list_title: "Design"
+      empty_list_message: "Here you can see, modify and design the application pages."
+    menu_item:
+      empty_list_title: "Sitemap"
+      empty_list_message: "Here you can see and modify the application site map. You can create new sections and subsections and reorder them."
     design:
       design: "Design"
       design_title: "Go to page design"

@@ -1,5 +1,11 @@
 ca:
   ubiquo:
+    page:
+      empty_list_title: "Maquetació"
+      empty_list_message: "Aquí pot veure, modificar y maquetar les pàgines de l'aplicació."
+    menu_item:
+      empty_list_title: "Mapa Web"
+      empty_list_message: "Aquí pots veure i modificar el mapa web de l'aplicació. Pots crear noves seccions, subseccions i reordenar-les."
     design:
       design: "Maquetació"
       design_title: "Anar a maquetació de pàgines"

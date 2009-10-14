@@ -1,5 +1,11 @@
 es:
   ubiquo:
+    page:
+      empty_list_title: "Maquetación"
+      empty_list_message: "Aquí puede ver, modificar y maquetar las páginas de la aplicación."
+    menu_item:
+      empty_list_title: "Mapa Web"
+      empty_list_message: "Aquí puede ver y modificar el mapa web de la aplicación. Puede crear nuevas secciones y subsecciones, y reordenarlas."
     design:
       design: "Maquetación"
       design_title: "Ir a maquetación de páginas"
