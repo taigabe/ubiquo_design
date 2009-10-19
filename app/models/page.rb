@@ -19,7 +19,7 @@ class Page < ActiveRecord::Base
   validates_presence_of :url_name, :if => lambda{ |page|
     page.url_name.nil?
   }
-  validates_format_of :url_name, :with => /\A[a-z\/\_\-]*\Z/
+  validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
   validates_uniqueness_of :url_name, :scope => [:page_type_id, :is_public, :page_category_id], :allow_blank => true
   validates_presence_of :page_template
   #  validates_presence_of :page_type
