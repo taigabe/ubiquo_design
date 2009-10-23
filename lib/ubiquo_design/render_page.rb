@@ -2,13 +2,13 @@ module UbiquoDesign
   module RenderPage
     private
     def render_page(page)
+      @menu = build_menu
       @blocks = page.all_blocks.collect do |block|
         block_output = render_block(block)
         # Return if block is void (normally, a redirect ocurred)
         return unless block_output
         [block.block_type.key.to_sym, block_output.join]
       end.to_hash
-      @menu = build_menu
       render_template_file(page.page_template.key, page.page_template.layout)
     end
 
