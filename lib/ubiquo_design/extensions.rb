@@ -6,4 +6,5 @@ module UbiquoDesign
 end
 
 ActionController::Base.helper(UbiquoDesign::Extensions::Helper)
+ActionView::Base.send(:include, UbiquoDesign::Extensions::Helper)
 ActiveSupport::TestCase.send(:include, UbiquoDesign::Extensions::TestHelper)
