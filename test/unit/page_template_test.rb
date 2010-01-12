@@ -26,7 +26,7 @@ class PageTemplateTest < ActiveSupport::TestCase
   def test_should_require_thumbnail
     assert_no_difference "PageTemplate.count" do
       page_template = create_page_template :thumbnail => nil
-      assert page_template.errors.on(:thumbnail)
+      assert page_template.errors.on(:thumbnail_file_name)
     end
   end
   
@@ -49,7 +49,10 @@ class PageTemplateTest < ActiveSupport::TestCase
   private
 
   def create_page_template(options = {})
-    PageTemplate.create({:name => "Index page", :key => "index", :thumbnail => test_file}.merge!(options))
+    PageTemplate.create({
+      :name => "Index page",
+      :key => "index",
+      :thumbnail => test_file
+    }.merge(options))
   end
-
 end
