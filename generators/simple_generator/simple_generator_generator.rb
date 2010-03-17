@@ -20,11 +20,12 @@ class SimpleGeneratorGenerator < Rails::Generator::NamedBase
       m.template('test/unit/generator_test.rb.erb', File.join('test/unit', "#{@name}_test.rb"))
       m.template('test/functional/generator_test.rb.erb', File.join('test/functional/generators', "#{@name}_test.rb"))
       m.template('test/functional/ubiquo/generator_test.rb.erb', File.join('test/functional/generators/ubiquo', "#{@name}_test.rb"))
+      m.migration_template 'migration.rb', 'db/migrate', :assigns => { 
+        :migration_name => "Create#{@name.classify}Component"
+      }, :migration_file_name => "create_#{@name}_component"
       puts "Notes:
       
-  - Create a component type for this generator: db/dev_bootstrap/component_types.yml
-  - Relate it with a page template in: db/dev_bootstrap/page_template_component_types.yml
-  - Create component params if needed for this component type: db/dev_bootstrap/component_params.yml
+  - Change the component type name in migration if you want
   - Remember to update the tests for the component model, the generator 
     controller and the ubiquo controller.
       "            
@@ -37,12 +38,12 @@ class SimpleGeneratorGenerator < Rails::Generator::NamedBase
     "Usage: #{$0} simple_generator name [attribute:type]"
   end
 
-  #def add_options!(opt)
-  #  opt.separator ''
-  #  opt.separator 'Options:'
-  #  opt.on("--skip-timestamps",
-  #         "Don't add timestamps to the migration file for this model") { |v| options[:skip_timestamps] = v }
-  #  opt.on("--skip-migration",
-  #         "Don't generate a migration file for this model") { |v| options[:skip_migration] = v }
-  #end
+  def add_options!(opt)
+    opt.separator ''
+    opt.separator 'Options:'
+    opt.on("--templates template_key, template_key2", Array,
+      "Relate component with these templates") { |v| options[:templates] = v }
+    opt.on("--params param_name, param_nam2", Array,
+      "Creates a component param") { |v| options[:params] = v }
+  end
 end
