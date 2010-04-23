@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../../test_helper'
 class FreeGeneratorUbiquoTest < ActionController::TestCase
   tests Ubiquo::ComponentsController
 
-  def test_edit_new_form
+  test "edit new form" do
     login_as
     component, page = insert_component({}, {}, false)
     get :show, :page_id => page.id, 
@@ -11,7 +11,7 @@ class FreeGeneratorUbiquoTest < ActionController::TestCase
     assert_response :success
   end
   
-  def test_edit_form
+  test "edit form" do
     login_as
     component, page = insert_component(component_attributes)
     get :show, :page_id => page.id, 
@@ -19,7 +19,7 @@ class FreeGeneratorUbiquoTest < ActionController::TestCase
     assert_response :success
   end
 
-  def test_form_submit
+  test "form submit" do
     login_as
     component, page = insert_component(component_attributes)
     xhr :post, :update, :page_id => page.id, 
@@ -28,7 +28,7 @@ class FreeGeneratorUbiquoTest < ActionController::TestCase
     assert_response :success
   end
 
-  def test_form_submit_with_errors
+  test "form submit with errors" do
     login_as
     component, page = insert_component({}, {}, false)
     xhr :post, :update, :page_id => page.id, 

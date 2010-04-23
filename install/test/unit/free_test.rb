@@ -2,14 +2,14 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class FreeTest < ActiveSupport::TestCase
   
-  def test_should_create_free
+  test "should create free" do
     assert_difference 'Free.count' do
       free = create_free
       assert !free.new_record?, "#{free.errors.full_messages.to_sentence}"
     end
   end
 
-  def test_should_require_content
+  test "should require content" do
     assert_no_difference 'Free.count' do
       free = create_free(:content => nil)
       assert free.errors.on(:content)

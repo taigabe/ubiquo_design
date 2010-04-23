@@ -4,13 +4,13 @@ require 'mocha'
 class FreeGeneratorTest < ActionController::TestCase
   tests PagesController
 
-  def test_free_generator_should_run_generator
+  test "free generator should run generator" do
     component, page = insert_component
     locals, render_options = run_generator(:free, component, {})
     assert_equal locals[:content], component_attributes[:content], "Error on component content"
   end
 
-  def test_content_generator_should_get_show
+  test "content generator should get show" do
     component, page = insert_component
     get :show, :category => page.page_category.url_name, :url_name => page.url_name
     assert_response :success
