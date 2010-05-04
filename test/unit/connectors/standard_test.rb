@@ -11,7 +11,7 @@ module Connectors
       page.blocks << pages(:one).blocks
       assert_equal page.is_public?, false
       assert_equal page.is_published?, false
-      assert_raises ActiveRecord::RecordNotFound do
+      assert_raise ActiveRecord::RecordNotFound do
         Page.find_public(page.page_category.url_name, page.url_name)
       end
       num_components = page.blocks.map(&:components).flatten.size
@@ -46,7 +46,7 @@ module Connectors
     end
     
     test "menu_items_controller find menu items" do 
-      assert_equal MenuItem.all.select{|mi|mi.is_root?}, Ubiquo::MenuItemsController.new.uhook_find_menu_items
+      assert_equal_set MenuItem.all.select{|mi|mi.is_root?}, Ubiquo::MenuItemsController.new.uhook_find_menu_items
     end
     
     test "menu_items_controller new menu item without parent" do 
