@@ -91,7 +91,7 @@ module UbiquoDesign
           # returns the component for the lightwindow. 
           # Will be rendered in their ubiquo/_form view
           def uhook_find_component
-            @component = ::Component.locale(current_locale, :ALL).find(params[:id])
+            @component = ::Component.find(params[:id])
           end
           
           # modify the created component and return it. It's executed in drag-drop.
