@@ -19,7 +19,7 @@ module Connectors
         assert_equal page.is_public?, false
         assert_equal page.is_published?, false
         assert_raises ActiveRecord::RecordNotFound do
-          Page.find_public(page.page_category.url_name, page.url_name)
+          Page.public.find_by_url_name(page.url_name)          
         end
         components = page.blocks.map(&:components).flatten
         num_components = components.size
@@ -83,13 +83,12 @@ module Connectors
     private 
     
     def create_page(options = {})
-      Page.create({:name => "Custom page",
-          :url_name => "custom_page",
-          :page_template_id => page_templates(:one).id,
-          :page_category_id => page_categories(:one).id,
-          :page_type_id => page_types(:one).id,
-          :is_public => false,
-        }.merge(options))
+      Page.create({
+        :name => "Custom page",
+        :url_name => "custom_page",
+        :page_template_id => page_templates(:one).id,
+        :is_public => false,
+      }.merge(options))
     end
   end
 end

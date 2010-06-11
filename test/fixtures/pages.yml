@@ -5,8 +5,6 @@ one:
   name: Start page
   url_name: ""
   page_template_id: 10000
-  page_type_id: 10000
-  page_category_id: 10000
   is_public: true
 
 two:
@@ -14,17 +12,13 @@ two:
   name: Article page
   url_name: "article"
   page_template_id: 10001
-  page_type_id: 10000
   is_public: true
-  page_category_id: 10001
 
 only_menu:
   id: 10002
   name: Menu page
   url_name: "menu_page"
   page_template_id: 10002
-  page_type_id: 10000
-  page_category_id: 10000
   is_public: true
 
 one_design:
@@ -32,9 +26,7 @@ one_design:
   name: Start page
   url_name: ""
   page_template_id: 10000
-  page_type_id: 10000
   is_public: false
-  page_category_id: 10000
   is_modified: false
 
 two_design:
@@ -42,8 +34,6 @@ two_design:
   name: Article page
   url_name: "article"
   page_template_id: 10001
-  page_type_id: 10000
-  page_category_id: 10000
   is_public: false
   is_modified: false
 
@@ -52,18 +42,14 @@ only_menu_design:
   name: Menu page
   url_name: "menu_page"
   page_template_id: 10002
-  page_type_id: 10000
   is_public: false
-  page_category_id: 10000
   is_modified: false
 
 test_page:
   name: TestPage
   updated_at: 2008-06-03 09:19:32.529112
   id: 10006
-  page_type_id: "10001"
   page_template_id: "10000"
   url_name: test_page
   is_public: true
-  page_category_id: 10000
   created_at: 2008-06-03 09:06:35.571694

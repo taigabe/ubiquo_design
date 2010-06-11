@@ -61,8 +61,6 @@ module UbiquoDesign
         end
         component_model = component_type_options[:subclass_type].constantize
         component = component_model.new(component_options)
-        page_category = PageCategory.create!(:name => "Test category Name", 
-                                             :url_name => 'test_category')
         thumbnail_template = Tempfile.new("template1.png")
         page_template = PageTemplate.create!(:name => "Test template", 
                                              :key => 'test', 
@@ -73,7 +71,6 @@ module UbiquoDesign
         default_page_options = {
           :name => 'Test page', 
           :url_name => 'test_page',
-          :page_category => page_category, 
           :page_template => page_template, 
           :is_public => true,
         }

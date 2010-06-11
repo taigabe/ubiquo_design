@@ -12,7 +12,7 @@ class <%= model_name %>GeneratorTest < ActionController::TestCase
 
   def test_<%= name %>_generator_should_get_show
     component, page = insert_component
-    get :show, :category => page.page_category.url_name, :url_name => page.url_name
+    get :show, :url_name => page.url_name
     assert_response :success
     # Test the view here
     # assert_select "div.xxx" do

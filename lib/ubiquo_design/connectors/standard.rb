@@ -52,10 +52,10 @@ module UbiquoDesign
         end
         module InstanceMethods
           # Loads the page for the public part. 
-          # Can use params[:category] and params[:url_name] to decide what page to show.
+          # Can use params[:url_name] to decide what page to show.
           # Must returns the expected Page instance.
           def uhook_load_page
-            ::Page.find_public(params[:category], params[:url_name])
+            ::Page.public.find_by_url_name(params[:url_name])
           end
         end
       end
@@ -210,9 +210,7 @@ module UbiquoDesign
           
           # Returns all private pages
           def uhook_find_private_pages(filters, order_by, sort_order)
-            ::Page.public_scope(false) do
-              ::Page.filtered_search(filters, :order => order_by + " " + sort_order)
-            end            
+            ::Page.private.filtered_search(filters, :order => order_by + " " + sort_order)
           end
           
           # initializes a new instance of page.

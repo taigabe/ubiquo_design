@@ -5,10 +5,6 @@ ca:
         menu_items:
           index: "Aquí pots veure i modificar el mapa web de l'aplicació. Pots crear noves seccions, subseccions i reordenar-les amb l'icona que es troba a la dreta del nom de la secció."
           form: "Aquí pots crear o modificar una entrada al mapa web. Aquestes entrades poden ser clickables (en tal cas s'hauria d'especificar una URL). Pels nodes arrel es pot, opcionalment, seleccionar un menú automàtic. En tal cas no està permés afegir-li subseccions."
-        pagecategories:
-          edit: "Aquí pot editar la categoria de la pàgina seleccionada."
-          new: "Aquí pots crear la nova categoria de pàgines. Una categoria de pàgina es com un prefix per les URLs de les pàgines y permet agrupar-les."
-          index: "Aquí pots veure totes les categories de pàgines disponibles en l'aplicació."
         page:
           edit: "Aquí pots configurar les opcions de la pàgina. El nom de la ruta, la secció i la categoria són camps que determinen la URL final de la pàgina."
           new: "Aquí pots configurar les opcions de la pàgina. El nom de la ruta, la secció i la categoria són camps que determinen la URL final de la pàgina."

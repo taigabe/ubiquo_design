@@ -37,40 +37,12 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  def test_should_require_page_category
-    assert_no_difference "Page.count" do
-      page = create_page :page_category_id => nil
-      assert page.errors.on(:page_category)
-    end
-  end
-
   def test_should_require_valid_url_name
     assert_no_difference "Page.count" do
       ["no spaces", "Lower_Case_only", "no:wrong*symbols", nil].each do |url|
         page = create_page :url_name => url
         assert page.errors.on(:url_name), "Url name should be wrong: '#{url}'"
       end
-    end
-  end
-
-  def test_shouldnt_require_unique_url_name_with_different_page_type_id
-    assert_difference "Page.count", 2 do
-
-      page1 = create_page :url_name => "unique_url", :page_type_id => page_types(:one).id
-      page2 = create_page :url_name => "unique_url", :page_type_id => page_types(:two).id
-
-      assert !page1.new_record?, "#{page1.errors.full_messages.to_sentence}"
-      assert !page2.new_record?, "#{page2.errors.full_messages.to_sentence}"
-    end
-  end
-
-  def test_should_require_unique_url_name_with_same_page_type_id
-    assert_difference "Page.count", 1 do
-      page1 = create_page :url_name => "unique_url", :page_type_id => page_types(:one).id
-      page2 = create_page :url_name => "unique_url", :page_type_id => page_types(:one).id
-
-      assert !page1.new_record?, "#{page1.errors.full_messages.to_sentence}"
-      assert page2.errors.on(:url_name)
     end
   end
 
@@ -123,9 +95,7 @@ class PageTest < ActiveSupport::TestCase
     page.blocks << pages(:one).blocks
     assert_equal page.is_public?, false
     assert_equal page.is_published?, false
-    assert_raises ActiveRecord::RecordNotFound do
-      Page.find_public(page.page_category.url_name, page.url_name)
-    end
+    assert_nil Page.public.find_by_url_name(page.url_name)
     num_blocks = page.blocks.size
     assert num_blocks > 0
     assert_difference "Page.count" do #New page
@@ -133,7 +103,7 @@ class PageTest < ActiveSupport::TestCase
         assert page.publish
       end
     end
-    published = Page.find_public(page.page_category.url_name, page.url_name)
+    published = Page.public.find_by_url_name(page.url_name)
     assert_not_nil published
     assert_equal page.is_published?, true
   end
@@ -143,9 +113,7 @@ class PageTest < ActiveSupport::TestCase
     page.blocks << pages(:one).blocks
     assert_equal page.is_public?, false
     assert_equal page.is_published?, false
-    assert_raises ActiveRecord::RecordNotFound do
-      Page.find_public(page.page_category.url_name, page.url_name)
-    end
+    assert_nil Page.public.find_by_url_name(page.url_name)
     
     #creates an error on first component (Free)
     component = page.blocks.map(&:components).flatten.first
@@ -163,7 +131,7 @@ class PageTest < ActiveSupport::TestCase
         end
       end
     end
-    assert !page.is_published?
+    assert !page.is_public?
   end
 
   def test_should_destroy_both_pages
@@ -186,8 +154,6 @@ class PageTest < ActiveSupport::TestCase
     Page.create({:name => "Custom page",
       :url_name => "custom_page",
       :page_template_id => page_templates(:one).id,
-      :page_category_id => page_categories(:one).id,
-      :page_type_id => page_types(:one).id,
       :is_public => false,
     }.merge(options))
   end

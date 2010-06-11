@@ -12,7 +12,7 @@ class FreeGeneratorTest < ActionController::TestCase
 
   test "content generator should get show" do
     component, page = insert_component
-    get :show, :category => page.page_category.url_name, :url_name => page.url_name
+    get :show, :url_name => page.url_name
     assert_response :success
     assert_select "div#example", {:count => 1, :text => 'Example content'}
    end

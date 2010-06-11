@@ -11,9 +11,7 @@ module Connectors
       page.blocks << pages(:one).blocks
       assert_equal page.is_public?, false
       assert_equal page.is_published?, false
-      assert_raise ActiveRecord::RecordNotFound do
-        Page.find_public(page.page_category.url_name, page.url_name)
-      end
+      assert_nil Page.public.find_by_url_name(page.url_name)
       num_components = page.blocks.map(&:components).flatten.size
       assert num_components > 0
       assert_difference "Component.count",num_components do # cloned components
@@ -23,7 +21,7 @@ module Connectors
     
     test "should load public page" do 
       p = pages(:one_design)
-      PagesController.any_instance.stubs(:params => {:category => p.page_category.url_name, :url_name => p.url_name})
+      PagesController.any_instance.stubs(:params => { :url_name => p.url_name })
       assert_equal pages(:one), PagesController.new.uhook_load_page
     end
     
@@ -138,13 +136,12 @@ module Connectors
     private 
     
     def create_page(options = {})
-      Page.create({:name => "Custom page",
-          :url_name => "custom_page",
-          :page_template_id => page_templates(:one).id,
-          :page_category_id => page_categories(:one).id,
-          :page_type_id => page_types(:one).id,
-          :is_public => false,
-        }.merge(options))
+      Page.create({
+        :name => "Custom page",
+        :url_name => "custom_page",
+        :page_template_id => page_templates(:one).id,
+        :is_public => false,
+      }.merge(options))
     end
   end
 end

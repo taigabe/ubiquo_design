@@ -3,8 +3,6 @@ class Ubiquo::PagesController < UbiquoAreaController
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
   
   before_filter :load_page_templates
-  before_filter :load_page_types
-  before_filter :load_page_categories
 
   # GET /pages
   # GET /pages.xml
@@ -101,12 +99,5 @@ class Ubiquo::PagesController < UbiquoAreaController
   def load_page_templates
     @page_templates = PageTemplate.all
   end
-  def load_page_types
-    @page_types = PageType.all
-  end
-  def load_page_categories
-    @page_categories = PageCategory.all
-  end
-  
   
 end

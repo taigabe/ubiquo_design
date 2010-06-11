@@ -5,8 +5,6 @@
 #* name: Descriptive name
 #* url_name: String that appears on the route
 #* page_template: Associated page templates (configure them on <tt>db/dev_bootstrap/page_template.yml</tt>).
-#* page_type: This attribute is used to create arbitrary routes. See the example on _Public routes_ secion. 
-#* page_category: Category to which the page belongs. The page categories can be created from the corresponding tab.
 #* is_public: Show if a page will be shown on the public website (true) or Ubuquo (false) 
 #
 #By default, pages are created non public. When a page is published, it is cloned (along with its components, blocks and asset_relations) and the is_public attribute is set. In that moment the changes are visible on the public website.
@@ -19,19 +17,16 @@
 #    ...
 #    map.with_options :controller => 'pages' do |pages|
 #      # Frontpage
-#      pages.connect "", :action => 'show', :category => '', :url_name => ''
+#      pages.connect "", :action => 'show', :url_name => ''
 #      
 #      # Common routes      
-#      pages.connect ":category/:url_name", :action => 'show', :defaults => {:url_name => ''}
-#      pages.connect ":category/:url_name/:id", :action => 'show'
-#      pages.connect ":category/:url_name/page/:page", :action => 'show'
-#      
-#      # Example of page_type usage  
-#      pages.connect "this/is/a/deep/path/:category/:url_name", :action => 'show', :page_type => 'deep', :defaults => {:url_name => ''}    
+#      pages.connect ":url_name", :action => 'show', :defaults => {:url_name => ''}
+#      pages.connect ":url_name/:id", :action => 'show'
+#      pages.connect ":url_name/page/:page", :action => 'show'
 #    end
 #  end
 #
-#The frontpage is a page with a empty string as url_name and a page_category also with empty string. 
+#The frontpage is a page with a empty string as url_name.
 #
 #== Build links on views from pages  
 #

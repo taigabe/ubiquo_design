@@ -83,7 +83,7 @@ module Ubiquo::DesignsHelper
     is_using_default = !page.blocks.as_hash.include?(bt.key)
     options.reverse_merge!({:class => "column_4"})
     s = "<div class='top_options'>"
-    s << render(:partial => "ubiquo/designs/use_default_form", :locals => {:bt => bt, :page => page, :is_using_default => is_using_default, :style_class => options[:class]}) if bt.can_use_default_block? && !(page.url_name.blank? && page.page_category.url_name=="")
+    s << render(:partial => "ubiquo/designs/use_default_form", :locals => {:bt => bt, :page => page, :is_using_default => is_using_default, :style_class => options[:class]}) if bt.can_use_default_block? && !(page.url_name.blank?)
     s << "</div>"
     s << block_type_holder(page, bt, options)
     s

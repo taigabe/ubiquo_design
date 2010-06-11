@@ -6,7 +6,6 @@ module UbiquoDesign
           tab.text = I18n.t("ubiquo.design.design")
           tab.title = I18n.t("ubiquo.design.design_title")
           tab.highlights_on({:controller => "ubiquo/pages"})
-          tab.highlights_on({:controller => "ubiquo/page_categories"})
           tab.highlights_on({:controller => "ubiquo/page_templates"})    
           tab.highlights_on({:controller => "ubiquo/designs"}) 
           tab.link = ubiquo_pages_path   
@@ -38,11 +37,7 @@ module UbiquoDesign
           :controller => '/pages', 
           :action => 'show', 
           :url_name => page.url_name,
-          :category => page.page_category.url_name, 
         }
-        if page.page_type && !page.page_type.key.blank?
-          page_url_for_options.update(:page_type => page.page_type.key)
-        end 
         url_for(page_url_for_options.merge(url_for_options))
       end
       

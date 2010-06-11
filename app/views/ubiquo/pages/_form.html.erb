@@ -1,49 +1,32 @@
 <%= error_messages_for 'page' %>
 <div class="form_box">
   <%= uhook_form_top f %>
-	<p>
-		<%= f.label :name, Page.human_attribute_name("name") %> 
-		<%= f.text_field :name %>
-	</p>
-        <% if @page_types.size == 1 %>
-          <%= f.hidden_field :page_type_id, :value => @page_types.first.id %>
-        <% else %>
-	<p>
-		<%= f.label :page_type_id, t('ubiquo.design.section') %> 
-		<%= f.collection_select :page_type_id, @page_types, :id, :name %>
-	</p>
-        <% end %>
-	
-	<fieldset>
-		<legend><%= t('ubiquo.design.situation') %></legend>
-		<p>
-			<%= f.label :page_category_id, t('ubiquo.design.category') %> 
-			<%= f.collection_select :page_category_id, @page_categories, :id, :name %>
-		</p>
-	
-		<p>
-			<%= f.label :url_name, Page.human_attribute_name("url_name") %>
-			<%= t("ubiquo.design.page_name_example", :name => content_tag(:strong, 'about')) %> 
-			<%= f.text_field :url_name, :style => 'float: left' %>
-		</p>
-	</fieldset>
-	
-	<% if f.object.new_record? %>
-	<fieldset>
-		<legend><%= t('ubiquo.design.page_template') %></legend>
-		
-		<ul class="page_templates">
-		  <% @page_templates.each do |pt| %>
-		    <li>
-		      <%= f.radio_button(:page_template_id, pt.id) %>
-		      <%= f.label "page_template_id_#{pt.id}", pt.name %>
-		      		  
-		      <%= image_tag(pt.thumbnail.url, :id => "page_template_id_#{pt.id}", 
-		            :onclick => "$('page_' + this.id).click(); return false;") %>
-            </li>		        
-		  <% end %>
-		</ul>
-	</fieldset>
+  <p>
+    <%= f.label :name, Page.human_attribute_name("name") %> 
+    <%= f.text_field :name %>
+  </p>
+  <fieldset>
+    <legend><%= t('ubiquo.design.situation') %></legend>
+    <p>
+      <%= f.label :url_name, Page.human_attribute_name("url_name") %>
+      <%= t("ubiquo.design.page_name_example", :name => content_tag(:strong, 'about')) %> 
+      <%= f.text_field :url_name, :style => 'float: left' %>
+    </p>
+  </fieldset>
+  <% if f.object.new_record? %>
+    <fieldset>
+      <legend><%= t('ubiquo.design.page_template') %></legend>
+      <ul class="page_templates">
+	<% @page_templates.each do |template| %>
+          <li>
+	    <%= f.radio_button(:page_template_id, template.id) %>
+	    <%= f.label "page_template_id_#{template.id}", template.name %>
+	    <%= image_tag(template.thumbnail.url, 
+                         :id => "page_template_id_#{template.id}",
+	                 :onclick => "$('page_' + this.id).click(); return false;") %>
+          </li>		        
 	<% end %>
-	
+      </ul>
+    </fieldset>
+  <% end %>
 </div>

@@ -5,9 +5,7 @@ module Connectors
    
     test "load page is a page" do 
       p = Page.first
-      PagesController.any_instance.stubs(:params => {
-          :category => p.page_category.url_name, 
-          :url_name => p.url_name})
+      PagesController.any_instance.stubs(:params => { :url_name => p.url_name })
       assert PagesController.new.uhook_load_page.is_a?(Page)
     end
     

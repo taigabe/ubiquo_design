@@ -10,11 +10,7 @@ class BlockType < ActiveRecord::Base
 
   # Return the default_block for this block type  
   def default_block
-    frontpage_category = PageCategory.find_by_url_name('')
-    return unless frontpage_category
-    page = Page.public_scope do
-      Page.find_by_url_name_and_page_category_id('', frontpage_category.id)
-    end
+    page = Page.public.find_by_url_name("")
     return nil if !self.can_use_default_block? || page.nil?
     page.nil? ? nil : page.blocks.as_hash[self.key]
   end

@@ -24,14 +24,12 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     login_as
     get :new
     assert_response :success
-    
-    assert_not_nil page_categories=assigns(:page_categories)
   end
 
   def test_should_create_page_with_default_blocks
     login_as
     assert_difference('Page.count') do
-      post :create, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id, :page_category_id => page_categories(:one).id,}
+      post :create, :page => { :name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id }
     end
 
     assert page = assigns(:page)
@@ -44,7 +42,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
   def test_should_create_page_with_some_default_blocks
     login_as
     assert_difference('Page.count') do
-      post :create, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:two).id, :page_category_id => page_categories(:one).id,}
+      post :create, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:two).id }
     end
 
     assert page = assigns(:page)
@@ -61,7 +59,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
 
   def test_should_update_page
     login_as
-    put :update, :id => pages(:one).id, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id, :page_category_id => page_categories(:one).id,}
+    put :update, :id => pages(:one).id, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id }
     assert_redirected_to ubiquo_pages_path
   end
 

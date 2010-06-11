@@ -1,14 +1,10 @@
 class Page < ActiveRecord::Base
-
   belongs_to :page_template
   has_many :blocks, :dependent => :destroy do
     def as_hash
       self.collect{|block|[block.block_type.key, block]}.to_hash
     end
   end
-
-  belongs_to :page_type
-  belongs_to :page_category
 
   after_create :assign_default_blocks
   before_validation_on_create :assign_default_is_public
@@ -20,11 +16,11 @@ class Page < ActiveRecord::Base
     page.url_name.nil?
   }
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
-  validates_uniqueness_of :url_name, :scope => [:page_type_id, :is_public, :page_category_id], :allow_blank => true
+  validates_uniqueness_of :url_name, :scope => [:is_public], :allow_blank => true
   validates_presence_of :page_template
-  #  validates_presence_of :page_type
-  validates_presence_of :page_category
 
+  named_scope :public, :conditions => { :is_public => true }
+  named_scope :private, :conditions => { :is_public => false }
   # Generic find for pages (by ID, url_name or record)
   def self.find_by(something, options={})
     case something
@@ -53,25 +49,6 @@ class Page < ActiveRecord::Base
     
     apply_find_scopes(scopes) do
       find(:all, options)
-    end
-  end
-
-  # Get public page given a page_type key, page_category url_name and page url_name
-  def self.find_public(page_category_url_name, page_name)
-    page_category = PageCategory.find_by_url_name(page_category_url_name)
-    raise ActiveRecord::RecordNotFound.new("Cannot find page_category '#{page_category_url_name}'") unless page_category
-    page = public_scope do
-      #page_category.pages.find_all_by_url_name(page_name)
-      page_category.pages.find(:first, :conditions => ["url_name = ?", page_name])
-    end
-    raise ActiveRecord::RecordNotFound.new("Cannot find public page with page_name '#{page_name}' and page_category '#{page_category_url_name}'") unless page
-    page
-  end
-
-  # Create a surrouding scope for calls within the block to get only public pages
-  def self.public_scope(p = true)
-    self.with_scope(:find => {:conditions => ["pages.is_public = ?", p]}) do
-      yield
     end
   end
 
@@ -153,16 +130,12 @@ class Page < ActiveRecord::Base
     self.blocks.map(&:components).flatten.reject(&:valid?).map(&:id)
   end
 
-  def is_published?
-    !published.nil?
+  def published
+    Page.public.find_by_url_name(self.url_name)
   end
 
-  def published
-    begin
-      Page.find_public(self.page_category.url_name, self.url_name)
-    rescue
-      nil
-    end
+  def is_published?
+    published.present?
   end
 
   def is_linkable?
