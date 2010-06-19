@@ -1,7 +1,5 @@
 class Ubiquo::PagesController < UbiquoAreaController
-
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
-  
   before_filter :load_page_templates
 
   # GET /pages
@@ -10,10 +8,7 @@ class Ubiquo::PagesController < UbiquoAreaController
     order_by = params[:order_by] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_order_field)
     sort_order = params[:sort_order] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_sort_order)
 
-    filters = {
-      :text => params[:filter_text],
-    }
-
+    filters = { :text => params[:filter_text] }
     per_page = Ubiquo::Config.context(:ubiquo_design).get(:pages_elements_per_page)
 
     @pages_pages, @pages = Page.paginate(:page => params[:page], :per_page => per_page) do
