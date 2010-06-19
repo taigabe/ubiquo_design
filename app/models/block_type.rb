@@ -4,13 +4,12 @@ class BlockType < ActiveRecord::Base
   validate :valid_default
   
   has_many :blocks
-  
   has_many :page_template_block_types
   has_many :page_templates, :through => :page_template_block_types
 
   # Return the default_block for this block type  
   def default_block
-    page = Page.public.find_by_url_name("")
+    page = Page.published.find_by_url_name("")
     return nil if !self.can_use_default_block? || page.nil?
     page.nil? ? nil : page.blocks.as_hash[self.key]
   end
