@@ -87,7 +87,8 @@ module Connectors
         :name => "Custom page",
         :url_name => "custom_page",
         :page_template_id => page_templates(:one).id,
-        :is_public => false,
+        :pending_publish => true,
+        :published_id => nil,
       }.merge(options))
     end
   end

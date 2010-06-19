@@ -3,46 +3,50 @@ one:
   name: Start page
   url_name: ""
   page_template_id: 10000
-  is_public: true
-
+  pending_publish: false
+  published_id: 
 two:
   id: 10001
   name: Article page
   url_name: "article"
   page_template_id: 10001
-  is_public: true
+  pending_publish: false
+  published_id: 
 
 only_menu:
   id: 10002
   name: Menu page
   url_name: "menu_page"
   page_template_id: 10002
-  is_public: true
-
+  pending_publish: false
+  published_id: 
 
 one_design:
   id: 10003
   name: Start page
   url_name: ""
   page_template_id: 10000
-  is_public: false
+  pending_publish: false
   is_modified: false
+  published_id: 10000
 
 two_design:
   id: 10004
   name: Article page
   url_name: "article"
   page_template_id: 10001
-  is_public: false
+  pending_publish: false
   is_modified: false
+  published_id: 10001
 
 only_menu_design:
   id: 10005
   name: Menu page
   url_name: "menu_page"
   page_template_id: 10002
-  is_public: false
+  pending_publish: false
   is_modified: false
+  published_id: 10002
 
 test_page:
   name: TestPage
@@ -50,5 +54,6 @@ test_page:
   id: 10006
   page_template_id: "10000"
   url_name: test_page
-  is_public: true
+  pending_publish: true
   created_at: 2008-06-03 09:06:35.571694
+  published_id: 

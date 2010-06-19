@@ -5,7 +5,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
   
   def test_should_get_design
     login_as
-    page = pages(:one)
+    page = pages(:one_design)
     template_mock(page)
     get :show, :page_id => page.id
     assert_response :success
@@ -27,19 +27,19 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
 
   def test_should_get_design_with_permission
     login_with_permission :design_management
-    get :show, :page_id => pages(:one).id
+    get :show, :page_id => pages(:one_design).id
     assert_response :success
   end
 
   def test_should_not_get_design_without_permission
     login_with_permission 
-    get :show, :page_id => pages(:one).id
+    get :show, :page_id => pages(:one_design).id
     assert_response :forbidden
   end
 
   def test_should_show_default_form_on_available_blocks
     login_as
-    page = pages(:two)
+    page = pages(:two_design)
     template_mock(page)
 
     get :show, :page_id => page.id
@@ -49,7 +49,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
   end
 
   def test_shouldnt_show_default_form_on_home
-    page = pages(:one)
+    page = pages(:one_design)
     template_mock(page)
     assert_equal page.url_name, ""
     assert page.blocks.map(&:id).sort == page.all_blocks.map(&:id).sort
@@ -61,7 +61,6 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     end
   end
 
-
   def test_should_show_edit_component_with_editable_components
     login_as
     component = nil
@@ -71,7 +70,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
       assert_not_nil page
     end
 
-    page = pages(:one)
+    page = pages(:one_design)
     template_mock(page)
     get :show, :page_id => page.id
 

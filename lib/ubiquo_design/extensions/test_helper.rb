@@ -72,7 +72,7 @@ module UbiquoDesign
           :name => 'Test page', 
           :url_name => 'test_page',
           :page_template => page_template, 
-          :is_public => true,
+          :published_id => nil,
         }
         page = Page.create!(default_page_options)
         component.block = block 

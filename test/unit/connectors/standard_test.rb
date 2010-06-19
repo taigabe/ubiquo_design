@@ -9,9 +9,9 @@ module Connectors
     test "should publish components" do
       page = create_page :page_template_id => page_templates(:one).id
       page.blocks << pages(:one).blocks
-      assert_equal page.is_public?, false
-      assert_equal page.is_published?, false
-      assert_nil Page.public.find_by_url_name(page.url_name)
+      assert page.pending_publish?
+      assert !page.is_published?
+      assert_nil Page.published.find_by_url_name(page.url_name)
       num_components = page.blocks.map(&:components).flatten.size
       assert num_components > 0
       assert_difference "Component.count",num_components do # cloned components
@@ -88,8 +88,13 @@ module Connectors
        assert_equal_set AutomaticMenu.all, Ubiquo::MenuItemsController.new.uhook_load_automatic_menus
     end
     
-    test "ubiquo pages_controller find pages" do 
-      assert_equal_set Page.all.select{|p| !p.is_public?}, Ubiquo::PagesController.new.uhook_find_private_pages({}, 'name', 'asc')
+    test "ubiquo pages_controller find pages" do
+      searched_pages = Ubiquo::PagesController.new.uhook_find_private_pages({}, 'name', 'asc')
+      fixture_pages = [pages(:one_design), pages(:two_design),
+                       pages(:only_menu_design), pages(:test_page)]
+require 'ruby-debug';debugger      
+assert_equal searched_pages.size, 4
+      assert_equal_set fixture_pages, searched_pages
     end
     
     test "ubiquo pages_controller new page" do 
@@ -140,7 +145,7 @@ module Connectors
         :name => "Custom page",
         :url_name => "custom_page",
         :page_template_id => page_templates(:one).id,
-        :is_public => false,
+        :published_id => nil,
       }.merge(options))
     end
   end

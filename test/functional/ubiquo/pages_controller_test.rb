@@ -10,7 +10,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_not_nil pages=assigns(:pages)
     assert pages.size > 0
     pages.each do |page|
-      assert_equal page.is_public?, false
+      assert_equal page.is_published?, false
     end
   end
 
@@ -34,7 +34,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
 
     assert page = assigns(:page)
     assert_equal page.all_blocks.size, page.page_template.block_types.size
-    assert_equal page.is_public?, false
+    assert_equal page.is_published?, false
 
     assert_redirected_to ubiquo_pages_path
   end
@@ -65,8 +65,9 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
 
   def test_should_destroy_page
     login_as
-    assert_difference('Page.count', -1) do
-      delete :destroy, :id => pages(:one).id
+    # if you remove a draft page, its published page is removed too 
+    assert_difference('Page.count', -2) do
+      delete :destroy, :id => pages(:one_design).id
     end
 
     assert_redirected_to ubiquo_pages_path

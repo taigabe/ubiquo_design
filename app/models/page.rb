@@ -1,5 +1,7 @@
 class Page < ActiveRecord::Base
   belongs_to :page_template
+  belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
+  has_one :draft, :class_name => 'Page', :foreign_key => 'published_id'
   has_many :blocks, :dependent => :destroy do
     def as_hash
       self.collect{|block|[block.block_type.key, block]}.to_hash
@@ -7,20 +9,23 @@ class Page < ActiveRecord::Base
   end
 
   after_create :assign_default_blocks
-  before_validation_on_create :assign_default_is_public
-  after_destroy :clear_published_page
   after_save :update_modified
+  after_destroy :pending_publish_on_destroy_published
 
   validates_presence_of :name
-  validates_presence_of :url_name, :if => lambda{ |page|
-    page.url_name.nil?
-  }
+  validates_presence_of :url_name
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
-  validates_uniqueness_of :url_name, :scope => [:is_public], :allow_blank => true
+  validates_uniqueness_of :url_name, 
+                          :scope => [:published_id],
+                          :if => Proc.new { |page| page.pending_publish? },
+                          :allow_blank => true
   validates_presence_of :page_template
 
-  named_scope :public, :conditions => { :is_public => true }
-  named_scope :private, :conditions => { :is_public => false }
+  named_scope :published, 
+              :conditions => ["pages.published_id IS NULL AND pages.pending_publish = ?", false]
+  named_scope :drafts, 
+              :conditions => ["pages.published_id IS NOT NULL OR pages.pending_publish = ?", true]
+  
   # Generic find for pages (by ID, url_name or record)
   def self.find_by(something, options={})
     case something
@@ -34,7 +39,7 @@ class Page < ActiveRecord::Base
       nil
     end
   end
-  
+
   # filters: 
   #   :text: String to search in page name
   #
@@ -69,13 +74,8 @@ class Page < ActiveRecord::Base
     true
   end
 
-  def assign_default_is_public
-    self.is_public = false if(self.is_public.nil?)
-    true
-  end
-
-  def clear_published_page
-    published.destroy if self.is_published?
+  def clear_published_page   
+    published.destroy unless pending_publish?
   end
 
   def default_blocks
@@ -104,25 +104,34 @@ class Page < ActiveRecord::Base
   def publish
     begin
       transaction do
-        self.published.destroy unless self.published.nil?
-        public_page = self.clone
-        public_page.is_public = true
-        public_page.save!
-        public_page.blocks.destroy_all
+        self.clear_published_page
+        published_page = self.clone
+        published_page.pending_publish = false
+        published_page.save!
+        published_page.blocks.destroy_all
         self.blocks.each do |block|
           new_block = block.clone
-          new_block.page = public_page
+          new_block.page = published_page
           new_block.save!
           uhook_publish_block_components(block, new_block) do |component, new_component|
             uhook_publish_component_asset_relations(component, new_component)
           end
         end
-        self.update_modified(false)
-        public_page.reload
+        self.update_attributes(:is_modified => false,
+                               :pending_publish => false,
+                               :published_id => published_page.id)
+        published_page.reload
       end
       return true
-    rescue
+    rescue Exception => e
       return false
+    end
+  end
+
+  # if you remove published page copy, draft page will be pending publish again
+  def pending_publish_on_destroy_published
+    if self.is_published? && self.draft
+      self.draft.update_attributes(:pending_publish => true)
     end
   end
   
@@ -130,12 +139,12 @@ class Page < ActiveRecord::Base
     self.blocks.map(&:components).flatten.reject(&:valid?).map(&:id)
   end
 
-  def published
-    Page.public.find_by_url_name(self.url_name)
+  def is_draft?
+    published_id? || (!published_id? && pending_publish?)
   end
 
   def is_published?
-    published.present?
+    !is_draft?
   end
 
   def is_linkable?
