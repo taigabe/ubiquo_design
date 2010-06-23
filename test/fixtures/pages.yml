@@ -4,14 +4,14 @@ one:
   url_name: ""
   page_template_id: 10000
   pending_publish: false
-  published_id: 
+  published_id:
 two:
   id: 10001
   name: Article page
   url_name: "article"
   page_template_id: 10001
   pending_publish: false
-  published_id: 
+  published_id:
 
 only_menu:
   id: 10002
@@ -19,7 +19,7 @@ only_menu:
   url_name: "menu_page"
   page_template_id: 10002
   pending_publish: false
-  published_id: 
+  published_id:
 
 one_design:
   id: 10003
@@ -56,4 +56,34 @@ test_page:
   url_name: test_page
   pending_publish: true
   created_at: 2008-06-03 09:06:35.571694
-  published_id: 
+  published_id:
+
+long_url:
+  name: LongUrl
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10007
+  page_template_id: "10000"
+  url_name: long/url
+  pending_publish: true
+  created_at: 2008-06-03 09:06:35.571694
+  published_id: 10008
+
+long_url_published:
+  name: LongUrl
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10008
+  page_template_id: "10000"
+  url_name: long/url
+  pending_publish: false
+  created_at: 2008-06-03 09:06:35.571694
+  published_id:
+
+unpublished:
+  name: Unpublished
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10009
+  page_template_id: "10000"
+  url_name: unpublished
+  pending_publish: true
+  created_at: 2008-06-03 09:06:35.571694
+  published_id:
