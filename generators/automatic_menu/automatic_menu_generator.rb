@@ -65,7 +65,7 @@ class AutomaticMenuGenerator < Rails::Generator::NamedBase
   protected
   
   def banner
-    "Usage: #{$0} simple_generator name [attribute:type]"
+    "Usage: #{$0} automatic_menu name [attribute:type]"
   end
 
   #def add_options!(opt)

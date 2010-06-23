@@ -1,0 +1,59 @@
+require File.dirname(__FILE__) + '/../../../test_helper'
+<% model_name = name.classify -%>
+
+class <%= model_name %>GeneratorUbiquoTest < ActionController::TestCase
+  tests Ubiquo::WidgetsController
+
+  def test_edit_new_form
+    login_as
+    widget, page = insert_widget({}, {}, false)
+    get :show, :page_id => page.id, 
+               :id => widget.id
+    assert_response :success
+  end
+  
+  def test_edit_form
+    login_as
+    widget, page = insert_widget(widget_attributes)
+    get :show, :page_id => page.id, 
+               :id => widget.id
+    assert_response :success
+  end
+
+  def test_form_submit
+    login_as
+    widget, page = insert_widget(widget_attributes)
+    xhr :post, :update, :page_id => page.id, 
+                        :id => widget.id,
+                        :widget => widget_attributes
+    assert_response :success
+  end
+
+  # Uncomment if it is a configurable widget, otherwise it should never return errors
+  #def test_form_submit_with_errors
+  #  login_as
+  #  widget, page = insert_widget({}, {}, false)
+  #  xhr :post, :update, :page_id => page.id, 
+  #                      :id => widget.id,
+  #                      :widget => {}
+  #  assert_response :success
+  #  assert_select_rjs "error_messages"
+  #end
+
+  private
+
+  def widget_attributes
+    {
+      # attributes for widget here
+    }
+  end
+  
+  def insert_widget(widget_options = {}, widget_type_options = {}, validation = true)
+    widget_type_options.reverse_merge!({
+      :key => "<%= name %>", 
+      :subclass_type => "<%= model_name %>"
+    })
+    insert_widget_in_page(widget_type_options, widget_options, [], validation)
+  end
+         
+end

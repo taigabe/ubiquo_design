@@ -12,18 +12,18 @@ class <%= model_name %>Test < ActiveSupport::TestCase
 
   private
   
-  def create_<%= name %>(options = {}, component_type_options = {})
-    component_type_options.reverse_merge!({
+  def create_<%= name %>(options = {}, widget_type_options = {})
+    widget_type_options.reverse_merge!({
       :name => "Test <%= name %>",
       :key => "<%= name %>", 
       :subclass_type => "<%= model_name %>",
     })  
-    component_type = ComponentType.create!(component_type_options)    
+    widget_type = ComponentType.create!(widget_type_options)
     default_options = {
       :name => "Test <%= name %>", 
       :block => blocks(:one),
-      :component_type => component_type,
-      # Insert other options for component here      
+      :widget_type => widget_type,
+      # Insert other options for widget here
     }
     <%= model_name %>.create(default_options.merge(options))
   end
