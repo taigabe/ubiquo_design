@@ -52,10 +52,10 @@ module UbiquoDesign
         end
         module InstanceMethods
           # Loads the page for the public part. 
-          # Can use params[:url_name] to decide what page to show.
+          # Can use params[:url] to decide what page to show.
           # Must returns the expected Page instance.
           def uhook_load_page
-            ::Page.published.find_by_url_name(params[:url_name])
+            ::Page.published.with_url(params[:url])
           end
         end
       end

@@ -157,6 +157,22 @@ class PageTest < ActiveSupport::TestCase
     assert page.is_modified?
   end
 
+  def test_with_url_name_returns_page
+    target_url = pages(:one).url_name
+    assert_equal target_url, Page.with_url(target_url).url_name
+  end
+
+  def test_with_url_name_raises_recordnotfound
+    assert_raise ActiveRecord::RecordNotFound do
+      Page.with_url 'not/existent'
+    end
+  end
+
+  def test_with_url_name_returns_page_when_array
+    target_url = pages(:long_url).url_name
+    assert_equal target_url, Page.with_url(target_url.split('/')).url_name
+  end
+
   private
 
   def create_page(options = {})

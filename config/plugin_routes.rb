@@ -11,11 +11,7 @@ end
 # Proposal for public routes. 
 
 map.with_options :controller => 'pages' do |pages|
-  # Frontpage
-  pages.connect "", :action => 'show', :url_name => ''
-
-  # Common routes (modify to fit your needs)
-  pages.connect ":url_name", :action => 'show', :defaults => {:url_name => ''}
-  pages.connect ":url_name/page/:page", :action => 'show'
-  pages.connect ":url_name/:id", :action => 'show'
+  # Default catch-all routes
+  pages.connect "*url/page/:page", :action => 'show', :requirements => {:page => /\d*/}
+  pages.connect "*url", :action => 'show'
 end

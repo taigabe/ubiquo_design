@@ -5,9 +5,8 @@
 #* name: Descriptive name
 #* url_name: String that appears on the route
 #* page_template: Associated page templates (configure them on <tt>db/dev_bootstrap/page_template.yml</tt>).
-#* is_public: Show if a page will be shown on the public website (true) or Ubuquo (false) 
 #
-#By default, pages are created non public. When a page is published, it is cloned (along with its components, blocks and asset_relations) and the is_public attribute is set. In that moment the changes are visible on the public website.
+#By default, pages are created as drafts. When a page is published, it is cloned (along with its components, blocks and asset_relations). In that moment the changes are visible on the public website.
 #
 #== Public routes
 #

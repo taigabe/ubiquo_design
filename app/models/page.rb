@@ -40,6 +40,22 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # Returns the most appropiate published page for that url, raises an
+  # Exception if no match is found
+  def self.with_url url
+    url_name = url.is_a?(Array) ? url.join('/') : url
+    page = find_by_url_name(url_name)
+
+    # Try to consider the last portion as the slug
+    url_name = returning(url_name.split('/')) do |portions|
+      portions.size > 1 ? portions.pop : portions
+    end.join('/') unless page
+
+    returning page || find_by_url_name(url_name) do |page|
+      raise ActiveRecord::RecordNotFound.new("Page with url '#{url_name}' not found") unless page
+    end
+  end
+
   # filters: 
   #   :text: String to search in page name
   #
