@@ -5,7 +5,7 @@
 #
 #  id                :integer         not null, primary key
 #  options           :text
-#  component_type_id :integer
+#  widget_id :integer
 #  block_id          :integer
 #  position          :integer
 #  type              :string(255)

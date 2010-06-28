@@ -10,7 +10,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     get :show, :page_id => page.id
     assert_response :success
     assert_not_nil page = assigns(:page)
-    assert_not_nil component_types = assigns(:component_types)
+    assert_not_nil widgets = assigns(:widgets)
     assert page.page_template.block_types.size > 0
     page.page_template.block_types.each do |block_type|
       assert_select "#block_type_holder_#{block_type.id}"
@@ -65,7 +65,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     login_as
     component = nil
     assert_nothing_thrown do
-      component = ComponentType.find(:first, :conditions => ["is_configurable = ? or is_configurable is ?", false, nil]).components.first
+      component = Widget.find(:first, :conditions => ["is_configurable = ? or is_configurable is ?", false, nil]).components.first
       page = component.block.page
       assert_not_nil page
     end

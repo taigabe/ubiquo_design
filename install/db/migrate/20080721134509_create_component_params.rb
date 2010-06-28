@@ -3,11 +3,11 @@ class CreateComponentParams < ActiveRecord::Migration
     create_table :component_params do |t|
       t.string :name
       t.boolean :is_required
-      t.integer :component_type_id
+      t.integer :widget_id
 
       t.timestamps
     end
-    add_index :component_params, :component_type_id
+    add_index :component_params, :widget_id
   end
 
   def self.down

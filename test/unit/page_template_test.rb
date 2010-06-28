@@ -40,9 +40,9 @@ class PageTemplateTest < ActiveSupport::TestCase
     end
   end
   
-  def test_can_navigate_to_component_types
+  def test_can_navigate_to_widgets
     assert_nothing_raised do
-      page_templates(:one).component_types
+      page_templates(:one).widgets
     end    
   end
 

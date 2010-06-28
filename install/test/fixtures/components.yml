@@ -3,7 +3,7 @@
 one:
   options: "--- \n:content: content example\n"
   name: "name"
-  component_type_id: 10000
+  widget_id: 10000
   block_id: 11000
   type: Free
   position: 1
@@ -11,7 +11,7 @@ one:
 two:
   options: "--- \n:content: content example2\n"
   name: "name"
-  component_type_id: 10000
+  widget_id: 10000
   block_id: 11001
   type: Free
   position: 2

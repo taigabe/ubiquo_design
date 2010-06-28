@@ -46,12 +46,12 @@ class FreeGeneratorUbiquoTest < ActionController::TestCase
     }
   end
   
-  def insert_component(component_options = {}, component_type_options = {}, validation = true)
-    component_type_options.reverse_merge!({
+  def insert_component(component_options = {}, widget_options = {}, validation = true)
+    widget_options.reverse_merge!({
       :key => "free", 
       :subclass_type => "Free"
     })
-    insert_component_in_page(component_type_options, component_options, [], validation)      
+    insert_component_in_page(widget_options, component_options, [], validation)      
   end
          
 end

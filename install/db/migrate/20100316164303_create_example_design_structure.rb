@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class CreateExampleDesignStructure < ActiveRecord::Migration
   def self.up
     pt_simple = PageTemplate.create(:name => "Simple",
@@ -18,11 +19,11 @@ class CreateExampleDesignStructure < ActiveRecord::Migration
                               :key => "main",
                               :can_use_default_block => false)
     
-    ct_free = ComponentType.create(:name => "Free component",
+    ct_free = Widget.create(:name => "Free component",
                                    :key => "free",
                                    :is_configurable => true,
                                    :subclass_type => "Free")
-    ct_assets_automatic_menu = ComponentType.create(:name => "Menu automàtic per recursos",
+    ct_assets_automatic_menu = Widget.create(:name => "Menu automàtic per recursos",
                                                     :key => "assets_automatic_menu",
                                                     :is_configurable => true,
                                                     :subclass_type => "AssetsAutomaticMenu")
@@ -34,8 +35,8 @@ class CreateExampleDesignStructure < ActiveRecord::Migration
     
     # relate page templates with component types
     
-    pt_simple.component_types << [ct_free, ct_assets_automatic_menu]
-    pt_interior.component_types << [ct_free, ct_assets_automatic_menu]
+    pt_simple.widgets << [ct_free, ct_assets_automatic_menu]
+    pt_interior.widgets << [ct_free, ct_assets_automatic_menu]
   end
 
   def self.down

@@ -92,8 +92,7 @@ module Connectors
       searched_pages = Ubiquo::PagesController.new.uhook_find_private_pages({}, 'name', 'asc')
       fixture_pages = [pages(:one_design), pages(:two_design),
                        pages(:only_menu_design), pages(:test_page)]
-require 'ruby-debug';debugger      
-assert_equal searched_pages.size, 4
+      assert_equal searched_pages.size, 4
       assert_equal_set fixture_pages, searched_pages
     end
     

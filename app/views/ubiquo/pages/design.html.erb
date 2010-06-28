@@ -5,5 +5,5 @@
 <%= @template_content %>
 <% content_for :sidebar do %>
 	<h3><%= t('ubiquo.design.avaliable_components') %></h3>
-	<%= render :partial => "component_sidebar", :collection => @component_types %>
+	<%= render :partial => "component_sidebar", :collection => @widgets %>
 <% end %>

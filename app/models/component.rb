@@ -1,13 +1,14 @@
+# -*- coding: utf-8 -*-
 class Component < ActiveRecord::Base
   
-  INACCEPTABLE_OPTIONS = %w{options component_type component_type_id block block_id position options options_object update_position prepare_yaml define_method_accessors allowed_options_storage name}
+  INACCEPTABLE_OPTIONS = %w{options widget widget_id block block_id position options options_object update_position prepare_yaml define_method_accessors allowed_options_storage name}
   
-  belongs_to :component_type
+  belongs_to :widget
 
   after_save :update_page
   after_destroy :update_page
 
-  validates_presence_of :component_type, :block, :name
+  validates_presence_of :widget, :block, :name
   #validates_uniqueness_of :position, :scope => :block_id
 
   attr_protected :options, :options_object

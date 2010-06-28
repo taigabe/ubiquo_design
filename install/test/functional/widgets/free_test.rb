@@ -25,13 +25,13 @@ class FreeGeneratorTest < ActionController::TestCase
     }
   end
   
-  def insert_component(component_options = {}, component_type_options = {})      
+  def insert_component(component_options = {}, widget_options = {})      
     component_options.update(component_attributes)
-    component_type_options.update({
+    widget_options.update({
       :key => "free", 
       :subclass_type => "Free"
     })
-    insert_component_in_page(component_type_options, component_options)
+    insert_component_in_page(widget_options, component_options)
   end
 
 end

@@ -24,10 +24,10 @@ class ComponentTest < ActiveSupport::TestCase
     end
   end
 
-  def test_should_require_component_type
+  def test_should_require_widget
     assert_no_difference "Component.count" do
-      component = create_sub_component :component_type_id => nil
-      assert component.errors.on(:component_type)
+      component = create_sub_component :widget_id => nil
+      assert component.errors.on(:widget)
     end
   end
 
@@ -88,7 +88,7 @@ class ComponentTest < ActiveSupport::TestCase
 
   private
   def create_sub_component(options = {})
-    SubComponent.create({:block_id => blocks(:one).id, :component_type_id => component_types(:one).id, :name => "name"}.merge!(options))
+    SubComponent.create({:block_id => blocks(:one).id, :widget_id => widgets(:one).id, :name => "name"}.merge!(options))
   end
 end
 

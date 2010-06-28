@@ -76,9 +76,9 @@ class Page < ActiveRecord::Base
   # Returns wheter the page contains components that have required component params
   def has_required_params?
     components = self.blocks.map(&:components).flatten
-    component_types = components.map(&:component_type).flatten.uniq
-    requires = component_types.map do |component_type|
-      component_type.component_params.map(&:is_required)
+    widgets = components.map(&:widget).flatten.uniq
+    requires = widgets.map do |widget|
+      widget.component_params.map(&:is_required)
     end.flatten
     requires.include?(true)
   end

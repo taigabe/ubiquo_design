@@ -7,19 +7,19 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     @page = Page.find(params[:page_id])
     @component = uhook_find_component
       
-    template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.component_type.key)
+    template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.widget.key)
     render :file => template_path, :locals => {:page => @page, :component => @component}
   end
 
   def create
-    @component_type = ComponentType.find(params[:component_type])
+    @widget = Widget.find(params[:widget])
     @block = Block.find(params[:block])
     @page = Page.find(params[:page_id])
 
-    @component = @component_type.subclass_type.constantize.new
+    @component = @widget.subclass_type.constantize.new
     @component.block = @block
-    @component.component_type = @component_type
-    @component.name = @component_type.name
+    @component.widget = @widget
+    @component.name = @widget.name
     @component = uhook_prepare_component(@component)
     # TODO: don't do this!!
     @component.save_without_validation
@@ -34,7 +34,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
           page.visual_effect :slide_down, "component_#{@component.id}"
           id, opts = sortable_block_type_holder_options(@block.block_type.id, change_order_ubiquo_page_design_components_path(@page), @page.page_template.block_types.map(&:id))
           page.sortable id, opts
-          page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component_type.is_configurable?
+          page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @widget.is_configurable?
           page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
                                          :locals => { :page => @page.reload })
           page.call "update_error_on_components", @page.wrong_components_ids

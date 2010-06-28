@@ -18,20 +18,20 @@ class FreeTest < ActiveSupport::TestCase
 
   private
     
-  def create_free(options = {}, component_type_options = {})
-    ComponentType.delete_all
-    component_type_options.reverse_merge!({
+  def create_free(options = {}, widget_options = {})
+    Widget.delete_all
+    widget_options.reverse_merge!({
       :name => "Test free",
       :key => "free", 
       :subclass_type => "Free",
     })  
-    component_type = ComponentType.create!(component_type_options)
+    widget = Widget.create!(widget_options)
     
     default_options = {
       :name => "Test free", 
       :content => 'Content example',
       :block => blocks(:one),
-      :component_type => component_type,      
+      :widget => widget,      
     }
     Free.create(default_options.merge(options))
   end

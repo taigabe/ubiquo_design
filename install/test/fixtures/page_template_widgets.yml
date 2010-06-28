@@ -2,12 +2,12 @@
 
 one:
   page_template_id: 10000
-  component_type_id: 10000
+  widget_id: 10000
 
 two:
   page_template_id: 10000
-  component_type_id: 10001
+  widget_id: 10001
   
 three:
   page_template_id: 10001
-  component_type_id: 10000
+  widget_id: 10000

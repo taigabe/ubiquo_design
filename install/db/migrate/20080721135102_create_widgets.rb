@@ -1,6 +1,6 @@
-class CreateComponentTypes < ActiveRecord::Migration
+class CreateWidgets < ActiveRecord::Migration
   def self.up
-    create_table :component_types do |t|
+    create_table :widgets do |t|
       t.string :name
       t.string :key
       t.boolean :is_configurable
@@ -8,10 +8,10 @@ class CreateComponentTypes < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :component_types, :key
+    add_index :widgets, :key
   end
 
   def self.down
-    drop_table :component_types
+    drop_table :widgets
   end
 end

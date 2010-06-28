@@ -3,7 +3,7 @@
 	<%= link_to_remote t('ubiquo.design.component_removal'), :url => ubiquo_page_design_component_path(@page, component), :method => :delete, :confirm => t('ubiquo.design.confirm_component_removal'), :html => {:class => "delete"} %>
 
 	<a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.component_move') %></a>
-	<% if component.component_type.is_configurable? %>
+	<% if component.widget.is_configurable? %>
 	  <%= uhook_link_to_edit_component(component) %>
 	<% end %>
 	<div class="wrap">

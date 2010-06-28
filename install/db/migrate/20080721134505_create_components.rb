@@ -2,7 +2,7 @@ class CreateComponents < ActiveRecord::Migration
   def self.up
     uhook_create_components_table do |t|
       t.text :options
-      t.integer :component_type_id
+      t.integer :widget_id
       t.integer :block_id
       t.integer :position
       t.string :type
@@ -10,7 +10,7 @@ class CreateComponents < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :components, :component_type_id
+    add_index :components, :widget_id
     add_index :components, :block_id
     add_index :components, :type
   end

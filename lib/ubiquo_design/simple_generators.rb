@@ -32,7 +32,7 @@
 #
 #A generator has an associated component (a model derived from _Component_) and cannot be included in our pages until we create its associated _component type_:
 #
-#  # db/dev_bootstrap/component_types.yml
+#  # db/dev_bootstrap/widgets.yml
 #  news:
 #    id: 1
 #    name: Last news
@@ -44,10 +44,10 @@
 #
 #Although the component type is created, we won't see it on the design page unless it's associated with a page_template:
 #
-#  # db/dev/bootstrap/page_template_component_types.yml
-#  page_template_component_type_001:
+#  # db/dev/bootstrap/page_template_widgets.yml
+#  page_template_widget_001:
 #    page_template: simple
-#    component_type: last_news
+#    widget: last_news
 #
 #== Creating the component
 #
@@ -100,7 +100,7 @@
 #  component_params_001: 
 #    name: max_news
 #    id: "1"
-#    component_type_id: "1"
+#    widget_id: "1"
 #    is_required: f
 #
 #If the _component_param_ is declared as required, the _pages_controller' will will raise a ActiveRecord::RecordNotFound exception unless it is present on _params_.

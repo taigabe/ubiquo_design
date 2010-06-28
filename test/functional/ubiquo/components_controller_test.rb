@@ -6,34 +6,34 @@ class Ubiquo::ComponentsControllerTest < ActionController::TestCase
   def test_should_add_component_through_html
     login_as
     assert_difference('Component.count') do
-      post :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :component_type => component_types(:one)
+      post :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :widget => widgets(:one)
     end
     assert_redirected_to(ubiquo_page_design_path(pages(:one_design)))
 
     assert_not_nil component = assigns(:component)
     assert_equal component.block, pages(:one_design).blocks.first
-    assert_equal component.component_type, component_types(:one)
-    assert_equal component.component_type.name, component.name
+    assert_equal component.widget, widgets(:one)
+    assert_equal component.widget.name, component.name
   end
 
   def test_should_add_editable_component_through_js
     login_as
-    assert_not_nil editable_component = ComponentType.find_by_is_configurable(true)
-    assert_not_nil not_editable_component = ComponentType.find_by_is_configurable(false)
-    [editable_component, not_editable_component].each do |component_type|
+    assert_not_nil editable_component = Widget.find_by_is_configurable(true)
+    assert_not_nil not_editable_component = Widget.find_by_is_configurable(false)
+    [editable_component, not_editable_component].each do |widget|
       assert_difference('Component.count') do
-        xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :component_type => component_type
+        xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :widget => widget
       end
 
       assert_not_nil component = assigns(:component)
       assert component.block == pages(:one_design).blocks.first
-      assert component.component_type == component_type
+      assert component.widget == widget
 
       assert_select_rjs :insert_html, "block_type_holder_#{component.block.block_type.id}" do
         assert_select "#component_name_field_#{component.id}"
       end
       edition_matches = @response.body.match(/myLightWindow\._processLink\(\$\(\'edit_component_#{component.id}\'\)\)\;/)
-      assert_equal edition_matches.nil?, !component.component_type.is_configurable?
+      assert_equal edition_matches.nil?, !component.widget.is_configurable?
 
     end
   end
@@ -41,7 +41,7 @@ class Ubiquo::ComponentsControllerTest < ActionController::TestCase
   def test_shouldnt_add_component_without_permission
     login_with_permission
     assert_no_difference("Component.count") do
-      post :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :component_type => component_types(:one)
+      post :create, :page_id => pages(:one_design).id, :block => pages(:one).blocks.first, :widget => widgets(:one)
     end
     assert_response :forbidden
   end

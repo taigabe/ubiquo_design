@@ -3,9 +3,9 @@
 one:
   name: MyString
   is_required: false
-  component_type_id: 1
+  widget_id: 1
 
 two:
   name: MyString
   is_required: false
-  component_type_id: 1
+  widget_id: 1

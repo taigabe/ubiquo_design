@@ -20,11 +20,11 @@ module UbiquoDesign
         # from params). Copy only those keys found in component_params,
         # checking also that the required params are present.
         next unless component.valid?
-        component_params = component.component_type.component_params.find(:all)
+        component_params = component.widget.component_params.find(:all)
         generator_options = component_params.collect do |component_param|
           param_name = component_param.name
           if component_param.is_required? && !params[param_name.to_sym]
-            component_name = component.component_type.name
+            component_name = component.widget.name
             errmsg =  "Required param \"#{param_name}\" for component " \
             "\"#{component_name}\" not found. Params: #{params.inspect}"
             raise ActiveRecord::RecordNotFound.new(errmsg)
@@ -32,7 +32,7 @@ module UbiquoDesign
           [param_name.to_sym, params[param_name]]
         end.to_hash
         generator_options.update(:request_path => request.path)
-        generator = component.component_type.key.to_sym
+        generator = component.widget.key.to_sym
         generator_output = render_generator_to_string(
                                                       generator,
                                                       :generator_args => [component, generator_options],

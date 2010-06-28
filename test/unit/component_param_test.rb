@@ -24,10 +24,10 @@ class ComponentParamTest < ActiveSupport::TestCase
     end
   end  
 
-  def test_should_require_component_type_id
+  def test_should_require_widget_id
     assert_no_difference "ComponentParam.count" do
-      component_param = create_component_param :component_type_id => nil
-      assert component_param.errors.on(:component_type_id)
+      component_param = create_component_param :widget_id => nil
+      assert component_param.errors.on(:widget_id)
     end
   end
 
@@ -42,7 +42,7 @@ class ComponentParamTest < ActiveSupport::TestCase
   def test_shouldnt_require_uniqueness_of_name_on_different_scope
     component_param = create_component_param :name => "test"
     assert_difference "ComponentParam.count" do
-      component_param = create_component_param :name => "test", :component_type_id => component_types(:two).id
+      component_param = create_component_param :name => "test", :widget_id => widgets(:two).id
       assert !component_param.new_record?, "#{component_param.errors.full_messages.to_sentence}"
     end
   end
@@ -53,7 +53,7 @@ class ComponentParamTest < ActiveSupport::TestCase
     default_options = {
       :name => 'default_name',
       :is_required => false,
-      :component_type_id => component_types(:one).id,
+      :widget_id => widgets(:one).id,
     }
     ComponentParam.create(default_options.merge(options))
   end

@@ -18,7 +18,7 @@ class <%= model_name %>Test < ActiveSupport::TestCase
       :key => "<%= name %>", 
       :subclass_type => "<%= model_name %>",
     })  
-    widget_type = ComponentType.create!(widget_type_options)
+    widget_type = Widget.create!(widget_type_options)
     default_options = {
       :name => "Test <%= name %>", 
       :block => blocks(:one),

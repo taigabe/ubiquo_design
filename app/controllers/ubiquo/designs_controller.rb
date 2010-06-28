@@ -9,7 +9,7 @@ class Ubiquo::DesignsController < UbiquoAreaController
   def show
     @page = Page.find(params[:page_id])
     @template_content = render_page_to_string(@page)
-    @component_types = @page.page_template.component_types.sort_by(&:name)
+    @widgets = @page.page_template.widgets.sort_by(&:name)
   end
   
   def preview

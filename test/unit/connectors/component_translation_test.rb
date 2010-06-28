@@ -57,7 +57,7 @@ module Connectors
       
       test "component_controller must set locale on the prepare component with configurable component" do 
         c = components(:one)
-        c.component_type.update_attribute :is_configurable, true
+        c.widget.update_attribute :is_configurable, true
         Ubiquo::ComponentsController.any_instance.stubs(
           :session => {:locale => 'es'},
           :params => {}
@@ -69,7 +69,7 @@ module Connectors
       
       test "component_controller must set locale on the prepare component with non configurable component" do 
         c = components(:one)
-        c.component_type.update_attribute :is_configurable, false
+        c.widget.update_attribute :is_configurable, false
         Ubiquo::ComponentsController.any_instance.stubs(
           :session => {:locale => 'es'},
           :params => {}

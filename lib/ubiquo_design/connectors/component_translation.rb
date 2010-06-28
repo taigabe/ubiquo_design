@@ -96,7 +96,7 @@ module UbiquoDesign
           
           # modify the created component and return it. It's executed in drag-drop.
           def uhook_prepare_component(component)
-            component.locale = component.component_type.is_configurable? ? current_locale : 'any'
+            component.locale = component.widget.is_configurable? ? current_locale : 'any'
             component
          end
           
@@ -126,7 +126,7 @@ module UbiquoDesign
             yield page
             if @component.id
               page.replace "edit_component_#{params[:id]}", uhook_link_to_edit_component(@component)
-              page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component.component_type.is_configurable?
+              page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component.widget.is_configurable?
             end
           end
         end

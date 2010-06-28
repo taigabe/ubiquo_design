@@ -130,7 +130,7 @@ module Ubiquo::DesignsHelper
     :url => ubiquo_page_design_components_path(@page),
     :method => :post,
     :accept => 'component',
-    :with => "'component_type='+element.id.match(/\\d+/).first()+'&block=#{block.id}'"
+    :with => "'widget='+element.id.match(/\\d+/).first()+'&block=#{block.id}'"
     ) : "")
   end
 
