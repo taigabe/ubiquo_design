@@ -21,7 +21,7 @@ module Connectors
     
     test "should load public page" do 
       p = pages(:one_design)
-      PagesController.any_instance.stubs(:params => { :url_name => p.url_name })
+      PagesController.any_instance.stubs(:params => { :url => p.url_name })
       assert_equal pages(:one), PagesController.new.uhook_load_page
     end
     
@@ -91,8 +91,10 @@ module Connectors
     test "ubiquo pages_controller find pages" do
       searched_pages = Ubiquo::PagesController.new.uhook_find_private_pages({}, 'name', 'asc')
       fixture_pages = [pages(:one_design), pages(:two_design),
-                       pages(:only_menu_design), pages(:test_page)]
-      assert_equal searched_pages.size, 4
+                       pages(:only_menu_design), pages(:test_page),
+                       pages(:unpublished), pages(:long_url),
+                      ]
+      assert_equal searched_pages.size, 6
       assert_equal_set fixture_pages, searched_pages
     end
     
