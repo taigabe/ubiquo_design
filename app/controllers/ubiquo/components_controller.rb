@@ -101,9 +101,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
 
   def change_name
     @component = Component.find(params[:id])
-    @page = Page.find(params[:page_id])
-    @component.name = params[:value]
-    @component.save
+    @component.update_attributes(:name => params[:value])
     render :inline => @component.name
   end
 
