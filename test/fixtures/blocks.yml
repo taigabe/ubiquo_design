@@ -5,6 +5,11 @@ one:
   block_type_id: 10000
   page_id: 10000
 
+one_design:
+  id: 11004
+  block_type_id: 10000
+  page_id: 10003
+
 two:
   id: 11001
   block_type_id: 10001
