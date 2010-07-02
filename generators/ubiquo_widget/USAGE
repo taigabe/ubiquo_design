@@ -2,10 +2,10 @@ Description:
 
   Create a scaffold to implement a ubiquo_widget. It creates the following code:
 
-  controller code: app/widgets/NAME/widget.rb
-  public partials: app/widgets/NAME/views/_show.html.erb
-  ubiquo partials: app/widgets/NAME/views/ubiquo/_form.html.erb
-  component class: app/models/NAME.rb
+  controller code: app/widgets/NAME_widget.rb
+  public partials: app/views/widgets/NAME/_show.html.erb
+  ubiquo partials: app/views/widgets/NAME/ubiquo/_form.html.erb
+  widget class:    app/models/widgets/NAME.rb
 
 Examples:
 
