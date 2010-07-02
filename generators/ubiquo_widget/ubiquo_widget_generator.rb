@@ -28,14 +28,14 @@ class UbiquoWidgetGenerator < Rails::Generator::NamedBase
   - Change the widget name in migration if you want to
   - Remember to update the tests for the widget model, the widget
     controller and the ubiquo controller.
-      "            
+      "
     end
   end
 
   protected
   
   def banner
-    "Usage: #{$0} ubiquo_widget name [attribute:type]"
+    "Usage: #{$0} ubiquo_widget example_widget [attribute:type]"
   end
 
   def add_options!(opt)

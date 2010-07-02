@@ -9,4 +9,5 @@ Description:
 
 Examples:
 
-  script/generate ubiquo_widget Example key:string description:text is_active:boolean
+  script/generate ubiquo_widget example_widget key:string description:text is_active:boolean
+
