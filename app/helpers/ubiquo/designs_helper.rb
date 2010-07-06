@@ -79,7 +79,6 @@ module Ubiquo::DesignsHelper
 
   def design_block_4cols(page, type_key, options={})
     bt = BlockType.find_by(type_key)
-    page = Page.find_by(page)
     is_using_default = !page.blocks.as_hash.include?(bt.key)
     options.reverse_merge!({:class => "column_4"})
     s = "<div class='top_options'>"

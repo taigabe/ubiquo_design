@@ -11,7 +11,6 @@ class Block < ActiveRecord::Base
   # Given a page and block_type, create and return a block
   def self.create_for_block_type_and_page(block_type, page, options = {})
     block_type = BlockType.find_by(block_type)
-    page = Page.find_by(page)
     options.reverse_merge!({:block_type_id => block_type.id, :page_id => page.id})
     created = self.create(options)
     page.reload

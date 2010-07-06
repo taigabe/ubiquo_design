@@ -26,20 +26,6 @@ class Page < ActiveRecord::Base
   named_scope :drafts, 
               :conditions => ["pages.published_id IS NOT NULL OR pages.pending_publish = ?", true]
   
-  # Generic find for pages (by ID, url_name or record)
-  def self.find_by(something, options={})
-    case something
-    when Fixnum
-      find_by_id(something, options)
-    when String, Symbol
-      find_by_url_name(something.to_s, options)
-    when Page
-      something
-    else
-      nil
-    end
-  end
-
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
