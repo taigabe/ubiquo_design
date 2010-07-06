@@ -26,6 +26,22 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  def test_should_get_new_with_possible_parent_pages
+    login_as
+    get :new
+    assert_response :success
+    assert_not_equal [], assigns(:pages)
+    assert_equal_set Page.drafts.all, assigns(:pages)    
+  end
+
+  def test_should_get_new_without_possible_parent_pages
+    Page.delete_all
+    login_as
+    get :new
+    assert_response :success
+    assert_equal [], assigns(:pages)
+  end  
+  
   def test_should_create_page_with_default_blocks
     login_as
     assert_difference('Page.count') do

@@ -22,11 +22,18 @@ module Ubiquo::PagesHelper
     string_filter
   end
 
-
   def page_url(page)
     method_route = Ubiquo::Config.get(:app_name) + "_host"
     host = self.send(method_route) if self.respond_to?(method_route)
     self.send("#{page.page_type.key}_url", {:page_name => page.url_name, :host => host})
+  end
+
+  def parent_pages_for_select(pages)
+    options = ["<option value=''>#{t('ubiquo_design.no_parent')}</option>"]
+    pages.map do |page|
+      options << "<option value='#{page.id}' title='#{page.url_name}'>#{page.name}</option>"
+    end
+    options.join("\n")
   end
   
 end

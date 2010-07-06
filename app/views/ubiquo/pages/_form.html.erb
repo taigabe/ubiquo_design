@@ -8,9 +8,14 @@
   <fieldset>
     <legend><%= t('ubiquo.design.situation') %></legend>
     <p>
+      <%= f.label :parent_id, Page.human_attribute_name("parent_id") %>
+      <%= f.select :parent_id, parent_pages_for_select(@pages) %>
+    </p>
+    <p>
       <%= f.label :url_name, Page.human_attribute_name("url_name") %>
-      <%= t("ubiquo.design.page_name_example", :name => content_tag(:strong, 'about')) %> 
-      <%= f.text_field :url_name, :style => 'float: left' %>
+      <%= f.text_field :url_name %>
+      <%= t("ubiquo.design.page_url_example") %>
+      <span id="url_example">http://www.ubiquo.me/<%= @page.url_name %></span>
     </p>
   </fieldset>
   <% if f.object.new_record? %>

@@ -9,6 +9,7 @@ class CreatePages < ActiveRecord::Migration
       t.boolean :is_static
       t.boolean :pending_publish, :default => true
       t.integer :published_id
+      t.integer :parent_id
       
       t.timestamps
     end
@@ -17,6 +18,7 @@ class CreatePages < ActiveRecord::Migration
     add_index :pages, :page_template_id
     add_index :pages, :pending_publish
     add_index :pages, :published_id
+    add_index :pages, :parent_id
   end
 
   def self.down
