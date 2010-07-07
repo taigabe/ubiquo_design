@@ -1,6 +1,8 @@
 class Page < ActiveRecord::Base
   belongs_to :page_template
   belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
+  belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
+  has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
   has_one :draft, :class_name => 'Page', :foreign_key => 'published_id'
   has_many :blocks, :dependent => :destroy do
     def as_hash
@@ -8,6 +10,7 @@ class Page < ActiveRecord::Base
     end
   end
 
+  before_save :compose_url_name_with_parent_url
   after_create :assign_default_blocks
   after_save :update_modified
   after_destroy :pending_publish_on_destroy_published
@@ -159,4 +162,10 @@ class Page < ActiveRecord::Base
     end
   end
 
+  private
+
+  def compose_url_name_with_parent_url
+    self.url_name = parent.url_name + "/" + url_name.gsub(/^#{parent.url_name}\//, '') if self.parent
+  end
+    
 end

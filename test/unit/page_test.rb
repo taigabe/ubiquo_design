@@ -6,7 +6,6 @@ class PageTest < ActiveSupport::TestCase
   # Page.publish is a transaction
   self.use_transactional_fixtures = false
   
-  
   def test_should_create_page
     assert_difference "Page.count" do
       page = create_page
@@ -173,6 +172,15 @@ class PageTest < ActiveSupport::TestCase
     assert_equal target_url, Page.with_url(target_url.split('/')).url_name
   end
 
+  def test_should_compose_url_with_parent_url_name
+    parent_page = pages(:two)
+    page = create_page(:url_name => 'card', :parent_id => parent_page.id)
+    parent_long_url = pages(:long_url)
+    page2 = create_page(:url_name => "foo/bar", :parent_id => parent_long_url.id)
+    assert_equal "article/card", page.url_name
+    assert_equal "long/url/foo/bar", page2.url_name
+  end
+  
   private
 
   def create_page(options = {})
