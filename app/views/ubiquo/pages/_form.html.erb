@@ -9,7 +9,7 @@
     <legend><%= t('ubiquo.design.situation') %></legend>
     <p>
       <%= f.label :parent_id, Page.human_attribute_name("parent_id") %>
-      <%= f.select :parent_id, parent_pages_for_select(@pages) %>
+      <%= f.select :parent_id, parent_pages_for_select(@pages, @page.parent) %>
     </p>
     <p>
       <%= f.label :url_name, Page.human_attribute_name("url_name") %>

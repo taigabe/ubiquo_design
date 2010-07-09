@@ -15,7 +15,7 @@ en:
       new_page: "New page"
       no_name: "(No name)"
       name: "name"
-      page_name_example: "Example: http://www.mywebpage/{{name}}"
+      page_url_example: "Absolute URL: "
       confirm_page_removal: "Are you sure you want to remove this page?"
       section: "Section"
       situation: "Situation"

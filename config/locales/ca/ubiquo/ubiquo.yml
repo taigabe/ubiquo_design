@@ -15,7 +15,7 @@ ca:
       new_page: "Nova pàgina"
       no_name: "(Sense nom)"
       name: "nom"
-      page_name_example: "Exemple: http://www.mywebpage/{{name}}"
+      page_url_example: "Adreça web: "
       confirm_page_removal: "Estàs segur de voler eliminar aquesta pàgina?"
       section: "Secció"
       situation: "Situació"

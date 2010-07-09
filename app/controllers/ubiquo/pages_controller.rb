@@ -99,7 +99,7 @@ class Ubiquo::PagesController < UbiquoAreaController
   end
   
   def load_parent_pages
-    @pages = Page.drafts.all - [@page]
+    @pages = Page.drafts.all(:conditions => ["url_name != ''"]) - [@page]
   end
   
 end
