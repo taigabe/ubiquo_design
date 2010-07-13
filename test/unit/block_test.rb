@@ -12,7 +12,7 @@ class BlockTest < ActiveSupport::TestCase
 
   def test_should_require_block_type
     assert_no_difference "Block.count" do
-      block = create_block :block_type_id => nil
+      block = create_block :block_type => nil
       assert block.errors.on(:block_type)
     end    
   end
@@ -23,18 +23,43 @@ class BlockTest < ActiveSupport::TestCase
       assert block.errors.on(:page)
     end    
   end
+
+  def test_should_return_block_uses
+    shared_block = blocks(:one)
+    delegated_block = create_block(:shared_id => shared_block.id)
+    delegated_block2 = create_block(:shared_id => shared_block.id)
+    assert_equal_set [delegated_block, delegated_block2], shared_block.block_uses
+  end
+
+  def test_should_return_shared_block
+    shared_block = blocks(:one)
+    delegated_block = create_block(:shared_id => shared_block.id)
+    assert_equal shared_block, delegated_block.shared
+  end
+
+  def test_shared_block_must_be_shared
+    shared_block = blocks(:one)
+    delegated_block = create_block(:shared_id => shared_block.id)
+    assert shared_block.is_shared?
+  end
+
+  def test_shouldnt_be_shared_delegated_block
+    shared_block = blocks(:one)
+    delegated_block = create_block(:shared_id => shared_block.id)
+    assert !delegated_block.is_shared?
+  end
   
   def test_create_for_block_type_and_page
     assert_difference "Block.count" do
-      block = Block.create_for_block_type_and_page(block_types(:one), pages(:one))
+      block = Block.create_for_block_type_and_page("static", pages(:one))
       assert_equal block.page, pages(:one)
-      assert_equal block.block_type, block_types(:one)
+      assert_equal block.block_type, "static"
     end
   end
 
   def test_should_set_is_modified_attribute_for_page_on_block_update
     page = pages(:one_design)
-    block = Block.create_for_block_type_and_page(block_types(:one), page)
+    block = Block.create_for_block_type_and_page("static", page)
     assert page.reload.is_modified?
     page.publish
     assert !page.reload.is_modified?
@@ -44,7 +69,7 @@ class BlockTest < ActiveSupport::TestCase
 
   def test_should_set_is_modified_attribute_for_page_on_block_delete
     page = pages(:one_design)
-    block = Block.create_for_block_type_and_page(block_types(:one), page)
+    block = Block.create_for_block_type_and_page("static", page)
     assert page.reload.is_modified?
     page.publish
     assert !page.reload.is_modified?
@@ -56,6 +81,10 @@ class BlockTest < ActiveSupport::TestCase
   private
   
   def create_block(options = {})
-    Block.create({:block_type_id => block_types(:one).id, :page_id => pages(:one).id}.merge!(options))
+    default_options = {
+      :block_type => 'sidebar',
+      :page_id => pages(:one).id,
+    }
+    Block.create(default_options.merge!(options))
   end
 end

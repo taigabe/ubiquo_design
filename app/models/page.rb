@@ -1,17 +1,11 @@
 class Page < ActiveRecord::Base
-  belongs_to :page_template
   belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
   belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
   has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
   has_one :draft, :class_name => 'Page', :foreign_key => 'published_id'
-  has_many :blocks, :dependent => :destroy do
-    def as_hash
-      self.collect{|block|[block.block_type.key, block]}.to_hash
-    end
-  end
+  has_many :blocks, :dependent => :destroy
 
   before_save :compose_url_name_with_parent_url
-  after_create :assign_default_blocks
   after_save :update_modified
   after_destroy :pending_publish_on_destroy_published
 
@@ -28,7 +22,7 @@ class Page < ActiveRecord::Base
               :conditions => ["pages.published_id IS NULL AND pages.pending_publish = ?", false]
   named_scope :drafts, 
               :conditions => ["pages.published_id IS NOT NULL OR pages.pending_publish = ?", true]
-  
+
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
@@ -71,38 +65,8 @@ class Page < ActiveRecord::Base
     requires.include?(true)
   end
 
-  def assign_default_blocks
-    desired_blocks = page_template.block_types.each do |bt|
-      Block.create_for_block_type_and_page(bt, self) if bt.default_block.nil?
-    end
-    true
-  end
-
   def clear_published_page   
     published.destroy unless pending_publish?
-  end
-
-  def default_blocks
-    page_template.block_types.map(&:default_block).compact
-  end
-
-  def default_block_as_hash
-    default_blocks.collect do |block|
-      [block.block_type.key, block]
-    end.to_hash
-  end
-
-  def all_blocks
-    all_blocks_as_hash.values
-  end
-
-  def all_blocks_as_hash
-    blocks.as_hash.reverse_merge(default_block_as_hash)
-  end
-
-  def is_using_default?(block_type)
-    block_type = BlockType.find_by(block_type)
-    all_blocks_as_hash[block_type.key] == default_block_as_hash[block_type.key]
   end
 
   def publish
@@ -155,17 +119,18 @@ class Page < ActiveRecord::Base
     is_published? && !has_required_params?
   end
 
-  def update_modified(value=true)
-    if self.changes["is_modified"].nil? && self.is_modified?!=value
-      self.is_modified = value
-      self.save
+  def update_modified(value = true)
+    if !self.changes["is_modified"] && self.is_modified? != value
+      self.update_attribute(:is_modified, value)
     end
   end
 
   private
 
   def compose_url_name_with_parent_url
-    self.url_name = parent.url_name + "/" + url_name.gsub(/^#{parent.url_name}\//, '') if self.parent
+    if self.parent
+      self.url_name = parent.url_name + "/" + url_name.gsub(/^#{parent.url_name}\//, '')
+    end
   end
     
 end

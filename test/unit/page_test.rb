@@ -30,7 +30,7 @@ class PageTest < ActiveSupport::TestCase
 
   def test_should_require_page_template
     assert_no_difference "Page.count" do
-      page = create_page :page_template_id => nil
+      page = create_page :page_template => nil
       assert page.errors.on(:page_template)
     end
   end
@@ -62,7 +62,7 @@ class PageTest < ActiveSupport::TestCase
 
   def test_should_create_page_with_some_default_blocks
     assert_difference "Page.count" do
-      page = create_page :page_template_id => page_templates(:two).id
+      page = create_page :page_template => "simple"
       assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
       page_blocks = page.all_blocks
       assert_equal page_blocks.size, page.page_template.block_types.size
@@ -84,13 +84,8 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  def test_default_blocks_method
-    page = create_page :page_template_id => page_templates(:one).id
-    assert_equal page.default_blocks, page.page_template.block_types.map(&:default_block).compact
-  end
-
   def test_publish_pages
-    page = create_page :page_template_id => page_templates(:one).id
+    page = create_page :page_template => page_templates(:one).id
     page.blocks << pages(:one).blocks
     assert page.pending_publish?, true
     assert !page.is_published?
@@ -109,7 +104,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_shouldnt_publish_wrong_pages
-    page = create_page :page_template_id => page_templates(:one).id
+    page = create_page :page_template => "static"
     page.blocks << pages(:one).blocks
     assert page.pending_publish?
     assert !page.is_published?
@@ -186,7 +181,7 @@ class PageTest < ActiveSupport::TestCase
   def create_page(options = {})
     Page.create({:name => "Custom page",
       :url_name => "custom_page",
-      :page_template_id => page_templates(:one).id,
+      :page_template => "static",
       :published_id => nil,
     }.merge(options))
   end

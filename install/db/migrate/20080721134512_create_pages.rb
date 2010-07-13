@@ -4,7 +4,7 @@ class CreatePages < ActiveRecord::Migration
       t.string :name
       t.string :url_name
       t.string :key
-      t.integer :page_template_id
+      t.string :page_template
       t.boolean :is_modified
       t.boolean :is_static
       t.boolean :pending_publish, :default => true
@@ -15,7 +15,7 @@ class CreatePages < ActiveRecord::Migration
     end
     
     add_index :pages, :url_name
-    add_index :pages, :page_template_id
+    add_index :pages, :page_template
     add_index :pages, :pending_publish
     add_index :pages, :published_id
     add_index :pages, :parent_id

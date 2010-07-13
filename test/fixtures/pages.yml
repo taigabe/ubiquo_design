@@ -2,14 +2,14 @@ one:
   id: 10000
   name: Start page
   url_name: ""
-  page_template_id: 10000
+  page_template: "static"
   pending_publish: false
   published_id:
 two:
   id: 10001
   name: Article page
   url_name: "article"
-  page_template_id: 10001
+  page_template: "interior"
   pending_publish: false
   published_id:
 
@@ -17,7 +17,7 @@ only_menu:
   id: 10002
   name: Menu page
   url_name: "menu_page"
-  page_template_id: 10002
+  page_template: "extra"
   pending_publish: false
   published_id:
 
@@ -25,7 +25,7 @@ one_design:
   id: 10003
   name: Start page
   url_name: ""
-  page_template_id: 10000
+  page_template: "static"
   pending_publish: false
   is_modified: false
   published_id: 10000
@@ -34,7 +34,7 @@ two_design:
   id: 10004
   name: Article page
   url_name: "article"
-  page_template_id: 10001
+  page_template: "interior"
   pending_publish: false
   is_modified: false
   published_id: 10001
@@ -43,7 +43,7 @@ only_menu_design:
   id: 10005
   name: Menu page
   url_name: "menu_page"
-  page_template_id: 10002
+  page_template: "extra"
   pending_publish: false
   is_modified: false
   published_id: 10002
@@ -52,7 +52,7 @@ test_page:
   name: TestPage
   updated_at: 2008-06-03 09:19:32.529112
   id: 10006
-  page_template_id: "10000"
+  page_template: "static"
   url_name: test_page
   pending_publish: true
   created_at: 2008-06-03 09:06:35.571694
@@ -62,7 +62,7 @@ long_url:
   name: LongUrl
   updated_at: 2008-06-03 09:19:32.529112
   id: 10007
-  page_template_id: "10000"
+  page_template: "static"
   url_name: long/url
   pending_publish: true
   created_at: 2008-06-03 09:06:35.571694
@@ -72,7 +72,7 @@ long_url_published:
   name: LongUrl
   updated_at: 2008-06-03 09:19:32.529112
   id: 10008
-  page_template_id: "10000"
+  page_template: "static"
   url_name: long/url
   pending_publish: false
   created_at: 2008-06-03 09:06:35.571694
@@ -82,7 +82,7 @@ unpublished:
   name: Unpublished
   updated_at: 2008-06-03 09:19:32.529112
   id: 10009
-  page_template_id: "10000"
+  page_template: "static"
   url_name: unpublished
   pending_publish: true
   created_at: 2008-06-03 09:06:35.571694

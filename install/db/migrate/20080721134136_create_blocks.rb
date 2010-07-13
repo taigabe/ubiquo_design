@@ -1,13 +1,14 @@
 class CreateBlocks < ActiveRecord::Migration
   def self.up
     create_table :blocks do |t|
-      t.integer :block_type_id
+      t.string :block_type
       t.integer :page_id
+      t.integer :shared_id
       
       t.timestamps
     end
-      add_index :blocks, :block_type_id
-      add_index :blocks, :page_id
+    add_index :blocks, :block_type
+    add_index :blocks, :page_id
   end
 
   def self.down
