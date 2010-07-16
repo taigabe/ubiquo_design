@@ -21,15 +21,21 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
   end
 
   def test_should_clean_scope
-    UbiquoDesign::Structure.define(:other) {}
+    UbiquoDesign::Structure.define(:other) do
+      page_template :a
+    end
     assert_raise ZeroDivisionError do
       UbiquoDesign::Structure.define(:test) do
-        widget :logo
-        1/0
+        page_template :pt do
+          widget :logo
+          1/0
+        end
       end
     end
-    # TODO test
-    assert_equal({}, UbiquoDesign::Structure.get(:other))
+    assert_equal(
+      {:page_templates => [:a => []]},
+      UbiquoDesign::Structure.get(:other)
+    )
   end
 
   def test_should_store_structures
@@ -39,7 +45,18 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
     end
 
     assert_equal(
-      {:widgets => [:logo], :page_templates => [:pt]},
+      {:widgets => [:logo => []], :page_templates => [:pt => []]},
+      UbiquoDesign::Structure.get(:test)
+    )
+  end
+
+  def test_should_store_structures_when_multiple_at_once
+    UbiquoDesign::Structure.define(:test) do
+      widget :logo, :sidebar
+    end
+
+    assert_equal(
+      {:widgets => [{:logo => []}, {:sidebar => []}]},
       UbiquoDesign::Structure.get(:test)
     )
   end
@@ -51,7 +68,7 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
     end
 
     assert_equal(
-      {:widgets => [:logo, :head, :lemma]},
+      {:widgets => [{:logo => []}, {:head => []}, {:lemma => []}]},
       UbiquoDesign::Structure.get(:test)
     )
   end
@@ -65,8 +82,8 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
     end
 
     assert_equal({
-        :page_templates => {:pt => {:widgets => [:logo, :head]}},
-        :widgets => [:logo, :head]},
+        :page_templates => [:pt => [{:widgets => [:logo => []]}]],
+        :widgets => [{:head => []}]},
       UbiquoDesign::Structure.get(:test)
     )
   end
@@ -79,15 +96,12 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
           widget :exclusive
         end
       end
-      widget :head do
-        description 'description'
-        name 'name'
-      end
+      widget :head
     end
 
     assert_equal({
-        :widgets => [:logo, :head],
-        :blocks => [{:block => {:widgets => :exclusive}}]
+        :widgets => [{:logo => []}, {:head => []}],
+        :blocks => [{:block => [{:widgets => [:exclusive => []]}]}]
       },
       UbiquoDesign::Structure.get(:test, {:page_template => :pt})
     )
@@ -100,17 +114,32 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
         block :block do
           widget :exclusive
         end
+        block :other do
+          widget :other
+        end
       end
-      widget :exclusive do
-        description 'description'
-        name 'name'
+      widget :exclusive
+    end
+
+    assert_equal({
+        :widgets => [{:logo => []}, {:exclusive => []}],
+      },
+      UbiquoDesign::Structure.get(:test, {:page_template => :pt, :block => :block})
+    )
+  end
+
+  def test_should_store_options
+    UbiquoDesign::Structure.define(:test) do
+      page_template :pt, :cols => 4 do
+        block :block, :cols => 1
       end
     end
 
     assert_equal({
-        :widgets => [:logo, {:name => 'name', :description => 'description'}],
+        :blocks => [:block => [{:options=> {:cols => 1}}]],
+        :options => {:cols => 4}
       },
-      UbiquoDesign::Structure.get({:page_template => :pt, :block => :block})
+      UbiquoDesign::Structure.get(:test, {:page_template => :pt})
     )
   end
 end

@@ -2,29 +2,33 @@
 module UbiquoDesign
   module Structure
 
-    @@structures  ||= {}
+    @@structures  ||= []
 
     class << self
 
       # Starts the definition of an structure
       #   context: possible context to create multiple structures
       def define(context = nil, &block)
-        @@structures[context] ||= {} if context
         with_scope(context) do
           yield_inside(&block)
         end
       end
 
       # Returns a hash with the required structure
-      #   options: can contain multiple values:
-      #            nil (default): returns the whole structure
-      def get(options = nil)
-        case options
-        when NilClass
-          @@structures[options]
+      #   args: can either be
+      #         nil (default): returns the whole structure as stored
+      #         a hash, in this case it's interpreted as a filter
+      #         [context, hash] to use a non-default context to filter
+      def get(*args)
+        result = case args[0]
         when String, Symbol
-          @@structures[options.to_sym]
+          with_scope(args[0].to_sym) do
+            filter(args[1])
+          end
+        else
+          filter(args[0])
         end
+        concat_merge(result)
       end
 
       # Sets the current context during a declaration
@@ -36,7 +40,7 @@ module UbiquoDesign
       # Cleans the current structure
       #   context: possible context for multiple structures
       def clear(context = nil)
-        get(context).clear
+        with_scope(context) { current_base.clear }
       end
 
       # Yields a block with this module binding
@@ -47,22 +51,118 @@ module UbiquoDesign
       # Catches all the possible calls and stores them
       def method_missing(method, *args, &block)
         scope = scope_name(method)
-        store_definition scope, args
-        with_scope(scope, &block) if block_given?
+        with_scope(scope) do
+          store_definition args, &block
+        end
       end
 
       # Stores an invocation definition
-      def store_definition method, args
-        current = @@structures
-        @@scopes.each do |scope|
-          current = current[scope]
+      def store_definition args, &block
+        base = current_base
+        options = args.extract_options!
+        args.inject(base) do |acc, element|
+          container = {element => []}
+          container[element] << {:options => options} unless options.empty?
+          returning (acc << container) do
+            with_scope(element, &block) if block_given?
+          end
         end
-        (current[scope_name(method)] ||= []).concat args
+      end
+
+      # Given a set of filters, returns the appropiate information
+      #   filters:  can be either nil (no filter) or a hash of conditions
+      #             in the form {:filter => value}
+      #   base:     base set of results to filter. Defaults to current_base
+      def filter(filters, base = nil)
+        results = {}
+        base ||= current_base
+        case filters
+        when Hash
+          results = []
+          base.each do |element|
+            element.keys.each do |element_key|
+              # retrieve the filters keys that may limit this element_key
+              applicable_keys = filters.keys.select do |key|
+                scope_name(key) == element_key
+              end
+
+              # if there are filters to apply, compare its value
+              unless applicable_keys.blank?
+                found = find_in_scope(
+                  element[element_key],
+                  filters[applicable_keys.first]
+                )
+                results.concat(found.values.flatten) if found
+              else
+                results << element
+              end
+            end
+          end
+          # call recursively while it's filtering
+          results = filter(filters, results) unless results == base
+        else
+          results = base
+        end
+        results
       end
 
       # Homogenizes a scope name to a pluralized symbol
       def scope_name name
         name.to_s.pluralize.to_sym
+      end
+
+      # Returns the current base array, given the applied scopes
+      def current_base
+        current = @@structures
+        @@scopes.each do |scope|
+          next unless scope
+          if !struct = find_in_scope(current, scope)
+            current << (struct = {scope => []})
+          end
+          current = struct.values.first
+        end
+        current
+      end
+
+      # Returns the hash scope +element+ in the +scope+, if exists
+      def find_in_scope scope, element
+        scope.select do |struct|
+          struct.keys.include?(element)
+        end.first
+      end
+
+      # Performs a merge concatenating the results sharing keys
+      def concat_merge original
+        returning({}) do |result|
+          original.each do |element|
+            element.each_pair do |key, value|
+              if value.is_a?(Array)
+                result[key] ||= []
+                result[key].concat value
+                merge_if_equals(result[key])
+              else
+                result[key] = value
+              end
+            end
+          end
+          # concat_merge each value recursively
+        end
+      end
+
+      # Given an array of hashes, will merge them if they share the key
+      def merge_if_equals(array)
+        merged = []
+        keymap = {}
+        array.each do |hash|
+          key = hash.keys.first
+          if i = keymap[key]
+            merged[i].values.first.concat hash.values.first
+          else
+            keymap[key] = merged.size
+            merged << hash
+          end
+        end
+        array.replace(merged)
       end
     end
   end
