@@ -145,7 +145,6 @@ module UbiquoDesign
               end
             end
           end
-          # concat_merge each value recursively
         end
       end
 
