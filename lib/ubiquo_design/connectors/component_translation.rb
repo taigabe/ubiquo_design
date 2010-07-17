@@ -234,7 +234,7 @@ module UbiquoDesign
         end
         
         module InstanceMethods
-          def uhook_collect_components(b, &block)
+          def uhook_collect_widgets(b, &block)
             b.components.locale(current_locale).collect(&block)
           end
           

@@ -12,34 +12,15 @@ module UbiquoDesign
       render_template_file(page.page_template.key, page.page_template.layout)
     end
 
-    # Render all components contained on a block (calling the configured
-    # generator) as string
+    # Renders all the widgets contained in a block
     def render_block(block)
-      uhook_collect_components(block) do |component| 
-        # Build a hash containing the options for this component (get info
-        # from params). Copy only those keys found in component_params,
-        # checking also that the required params are present.
-        next unless component.valid?
-        component_params = component.widget.component_params.find(:all)
-        generator_options = component_params.collect do |component_param|
-          param_name = component_param.name
-          if component_param.is_required? && !params[param_name.to_sym]
-            component_name = component.widget.name
-            errmsg =  "Required param \"#{param_name}\" for component " \
-            "\"#{component_name}\" not found. Params: #{params.inspect}"
-            raise ActiveRecord::RecordNotFound.new(errmsg)
-          end
-          [param_name.to_sym, params[param_name]]
-        end.to_hash
-        generator_options.update(:request_path => request.path)
-        generator = component.widget.key.to_sym
-        generator_output = render_generator_to_string(
-                                                      generator,
-                                                      :generator_args => [component, generator_options],
-                                                      :template => 'show')
-        # A generator didn't returned an string, return inmediately 
-        return unless generator_output
-        generator_output
+      uhook_collect_widgets(block) do |widget|
+        next unless widget.valid?
+        widget_name = widget.key.to_sym
+        returning(render(widget_name)) do |output|
+          # A widget didn't return an string, return inmediately
+          return unless output
+        end
       end
     end
 
