@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/.././test_helper'
 <% model_name = name.classify -%>
 
 class <%= model_name %>Test < ActiveSupport::TestCase
@@ -12,17 +12,10 @@ class <%= model_name %>Test < ActiveSupport::TestCase
 
   private
   
-  def create_<%= name %>(options = {}, widget_type_options = {})
-    widget_type_options.reverse_merge!({
-      :name => "Test <%= name %>",
-      :key => "<%= name %>", 
-      :subclass_type => "<%= model_name %>",
-    })  
-    widget_type = Widget.create!(widget_type_options)
+  def create_<%= name %>(options = {})
     default_options = {
       :name => "Test <%= name %>", 
       :block => blocks(:one),
-      :widget_type => widget_type,
       # Insert other options for widget here
     }
     <%= model_name %>.create(default_options.merge(options))
