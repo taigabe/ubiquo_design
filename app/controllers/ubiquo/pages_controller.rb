@@ -91,7 +91,7 @@ class Ubiquo::PagesController < UbiquoAreaController
   private
   
   def load_page_templates
-    @page_templates = PageTemplate.all
+    @page_templates = Page.templates
   end
 
   def load_page

@@ -11,20 +11,20 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil page = assigns(:page)
     assert_not_nil widgets = assigns(:widgets)
-    assert page.page_template.block_types.size > 0
-    page.page_template.block_types.each do |block_type|
-      assert_select "#block_type_holder_#{block_type.id}"
+    assert page.blocks.size > 0
+    page.blocks.map(&:block_type).each do |block_type|
+      assert_select "#block_type_holder_#{block_type}"
       # TODO: We going to change default blocks way.
       # We need check over this when we changed it.
-      #block = page.all_blocks_as_hash[block_type.key]
+      block = page.blocks.first(:conditions => { :block_type => block_type })
       #
-      #last_order = 0
-      #block.components.each do |component|
-      #  assert_operator component.position, :>, last_order
-      #  last_order = component.position
-      #
-      #  assert_select "#component_#{component.id}"
-      #end
+      last_order = 0
+      block.components.each do |component|
+        assert_operator component.position, :>, last_order
+        last_order = component.position
+      
+        assert_select "#widget_#{component.id}"
+      end
     end
   end
 
@@ -46,23 +46,8 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     template_mock(page)
 
     get :show, :page_id => page.id
-    page.page_template.block_types.each do |block_type|
-      assert_select "#use_default_#{block_type.id}" if block_type.can_use_default_block?
-    end
-  end
-
-  def test_shouldnt_show_default_form_on_home
-    page = pages(:one_design)
-    template_mock(page)
-    assert_equal page.url_name, ""
-    # TODO: We going to change default blocks way.
-    # We need check over this when we changed it.
-    #assert page.blocks.map(&:id).sort == page.all_blocks.map(&:id).sort
-    assert_not_equal page.blocks.size, 0
-    assert page.blocks.map(&:block_type).map(&:can_use_default_block).include?(true)
-    get :show, :page_id => page.id
-    page.blocks.each do |block|
-      assert_select "#use_default_#{block.block_type.id}", false
+    page.blocks.map(&:block_types).each do |block_type|
+      assert_select "#use_default_#{block_type}"
     end
   end
 

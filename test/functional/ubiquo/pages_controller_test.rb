@@ -42,27 +42,21 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_equal [], assigns(:pages)
   end  
   
-  def test_should_create_page_with_default_blocks
+  def test_should_create_page_with_assigned_blocks
     login_as
     assert_difference('Page.count') do
-      post :create, :page => { :name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id }
+      post(:create,
+           :page => {
+             :name => "Custom page",
+             :url_name => "custom_page",
+             :page_template => "static"
+           })
     end
 
     assert page = assigns(:page)
-    assert_equal page.all_blocks.size, page.page_template.block_types.size
+    assert_equal 3, page.blocks.size
+    assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
     assert_equal page.is_published?, false
-
-    assert_redirected_to ubiquo_pages_path
-  end
-
-  def test_should_create_page_with_some_default_blocks
-    login_as
-    assert_difference('Page.count') do
-      post :create, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:two).id }
-    end
-
-    assert page = assigns(:page)
-    assert_equal page.all_blocks.size, page.page_template.block_types.size
 
     assert_redirected_to ubiquo_pages_path
   end
@@ -75,7 +69,13 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
 
   def test_should_update_page
     login_as
-    put :update, :id => pages(:one).id, :page => {:name => "Custom page", :url_name => "custom_page", :page_template_id => page_templates(:one).id }
+    put(:update,
+        :id => pages(:one).id,
+        :page => {
+          :name => "Custom page",
+          :url_name => "custom_page",
+          :page_template => "static"
+        })
     assert_redirected_to ubiquo_pages_path
   end
 

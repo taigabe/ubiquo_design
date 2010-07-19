@@ -2,7 +2,7 @@ map.namespace :ubiquo do |ubiquo|
   ubiquo.resources :pages do |pages|
     pages.resource :design, :member => {:preview => :get, :publish => :put} do |design|
       design.resources :components, :collection => {:change_order => :any}, :member => {:change_name => :post}
-      design.resources :block_types
+      design.resources :blocks
     end
   end
   ubiquo.resources :menu_items, :collection => {:update_positions => :put}

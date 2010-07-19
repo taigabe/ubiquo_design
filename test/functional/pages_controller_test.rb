@@ -6,8 +6,9 @@ class PagesControllerTest < ActionController::TestCase
   def test_should_get_show
     get :show, :url => pages(:one).url_name
     assert_response :success
-    blocks = assigns(:blocks)
-    assert blocks[:block_a], "Cannot find expected block"
+    assert_not_nil assigns(:blocks)
+    assert assigns(:blocks)[:sidebar], "Cannot find expected block"
+    assert assigns(:blocks)[:subheader], "Cannot find expected block"
   end
 
   def test_should_return_404_if_no_page

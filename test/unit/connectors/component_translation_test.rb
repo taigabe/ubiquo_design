@@ -14,7 +14,7 @@ module Connectors
       end
       
       test "publication must copy component translations and their asset relations" do
-        page = create_page :page_template_id => page_templates(:one).id
+        page = create_page
         page.blocks << pages(:one).blocks
         assert_equal page.is_public?, false
         assert_equal page.is_published?, false
@@ -86,7 +86,7 @@ module Connectors
       Page.create({
         :name => "Custom page",
         :url_name => "custom_page",
-        :page_template_id => page_templates(:one).id,
+        :page_template => "static",
         :pending_publish => true,
         :published_id => nil,
       }.merge(options))

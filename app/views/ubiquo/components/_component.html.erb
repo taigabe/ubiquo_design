@@ -1,28 +1,30 @@
-<li id="component_<%= component.id %>" class="component<%= " error" unless component.valid? %>">
-
-	<%= link_to_remote t('ubiquo.design.component_removal'), :url => ubiquo_page_design_component_path(@page, component), :method => :delete, :confirm => t('ubiquo.design.confirm_component_removal'), :html => {:class => "delete"} %>
-
-	<a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.component_move') %></a>
-	<% if component.widget.is_configurable? %>
-	  <%= uhook_link_to_edit_component(component) %>
-	<% end %>
-	<div class="wrap">
-			<h4 id="component_name_field_<%= component.id %>"><%= component.name %></h4>
-			<% javascript_tag do %>
-				new Ajax.InPlaceEditor(
-					"component_name_field_<%= component.id %>", 
-					"<%= change_name_ubiquo_page_design_component_path(@page, component) %>", 
-					{
-						savingText:"<%= t('ubiquo.design.component_saving')%>", 
-						okText:"<%= t('ubiquo.design.component_save') %>", 
-						cancelText: "<%= t('ubiquo.design.component_cancel') %>", 
-						clickToEditText: "<%= t('ubiquo.design.component_click_to_edit') %>", 
-						loadingText:"<%= t('ubiquo.design.component_click_to_edit') %>",
-						callback: function(form, value) {
-							return 'authenticity_token=' + encodeURIComponent('<%= RAILS_ENV == 'test' ? "" : form_authenticity_token %>') + '&' + Form.serialize(form);
-						},
-					}
-				);
-			<% end %>
-	</div>			
+<li id="widget_<%= component.id %>" class="component<%= " error" unless component.valid? %>">
+  <%= link_to_remote t('ubiquo.design.component_removal'), 
+                     :url => ubiquo_page_design_component_path(@page, component),
+                     :method => :delete, 
+                     :confirm => t('ubiquo.design.confirm_component_removal'),
+                     :html => {:class => "delete"} %>
+  <a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.component_move') %></a>
+  <% if component.widget.is_configurable? %>
+    <%= uhook_link_to_edit_component(component) %>
+  <% end %>
+  <div class="wrap">
+    <h4 id="component_name_field_<%= component.id %>"><%= component.name %></h4>
+    <% javascript_tag do %>
+    new Ajax.InPlaceEditor(
+    "component_name_field_<%= component.id %>", 
+    "<%= change_name_ubiquo_page_design_component_path(@page, component) %>", 
+    {
+      savingText:"<%= t('ubiquo.design.component_saving')%>", 
+      okText:"<%= t('ubiquo.design.component_save') %>", 
+      cancelText: "<%= t('ubiquo.design.component_cancel') %>", 
+      clickToEditText: "<%= t('ubiquo.design.component_click_to_edit') %>", 
+      loadingText:"<%= t('ubiquo.design.component_click_to_edit') %>",
+      callback: function(form, value) {
+      return 'authenticity_token=' + encodeURIComponent('<%= RAILS_ENV == 'test' ? "" : form_authenticity_token %>') + '&' + Form.serialize(form);
+    },
+    }
+    );
+    <% end %>
+  </div>			
 </li>

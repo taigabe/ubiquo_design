@@ -78,14 +78,17 @@
 module Ubiquo::DesignsHelper
 
   def design_block_4cols(page, type_key, options={})
-    bt = BlockType.find_by(type_key)
-    is_using_default = !page.blocks.as_hash.include?(bt.key)
+    block = page.blocks.first(:conditions => { :block_type => type_key })
     options.reverse_merge!({:class => "column_4"})
     s = "<div class='top_options'>"
-    s << render(:partial => "ubiquo/designs/use_default_form", :locals => {:bt => bt, :page => page, :is_using_default => is_using_default, :style_class => options[:class]}) if bt.can_use_default_block? && !(page.url_name.blank?)
+    s << render(:partial => "ubiquo/designs/is_shared_form",
+                :locals => { :page => page, :block => block, :style_class => options[:class]})
     s << "</div>"
-    s << block_type_holder(page, bt, options)
-    s
+    s << block_type_holder(page, type_key, block, options)
+    s << "<div class='bottom_options'>"
+    s << render(:partial => "ubiquo/designs/shared_blocks_select",
+                :locals => { :page => page, :block => block })
+    s << "</div>"
   end
 
   def design_block_1col(page, type_key, options={})
@@ -104,27 +107,26 @@ module Ubiquo::DesignsHelper
   end
 
   def make_blocks_sortables(page)
-    ids = page.page_template.block_types.map(&:id)
+    keys = page.blocks.map(&:block_type).uniq
     page.blocks.collect do |block|
-      sortable_block_type_holder block.block_type.id,  change_order_ubiquo_page_design_components_path(page), ids
+      sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_components_path(page), keys
     end
   end
 
-  def block_type_holder(page, block_type, options = {})
-    block = page.all_blocks_as_hash[block_type.key]
-    options.merge!(:id => "block_#{block_type.id}" )
+  def block_type_holder(page, block_type, block, options = {})
+    options.merge!(:id => "block_#{block_type}" )
     options[:class] ||= ''
-    if page.blocks.as_hash.include?(block_type.key)
+    if page.blocks.as_hash.include?(block_type)
       options[:class] << " draggable_target"
     else
       options[:class] << " non_draggable_target"
     end
     (content_tag :div, options do
-      content_tag :ul, :id =>"block_type_holder_#{block_type.id}", :class => 'block_type_holder' do
+      content_tag :ul, :id =>"block_type_holder_#{block_type}", :class => 'block_type_holder' do
         components_for_block_type_holder(block) unless options[:class].match /non_draggable/
       end
     end) +
-    (page.blocks.as_hash.include?(block_type.key) ? drop_receiving_element(
+    (page.blocks.as_hash.include?(block_type) ? drop_receiving_element(
     options[:id],
     :url => ubiquo_page_design_components_path(@page),
     :method => :post,
@@ -133,6 +135,13 @@ module Ubiquo::DesignsHelper
     ) : "")
   end
 
+  def options_for_shared_blocks_select(block)
+    options = block.available_shared_blocks.map do |block|
+      ["#{block.page.name} - #{block.block_type}", block.id]
+    end
+    options_for_select([[]] + options)
+  end
+  
   def components_for_block_type_holder(block)
     components = uhook_load_components(block)
     render :partial => "ubiquo/components/component", :collection => components

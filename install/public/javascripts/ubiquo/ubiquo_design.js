@@ -35,3 +35,13 @@ function update_url_example() {
   }
   $('url_example').update(value);
 } 
+
+function update_error_on_components(component_ids) {
+  $$("#content .component").each(function(i) {
+    i.removeClassName("error");
+  })
+	
+  component_ids.each(function(id) {
+    $("widget_" + id).addClassName("error");
+  })
+}

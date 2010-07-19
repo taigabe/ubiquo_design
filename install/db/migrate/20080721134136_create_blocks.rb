@@ -4,6 +4,7 @@ class CreateBlocks < ActiveRecord::Migration
       t.string :block_type
       t.integer :page_id
       t.integer :shared_id
+      t.boolean :is_shared, :default => false
       
       t.timestamps
     end

@@ -76,6 +76,16 @@ class BlockTest < ActiveSupport::TestCase
     assert block.destroy
     assert page.reload.is_modified?
   end
+
+  def test_should_return_available_shared_blocks
+    page = pages(:one_design)
+    block = Block.create_for_block_type_and_page("sidebar", page, :is_shared => true)
+    block2 = Block.create_for_block_type_and_page("sidebar", page, :is_shared => true)
+    block3 = Block.create_for_block_type_and_page("main", page, :is_shared => true)
+
+    uses_block = Block.new(:block_type => "sidebar", :is_shared => false)
+    assert_equal_set [block, block2], uses_block.available_shared_blocks
+  end
   
   
   private

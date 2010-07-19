@@ -44,48 +44,17 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  #comment this test because we going to change this feature
-  #def test_should_create_page_with_default_blocks
-  #  assert_difference "Page.count" do
-  #    page = create_page :page_template_id => page_templates(:one).id
-  #    assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
-  #    page_blocks = page.all_blocks
-  #    assert_equal page_blocks.size, page.page_template.block_types.size
-  #    desired_blocks = page.default_blocks
-  #    assert_equal page_blocks.size, desired_blocks.size
-  #    assert !desired_blocks.empty?, "You should test with block types with default block assigned. Check your fixtures."
-  #    desired_blocks.each do |block|
-  #      assert page_blocks.include?(block), "Page '#{page.name}' does not contain the expected block '#{block.id}'"
-  #    end
-  #  end
-  #end
-
-  def test_should_create_page_with_some_default_blocks
-    assert_difference "Page.count" do
-      page = create_page :page_template => "simple"
-      assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
-      page_blocks = page.all_blocks
-      assert_equal page_blocks.size, page.page_template.block_types.size
-      desired_blocks = page.default_blocks
-      assert_operator page_blocks.size, :>, desired_blocks.size
-      assert !desired_blocks.empty?, "You should test with block types with default block assigned. Check your fixtures."
-      desired_blocks.each do |block|
-        assert page_blocks.include?(block), "Page '#{page.name}' does not contain the expected block '#{block.id}'"
-      end
-    end
-  end
-
   def test_should_get_components_for_block_type
     page = pages(:one)
-    block = page.all_blocks_as_hash[block_types(:one).key]
+    block = page.blocks.first(:conditions => { :block_type => "sidebar" })
     assert block.components.size > 0 #needs something to test.
     block.components.each do |component|
-      assert component.block.block_type == block_types(:one)
+      assert component.block.block_type == "sidebar"
     end
   end
 
   def test_publish_pages
-    page = create_page :page_template => page_templates(:one).id
+    page = create_page
     page.blocks << pages(:one).blocks
     assert page.pending_publish?, true
     assert !page.is_published?
@@ -167,6 +136,12 @@ class PageTest < ActiveSupport::TestCase
     assert_equal target_url, Page.with_url(target_url.split('/')).url_name
   end
 
+  def test_should_assign_blocks_on_create
+    page = create_page(:url_name => 'about')
+    assert_equal 3, page.blocks.size
+    assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
+  end
+  
   def test_should_compose_url_with_parent_url_name
     parent_page = pages(:two)
     page = create_page(:url_name => 'card', :parent_id => parent_page.id)

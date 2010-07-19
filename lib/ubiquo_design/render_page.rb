@@ -3,13 +3,13 @@ module UbiquoDesign
     private
     def render_page(page)
       @menu = build_menu
-      @blocks = page.all_blocks.collect do |block|
+      @blocks = page.blocks.collect do |block|
         block_output = render_block(block)
         # Return if block is void (normally, a redirect ocurred)
         return unless block_output
-        [block.block_type.key.to_sym, block_output.join]
+        [block.block_type.to_sym, block_output.join]
       end.to_hash
-      render_template_file(page.page_template.key, page.page_template.layout)
+      render_template_file(page.page_template, page.layout)
     end
 
     # Renders all the widgets contained in a block

@@ -28,5 +28,4 @@ class Widget < ActiveRecord::Base
     self.allowed_options_storage ||= []
   end
 
-
 end

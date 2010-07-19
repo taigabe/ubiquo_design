@@ -7,7 +7,7 @@ module Connectors
     end
     
     test "should publish components" do
-      page = create_page :page_template_id => page_templates(:one).id
+      page = create_page
       page.blocks << pages(:one).blocks
       assert page.pending_publish?
       assert !page.is_published?
@@ -145,7 +145,7 @@ module Connectors
       Page.create({
         :name => "Custom page",
         :url_name => "custom_page",
-        :page_template_id => page_templates(:one).id,
+        :page_template => "static",
         :published_id => nil,
       }.merge(options))
     end

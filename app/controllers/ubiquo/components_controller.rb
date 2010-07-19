@@ -1,10 +1,9 @@
 class Ubiquo::ComponentsController < UbiquoAreaController
-
+  before_filter :load_page
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
   
   helper "ubiquo/designs"
   def show
-    @page = Page.find(params[:page_id])
     @component = uhook_find_component
       
     template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.widget.key)
@@ -14,7 +13,6 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   def create
     @widget = Widget.find(params[:widget])
     @block = Block.find(params[:block])
-    @page = Page.find(params[:page_id])
 
     @component = @widget.subclass_type.constantize.new
     @component.block = @block
@@ -29,10 +27,12 @@ class Ubiquo::ComponentsController < UbiquoAreaController
       format.html { redirect_to(ubiquo_page_design_path(@page)) }
       format.js {
         render :update do |page|
-          page.insert_html :bottom, "block_type_holder_#{@block.block_type.id}", :partial => "ubiquo/components/component", :object => @component
-          page.hide "component_#{@component.id}"
-          page.visual_effect :slide_down, "component_#{@component.id}"
-          id, opts = sortable_block_type_holder_options(@block.block_type.id, change_order_ubiquo_page_design_components_path(@page), @page.page_template.block_types.map(&:id))
+          page.insert_html :bottom, "block_type_holder_#{@block.block_type}", :partial => "ubiquo/components/component", :object => @component
+          page.hide "widget_#{@component.id}"
+          page.visual_effect :slide_down, "widget_#{@component.id}"
+          id, opts = sortable_block_type_holder_options(@block.block_type,
+                                                        change_order_ubiquo_page_design_components_path(@page),
+                                                        [1,2])
           page.sortable id, opts
           page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @widget.is_configurable?
           page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
@@ -45,7 +45,6 @@ class Ubiquo::ComponentsController < UbiquoAreaController
 
   def destroy
     @component = Component.find(params[:id])
-    @page = Page.find(params[:page_id])
 
     uhook_destroy_component(@component)
 
@@ -54,9 +53,9 @@ class Ubiquo::ComponentsController < UbiquoAreaController
       format.html { redirect_to(ubiquo_page_design_path(@page))}
       format.js {
         render :update do |page|
-          page.visual_effect :slide_up, "component_#{@component.id}"
-          page.delay(3) do
-            page.remove "component_#{@component.id}"
+          page.visual_effect :slide_up, "widget_#{@component.id}"
+          page.delay(1) do
+            page.remove "widget_#{@component.id}"
           end
           page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
                                          :locals => { :page => @page.reload })
@@ -67,7 +66,6 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   end
   
   def update
-    @page = Page.find(params[:page_id])
     @component = uhook_update_component
     if @component.valid?
       respond_to do |format|
@@ -80,7 +78,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
                 :locals => { :page => @page.reload })
               page.call "update_error_on_components", @page.wrong_components_ids
             end
-          end
+           end
         }
       end
     else
@@ -106,19 +104,17 @@ class Ubiquo::ComponentsController < UbiquoAreaController
   end
 
   def change_order
-    @page = Page.find(params[:page_id])
-    params[:block].each do |block_type_id, ids|
-      block_type = BlockType.find(block_type_id)
-      block = @page.blocks.as_hash[block_type.key]
-      Component.transaction do
-        ids.each_with_index do |component_id, i|
-          component = Component.find(component_id)
-          component.position = i
-          component.block = block
-          component.save
+    unless params[:block].blank?
+      params[:block].each do |block_type, widget_ids|
+        block = @page.blocks.first(:conditions => { :block_type => block_type })
+        Component.transaction do
+          widget_ids.each_with_index do |widget_id, index|
+            component = Component.find(widget_id)
+            component.update_attributes(:position => index, :block_id => block.id)
+          end
         end
       end
-    end unless params[:block].blank?
+    end
     respond_to do |format|
       format.html { redirect_to(ubiquo_page_design_path(@page))}
       format.js {
@@ -129,5 +125,11 @@ class Ubiquo::ComponentsController < UbiquoAreaController
         end
       }
     end
+  end
+
+  private
+
+  def load_page
+    @page = Page.find(params[:page_id])
   end
 end

@@ -3,9 +3,14 @@ class Page < ActiveRecord::Base
   belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
   has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
   has_one :draft, :class_name => 'Page', :foreign_key => 'published_id'
-  has_many :blocks, :dependent => :destroy
+  has_many :blocks, :dependent => :destroy do
+     def as_hash
+       self.collect{|block|[block.block_type, block]}.to_hash
+     end
+  end
 
   before_save :compose_url_name_with_parent_url
+  before_create :assign_template_blocks
   after_save :update_modified
   after_destroy :pending_publish_on_destroy_published
 
@@ -53,16 +58,6 @@ class Page < ActiveRecord::Base
     apply_find_scopes(scopes) do
       find(:all, options)
     end
-  end
-
-  # Returns wheter the page contains components that have required component params
-  def has_required_params?
-    components = self.blocks.map(&:components).flatten
-    widgets = components.map(&:widget).flatten.uniq
-    requires = widgets.map do |widget|
-      widget.component_params.map(&:is_required)
-    end.flatten
-    requires.include?(true)
   end
 
   def clear_published_page   
@@ -116,7 +111,39 @@ class Page < ActiveRecord::Base
   end
 
   def is_linkable?
-    is_published? && !has_required_params?
+    #TODO implement this method
+    is_published?
+  end
+
+  def is_previewable?
+    #TODO Implement this method
+    false
+  end
+
+  def layout
+    #TODO Implement this method with Ubiquodesign::structure
+    # reading page_template properties
+    "main"
+  end
+
+  def self.templates
+    #TODO Implement this method with UbiquoDesign::structure
+    ["static", "home", "interior"]
+  end
+
+  def self.blocks(template = nil)
+    #TODO Implement this method with UbiquoDesign::structure
+    if template
+      # UbiquoDesign::structure.get(:page_template => template)[:block_types].keys
+      ["top", "sidebar", "main"]
+    else
+      # UbiquoDesign::structure.get(:all)[:block_types].keys
+      ["top", "footer", "sidebar", "main", "main2"]
+    end
+  end
+
+  def widgets
+    Widget.all
   end
 
   def update_modified(value = true)
@@ -130,6 +157,13 @@ class Page < ActiveRecord::Base
   def compose_url_name_with_parent_url
     if self.parent
       self.url_name = parent.url_name + "/" + url_name.gsub(/^#{parent.url_name}\//, '')
+    end
+  end
+
+  def assign_template_blocks
+    block_types = Page.blocks(self.page_template)
+    block_types.each do |block_type|
+      self.blocks << Block.create(:block_type => block_type)
     end
   end
     

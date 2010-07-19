@@ -1,24 +1,7 @@
 <h1><%= render :partial => 'title' %></h1>
-<h2>
-	<%= render :partial => 'submenu' %>
-</h2>
+<h2><%= render :partial => 'submenu' %></h2>
 <%= render :partial => "shared/ubiquo/feedback" %>
-
-<script type="text/javascript" charset="utf-8">
-	function update_error_on_components(ids){
-		$$("#content .component").each(function(i){
-			i.removeClassName("error")
-		})
-		
-		ids.each(function(i){
-			$("component_"+i).addClassName("error")
-		})
-	}
-</script>
-
-<div id="template">
-<%= @template_content %>
-</div>
+<div id="template"><%= @template_content %></div>
 
 <% content_for :sidebar do %>
 <div class="sidebar_box">
@@ -28,9 +11,11 @@
   </div>
 </div>
 <div class="sidebar_box">
-  <div class="sidebar_title"><h3><%= t('ubiquo.design.avaliable_components') %></h3></div>
-	<ul>
-		<%= render :partial => "component_sidebar", :collection => @widgets %>
-	</ul>
+  <div class="sidebar_title">
+    <h3><%= t('ubiquo.design.avaliable_components') %></h3>
+  </div>
+  <ul>
+    <%= render :partial => "component_sidebar", :collection => @widgets %>
+  </ul>
 </div>
 <% end %>

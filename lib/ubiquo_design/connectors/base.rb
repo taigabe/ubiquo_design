@@ -18,7 +18,6 @@ module UbiquoDesign
         rescue NameError; end
         begin
           ::Ubiquo::DesignsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
-          ::Ubiquo::BlockTypesController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
           ::Ubiquo::ComponentsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
         rescue NameError; end
         begin

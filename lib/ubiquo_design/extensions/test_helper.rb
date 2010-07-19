@@ -29,20 +29,17 @@ module UbiquoDesign
 
       # Create a component type for testing
       #
-      # To create a component, we need the widget_options,  the component_options
-      # and an array of component_params options.
+      # To create a component, we need the widget_options and the component_options
       # 
       # A page and a block are created on-the-fly, so there is no need to create fixtures
       # for each component (a difficult task)
       #
       # You can disable component validation (useful to test new component forms
       #
-      def insert_component_in_page(widget_options, component_options, component_params = [], validate = true)
+      def insert_component_in_page(widget_options, component_options, validate = true)
         Widget.delete_all
-        widget_options.reverse_merge!(
-                                              :name => 'TestWidget', 
-                                              :is_configurable => false)
-        component, page = create_test_page(widget_options, component_options, component_params)            
+        widget_options.reverse_merge!(:name => 'TestWidget', :is_configurable => false)
+        component, page = create_test_page(widget_options, component_options)
         if validate
           assert component.save, "Component has errors (attributes: #{component.options.inspect})"
         else
@@ -51,14 +48,11 @@ module UbiquoDesign
         [component, page]
       end    
 
-      def create_test_page(widget_options, component_options, component_params)
+      def create_test_page(widget_options, component_options)
         widget = Widget.create!(widget_options)
         component_options.reverse_merge!(
                                          :widget => widget,
                                          :name => 'TestComponent')
-        component_params.each do |cp_attributes|
-          widget.component_params << ComponentParam.new(cp_attributes)
-        end
         component_model = widget_options[:subclass_type].constantize
         component = component_model.new(component_options)
         thumbnail_template = Tempfile.new("template1.png")

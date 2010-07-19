@@ -1,2 +1,0 @@
-module Ubiquo::PageTemplatesHelper
-end
