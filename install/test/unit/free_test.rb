@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class FreeTest < ActiveSupport::TestCase
-  
+
   test "should create free" do
     assert_difference 'Free.count' do
       free = create_free
@@ -17,21 +17,12 @@ class FreeTest < ActiveSupport::TestCase
   end
 
   private
-    
-  def create_free(options = {}, widget_options = {})
-    Widget.delete_all
-    widget_options.reverse_merge!({
-      :name => "Test free",
-      :key => "free", 
-      :subclass_type => "Free",
-    })  
-    widget = Widget.create!(widget_options)
-    
+
+  def create_free(options = {})
     default_options = {
-      :name => "Test free", 
+      :name => "Test free",
       :content => 'Content example',
-      :block => blocks(:one),
-      :widget => widget,      
+      :block => blocks(:one)
     }
     Free.create(default_options.merge(options))
   end

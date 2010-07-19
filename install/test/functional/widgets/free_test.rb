@@ -4,34 +4,29 @@ require 'mocha'
 class FreeGeneratorTest < ActionController::TestCase
   tests PagesController
 
-  test "free generator should run generator" do
-    component, page = insert_component
-    locals, render_options = run_generator(:free, component, {})
-    assert_equal locals[:content], component_attributes[:content], "Error on component content"
+  test "free widget should run behaviour" do
+    widget, page = create_widget(:free)
+    run_behaviour(widget)
+    assert_equal widget_attributes[:content], assigns(:content), "Error on widget content"
   end
 
   test "content generator should get show" do
-    component, page = insert_component
-    get :show, :url_name => page.url_name
+    widget, page = create_widget(:free)
+    get :show, :url => page.url_name
     assert_response :success
     assert_select "div#example", {:count => 1, :text => 'Example content'}
    end
 
   private
 
-  def component_attributes
+  def widget_attributes
     {
       :content => '<div id="example">Example content</div>',
     }
   end
-  
-  def insert_component(component_options = {}, widget_options = {})      
-    component_options.update(component_attributes)
-    widget_options.update({
-      :key => "free", 
-      :subclass_type => "Free"
-    })
-    insert_component_in_page(widget_options, component_options)
+
+  def create_widget(type, options = {})
+    insert_widget_in_page(type, widget_attributes.merge(options))
   end
 
 end

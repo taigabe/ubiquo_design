@@ -1,57 +1,53 @@
 require File.dirname(__FILE__) + '/../../../test_helper'
 
 class FreeGeneratorUbiquoTest < ActionController::TestCase
-  tests Ubiquo::ComponentsController
+  tests Ubiquo::WidgetsController
 
   test "edit new form" do
     login_as
-    component, page = insert_component({}, {}, false)
-    get :show, :page_id => page.id, 
-               :id => component.id
+    widget, page = create_widget(:free)
+    get :show, :page_id => page.id,
+               :id => widget.id
     assert_response :success
   end
-  
+
   test "edit form" do
     login_as
-    component, page = insert_component(component_attributes)
-    get :show, :page_id => page.id, 
-               :id => component.id
+    widget, page = create_widget(:free)
+    get :show, :page_id => page.id,
+               :id => widget.id
     assert_response :success
   end
 
   test "form submit" do
     login_as
-    component, page = insert_component(component_attributes)
-    xhr :post, :update, :page_id => page.id, 
-                        :id => component.id, 
-                        :component => component_attributes
+    widget, page = create_widget(:free)
+    xhr :post, :update, :page_id => page.id,
+                        :id => widget.id,
+                        :widget => widget_attributes
     assert_response :success
   end
 
   test "form submit with errors" do
     login_as
-    component, page = insert_component({}, {}, false)
-    xhr :post, :update, :page_id => page.id, 
-                        :id => component.id, 
-                        :component => {}
+    widget, page = create_widget(:free)
+    xhr :post, :update, :page_id => page.id,
+                        :id => widget.id,
+                        :widget => {}
     assert_response :success
     assert_select_rjs "error_messages"
   end
 
   private
 
-  def component_attributes
+  def widget_attributes
     {
       :content => 'Example content',
     }
   end
-  
-  def insert_component(component_options = {}, widget_options = {}, validation = true)
-    widget_options.reverse_merge!({
-      :key => "free", 
-      :subclass_type => "Free"
-    })
-    insert_component_in_page(widget_options, component_options, [], validation)      
+
+  def create_widget(type, options = {})
+    insert_widget_in_page(type, widget_attributes.merge(options))
   end
-         
+
 end
