@@ -1,0 +1,97 @@
+/*--- Maquetació ---*/
+.column_4, .column_3, .column_2, .column_1 {
+  margin: 0 1.5% 1.5% 0;
+}
+.column_4 {
+  width: 98.5%;
+}
+.column_3, .column_2, .column_1 {
+  float: left;
+}
+.column_3 {
+  width: 73.5%;
+}
+.column_2 {
+  width: 48.5%;
+}
+.column_1 {
+  width: 23.5%;
+}
+#template .draggable_target {
+  background: #E9E9E9 url(../images/ubiquo/bg_dragdrop.jpg) no-repeat center center;
+}
+#template .non_draggable_target {
+  background: #F7F7F7 url(../images/ubiquo/bg_no_dragdrop.jpg) no-repeat center center;
+}
+.top_options p {
+  margin-bottom: .4em;
+  font-size: 1.1em;
+}
+.top_options input {
+  vertical-align: middle;
+}
+ul.block_type_holder {
+  min-height: 15em;
+  padding: 1em;
+  border: .1em solid #B4B4B4;
+}
+.column_3 ul.block_type_holder, .column_2 ul.block_type_holder, .column_1 ul.block_type_holder {
+  min-height: 28em;
+}
+li.widget {
+  position: relative;
+  width: 13.9em;
+  height: 5.2em;
+  padding: 4.2em 1em 0 .7em;
+  margin: 0 auto;
+  font-size: 1em;
+  background: url(../images/ubiquo/widget.jpg) no-repeat;
+}
+ul.block_type_holder li.error { /* ie6 no accepta li.widget.error */
+                                background: url(../images/ubiquo/widget_error.jpg) no-repeat;
+}
+#sidebar li.widget {
+  width: 23em;
+  height: 4.3em;
+  padding: 1.5em 1em 0 .7em;
+  background-image: url(../images/ubiquo/long_widget.jpg);
+}
+li.widget a {
+  position: absolute;
+  top: .6em;
+}
+li.widget a.delete {
+  left: .6em;
+  width: 14px;
+  height: 15px;
+  text-indent: -5000px;
+  background: url(../images/ubiquo/trash_icon.jpg) no-repeat;
+}
+#central li.widget a.edit {
+  right: 2.4em;
+  font-size: 1.2em;
+  text-decoration: none;
+}
+li.widget a.move {
+  right: .9em;
+  width: 17px;
+  height: 17px;
+  text-indent: -5000px;
+  background: url(../images/ubiquo/cross.gif) no-repeat;
+}
+li.widget a.editor_cancel {
+  position: static;
+}
+#sidebar li.widget a.move {
+  top: 1.6em;
+  left: .3em;
+}
+#central li.widget h4 {
+  color: #572F14;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+#central li.widget form input {
+  display: inline;
+}

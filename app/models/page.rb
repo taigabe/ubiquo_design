@@ -127,23 +127,20 @@ class Page < ActiveRecord::Base
   end
 
   def self.templates
-    #TODO Implement this method with UbiquoDesign::structure
-    ["static", "home", "interior"]
+    UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten
   end
 
   def self.blocks(template = nil)
-    #TODO Implement this method with UbiquoDesign::structure
     if template
-      # UbiquoDesign::structure.get(:page_template => template)[:block_types].keys
-      ["top", "sidebar", "main"]
+      UbiquoDesign::Structure.get(:page_template => template)[:blocks].map(&:keys).flatten
     else
-      # UbiquoDesign::structure.get(:all)[:block_types].keys
-      ["top", "footer", "sidebar", "main", "main2"]
+      #TODO Implement this method with UbiquoDesign::structure
+      raise NotImplementedError
     end
   end
 
-  def widgets
-    Widget.all
+  def available_widgets
+    UbiquoDesign::Structure.get(:page_template => page_template)[:widgets].map(&:keys).flatten
   end
 
   def update_modified(value = true)

@@ -5,7 +5,7 @@
                      :confirm => t('ubiquo.design.confirm_component_removal'),
                      :html => {:class => "delete"} %>
   <a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.component_move') %></a>
-  <% if component.widget.is_configurable? %>
+  <% if component.is_configurable? %>
     <%= uhook_link_to_edit_component(component) %>
   <% end %>
   <div class="wrap">

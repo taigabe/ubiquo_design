@@ -47,7 +47,7 @@
 #
 #And on the view:
 #
-#  <% @last_news.each do |news| %>
+#  <% @news.each do |news| %>
 #    <p><%= news.body %></p>
 #  <% end %>
 #

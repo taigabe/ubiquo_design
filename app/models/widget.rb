@@ -28,4 +28,10 @@ class Widget < ActiveRecord::Base
     self.allowed_options_storage ||= []
   end
 
+  # Returns true if the component has editable options
+  def is_configurable?
+    #TODO
+    true
+  end
+
 end

@@ -1,23 +1,24 @@
 class Ubiquo::ComponentsController < UbiquoAreaController
   before_filter :load_page
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
-  
+
   helper "ubiquo/designs"
   def show
     @component = uhook_find_component
-      
+
     template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@component.widget.key)
     render :file => template_path, :locals => {:page => @page, :component => @component}
   end
 
   def create
-    @widget = Widget.find(params[:widget])
     @block = Block.find(params[:block])
 
-    @component = @widget.subclass_type.constantize.new
+    @component = params[:widget].classify.constantize.new
+    raise "#{params[:widget]} is not a widget" unless @component.is_a? Widget
+
     @component.block = @block
-    @component.widget = @widget
-    @component.name = @widget.name
+#    @component.widget = 1 # TODO fix
+#    @component.name = 'a' # TODO fix #@widget.name
     @component = uhook_prepare_component(@component)
     # TODO: don't do this!!
     @component.save_without_validation
@@ -34,8 +35,8 @@ class Ubiquo::ComponentsController < UbiquoAreaController
                                                         change_order_ubiquo_page_design_components_path(@page),
                                                         [1,2])
           page.sortable id, opts
-          page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @widget.is_configurable?
-          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+          page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component.is_configurable?
+          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
                                          :locals => { :page => @page.reload })
           page.call "update_error_on_components", @page.wrong_components_ids
         end
@@ -49,7 +50,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
     uhook_destroy_component(@component)
 
     #TODO: Afegir el nou component al block de la pagina
-    respond_to do |format|    
+    respond_to do |format|
       format.html { redirect_to(ubiquo_page_design_path(@page))}
       format.js {
         render :update do |page|
@@ -57,14 +58,14 @@ class Ubiquo::ComponentsController < UbiquoAreaController
           page.delay(1) do
             page.remove "widget_#{@component.id}"
           end
-          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
                                          :locals => { :page => @page.reload })
           page.call "update_error_on_components", @page.wrong_components_ids
         end
       }
     end
   end
-  
+
   def update
     @component = uhook_update_component
     if @component.valid?
@@ -74,7 +75,7 @@ class Ubiquo::ComponentsController < UbiquoAreaController
           render :update do |page|
             self.uhook_extra_rjs_on_update(page, true) do |page|
               page << 'myLightWindow.deactivate();'
-              page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
+              page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
                 :locals => { :page => @page.reload })
               page.call "update_error_on_components", @page.wrong_components_ids
             end
@@ -119,9 +120,9 @@ class Ubiquo::ComponentsController < UbiquoAreaController
       format.html { redirect_to(ubiquo_page_design_path(@page))}
       format.js {
         render :update do |page|
-          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar', 
-                                         :locals => { :page => @page.reload })     
-          page.call "update_error_on_components", @page.wrong_components_ids   
+          page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
+                                         :locals => { :page => @page.reload })
+          page.call "update_error_on_components", @page.wrong_components_ids
         end
       }
     end
