@@ -3,7 +3,7 @@ module UbiquoDesign
     class Standard < Base
       
       
-      module Component
+      module Widget
         def self.included(klass)
           klass.send :belongs_to, :block
         end
@@ -24,20 +24,20 @@ module UbiquoDesign
         
         module InstanceMethods
           
-          def uhook_publish_block_components(block, new_block)
-            block.components.each do |component|
-              new_component = component.clone
-              new_component.block = new_block
-              new_component.save_without_validation!
-              yield component, new_component
-              new_component.save! # must validate now
+          def uhook_publish_block_widgets(block, new_block)
+            block.widgets.each do |widget|
+              new_widget = widget.clone
+              new_widget.block = new_block
+              new_widget.save_without_validation!
+              yield widget, new_widget
+              new_widget.save! # must validate now
             end
           end
-          def uhook_publish_component_asset_relations(component, new_component)
-            if component.respond_to?(:asset_relations)
-              component.asset_relations.each do |asset_relation|
+          def uhook_publish_widget_asset_relations(widget, new_widget)
+            if widget.respond_to?(:asset_relations)
+              widget.asset_relations.each do |asset_relation|
                 new_asset_relation = asset_relation.clone
-                new_asset_relation.related_object = new_component
+                new_asset_relation.related_object = new_widget
                 new_asset_relation.save!
               end
             end
@@ -65,16 +65,16 @@ module UbiquoDesign
           klass.send(:helper, Helper)
         end
         module Helper
-          def uhook_link_to_edit_component(component)
-            link_to t('ubiquo.design.component_edit'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}"
+          def uhook_link_to_edit_widget(widget)
+            link_to t('ubiquo.design.widget_edit'), ubiquo_page_design_widget_path(@page, widget), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=widget_edit_form,lightwindow_width=610", :id => "edit_widget_#{widget.id}"
           end
-          def uhook_load_components(block)
-            block.components
+          def uhook_load_widgets(block)
+            block.widgets
           end
         end        
       end
       
-      module UbiquoComponentsController
+      module UbiquoWidgetsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
@@ -82,32 +82,32 @@ module UbiquoDesign
         end
         module InstanceMethods
           
-          # returns the component for the lightwindow. 
+          # returns the widget for the lightwindow.
           # Will be rendered in their ubiquo/_form view
-          def uhook_find_component
-            @component = ::Component.find(params[:id])
+          def uhook_find_widget
+            @widget = ::Widget.find(params[:id])
           end
           
-          # modify the created component and return it. It's executed in drag-drop.
-          def uhook_prepare_component(component)
-            component
+          # modify the created widget and return it. It's executed in drag-drop.
+          def uhook_prepare_widget(widget)
+            widget
          end
           
-          # Destroys a component
-          def uhook_destroy_component(component)
-            component.destroy
+          # Destroys a widget
+          def uhook_destroy_widget(widget)
+            widget.destroy
           end
           
-          # updates a component. 
-          # Fields can be found in params[:component] and component_id in params[:id]
-          # must returns the updated component
-          def uhook_update_component
-            component = ::Component.find(params[:id])
-            params[:component].each do |field, value|
-              component.send("#{field}=", value)
+          # updates a widget.
+          # Fields can be found in params[:widget] and widget_id in params[:id]
+          # must returns the updated widget
+          def uhook_update_widget
+            widget = ::Widget.find(params[:id])
+            params[:widget].each do |field, value|
+              widget.send("#{field}=", value)
             end
-            component.save
-            component
+            widget.save
+            widget
           end
         end
         module Helper
@@ -246,7 +246,7 @@ module UbiquoDesign
         
         module InstanceMethods
           def uhook_collect_widgets(b, &block)
-            b.components.collect(&block)
+            b.widgets.collect(&block)
           end
           
           def uhook_root_menu_items
@@ -274,8 +274,8 @@ module UbiquoDesign
               yield t
             end
           end
-          def uhook_create_components_table
-            create_table :components do |t|
+          def uhook_create_widgets_table
+            create_table :widgets do |t|
               yield t
             end
           end

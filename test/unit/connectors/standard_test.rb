@@ -6,15 +6,15 @@ module Connectors
       UbiquoDesign::Connectors::Standard.load!
     end
     
-    test "should publish components" do
+    test "should publish widgets" do
       page = create_page
       page.blocks << pages(:one).blocks
       assert page.pending_publish?
       assert !page.is_published?
       assert_nil Page.published.find_by_url_name(page.url_name)
-      num_components = page.blocks.map(&:components).flatten.size
-      assert num_components > 0
-      assert_difference "Component.count",num_components do # cloned components
+      num_widgets = page.blocks.map(&:widgets).flatten.size
+      assert num_widgets > 0
+      assert_difference "Widget.count",num_widgets do # cloned widgets
         assert page.publish
       end
     end
@@ -25,22 +25,22 @@ module Connectors
       assert_equal pages(:one), PagesController.new.uhook_load_page
     end
     
-    test "components_controller find component" do
-      c = components(:one)
-      Ubiquo::ComponentsController.any_instance.stubs(:params => {:id => c.id})
-      assert_equal c, Ubiquo::ComponentsController.new.uhook_find_component
+    test "widgets_controller find widget" do
+      c = widgets(:one)
+      Ubiquo::WidgetsController.any_instance.stubs(:params => {:id => c.id})
+      assert_equal c, Ubiquo::WidgetsController.new.uhook_find_widget
     end
     
-    test "components_controller destroy component" do
-      assert_difference "Component.count", -1 do
-        assert Ubiquo::ComponentsController.new.uhook_destroy_component(components(:one))
+    test "widgets_controller destroy widget" do
+      assert_difference "Widget.count", -1 do
+        assert Ubiquo::WidgetsController.new.uhook_destroy_widget(widgets(:one))
       end
     end
     
-    test "components_controller update component" do
-      c = components(:one)
-      Ubiquo::ComponentsController.any_instance.stubs(:params => {:id => c.id, :component => {:name => "test"}})
-      assert_equal "test", Ubiquo::ComponentsController.new.uhook_update_component.name
+    test "widgets_controller update widget" do
+      c = widgets(:one)
+      Ubiquo::WidgetsController.any_instance.stubs(:params => {:id => c.id, :widget => {:name => "test"}})
+      assert_equal "test", Ubiquo::WidgetsController.new.uhook_update_widget.name
     end
     
     test "menu_items_controller find menu items" do 
@@ -134,9 +134,9 @@ module Connectors
       ActiveRecord::Migration.uhook_create_pages_table
     end
 
-    test "create components migration" do
-      ActiveRecord::Migration.expects(:create_table).with(:components).once
-      ActiveRecord::Migration.uhook_create_components_table
+    test "create widgets migration" do
+      ActiveRecord::Migration.expects(:create_table).with(:widgets).once
+      ActiveRecord::Migration.uhook_create_widgets_table
     end
     
     private 

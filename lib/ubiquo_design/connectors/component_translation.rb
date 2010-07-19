@@ -1,6 +1,6 @@
 module UbiquoDesign
   module Connectors
-    class ComponentTranslation < Base
+    class WidgetTranslation < Base
       
       def self.load!
         Standard.load!
@@ -9,7 +9,7 @@ module UbiquoDesign
         super
       end
       
-      module Component
+      module Widget
         def self.included(klass)
           klass.send :belongs_to, :block, :translation_shared => true
           klass.send :translatable, :options
@@ -38,25 +38,25 @@ module UbiquoDesign
         
         def self.included(klass)
           klass.send(:include, self::InstanceMethods)
-          ComponentTranslation.register_uhooks klass, InstanceMethods
+          WidgetTranslation.register_uhooks klass, InstanceMethods
         end
         module InstanceMethods
           
-          def uhook_publish_block_components(block, new_block)
+          def uhook_publish_block_widgets(block, new_block)
             mapped_content_ids = {}
-            block.components.each do |component|
-              next_content_id = mapped_content_ids[component.content_id]
+            block.widgets.each do |widget|
+              next_content_id = mapped_content_ids[widget.content_id]
               
-              new_component = component.clone
-              new_component.block = new_block
-              new_component.content_id = next_content_id
-              new_component.save_without_validation!
+              new_widget = widget.clone
+              new_widget.block = new_block
+              new_widget.content_id = next_content_id
+              new_widget.save_without_validation!
               
-              mapped_content_ids[component.content_id] = new_component.content_id
+              mapped_content_ids[widget.content_id] = new_widget.content_id
               
-              yield component, new_component
+              yield widget, new_widget
               
-              new_component.save! # must validate now
+              new_widget.save! # must validate now
             end
           end
         end
@@ -67,66 +67,66 @@ module UbiquoDesign
           klass.send(:helper, Helper)
         end
         module Helper
-          def uhook_link_to_edit_component(component)
-            if component.locale == current_locale
-              link_to t('ubiquo.design.component_edit'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}"
+          def uhook_link_to_edit_widget(widget)
+            if widget.locale == current_locale
+              link_to t('ubiquo.design.widget_edit'), ubiquo_page_design_widget_path(@page, widget), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=widget_edit_form,lightwindow_width=610", :id => "edit_widget_#{widget.id}"
             else
-              link_to t('ubiquo.design.component_translate'), ubiquo_page_design_component_path(@page, component), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=component_edit_form,lightwindow_width=610", :id => "edit_component_#{component.id}"
+              link_to t('ubiquo.design.widget_translate'), ubiquo_page_design_widget_path(@page, widget), :class => "edit lightwindow", :type => "page", :params => "lightwindow_form=widget_edit_form,lightwindow_width=610", :id => "edit_widget_#{widget.id}"
             end
           end
-          def uhook_load_components(block)
-            block.components.locale(current_locale, :ALL)
+          def uhook_load_widgets(block)
+            block.widgets.locale(current_locale, :ALL)
           end
         end        
       end
       
-      module UbiquoComponentsController
+      module UbiquoWidgetsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          ComponentTranslation.register_uhooks klass, InstanceMethods
+          WidgetTranslation.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
         module InstanceMethods
           
-          # returns the component for the lightwindow. 
+          # returns the widget for the lightwindow.
           # Will be rendered in their ubiquo/_form view
-          def uhook_find_component
-            @component = ::Component.find(params[:id])
+          def uhook_find_widget
+            @widget = ::Widget.find(params[:id])
           end
           
-          # modify the created component and return it. It's executed in drag-drop.
-          def uhook_prepare_component(component)
-            component.locale = component.widget.is_configurable? ? current_locale : 'any'
-            component
+          # modify the created widget and return it. It's executed in drag-drop.
+          def uhook_prepare_widget(widget)
+            widget.locale = widget.widget.is_configurable? ? current_locale : 'any'
+            widget
          end
           
-          # Destroys a component
-          def uhook_destroy_component(component)
-            component.destroy_content
+          # Destroys a widget
+          def uhook_destroy_widget(widget)
+            widget.destroy_content
           end
           
-          # updates a component. 
-          # Fields can be found in params[:component] and component_id in params[:id]
-          # must returns the updated component
-          def uhook_update_component
-            component = ::Component.find(params[:id])
-            if current_locale != component.locale
-              component = component.translate(current_locale, :copy_all => true) 
-              component.locale = current_locale
+          # updates a widget.
+          # Fields can be found in params[:widget] and widget_id in params[:id]
+          # must returns the updated widget
+          def uhook_update_widget
+            widget = ::Widget.find(params[:id])
+            if current_locale != widget.locale
+              widget = widget.translate(current_locale, :copy_all => true)
+              widget.locale = current_locale
             end
-            params[:component].each do |field, value|
-              component.send("#{field}=", value)
+            params[:widget].each do |field, value|
+              widget.send("#{field}=", value)
             end
-            component.save
-            component
+            widget.save
+            widget
           end
         end
         module Helper
           def uhook_extra_rjs_on_update(page, valid)
             yield page
-            if @component.id
-              page.replace "edit_component_#{params[:id]}", uhook_link_to_edit_component(@component)
-              page << "myLightWindow._processLink($('edit_component_#{@component.id}'));" if @component.widget.is_configurable?
+            if @widget.id
+              page.replace "edit_widget_#{params[:id]}", uhook_link_to_edit_widget(@widget)
+              page << "myLightWindow._processLink($('edit_widget_#{@widget.id}'));" if @widget.widget.is_configurable?
             end
           end
         end
@@ -135,7 +135,7 @@ module UbiquoDesign
       module UbiquoMenuItemsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          ComponentTranslation.register_uhooks klass, InstanceMethods
+          WidgetTranslation.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
         module InstanceMethods
@@ -230,12 +230,12 @@ module UbiquoDesign
         
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          ComponentTranslation.register_uhooks klass, InstanceMethods
+          WidgetTranslation.register_uhooks klass, InstanceMethods
         end
         
         module InstanceMethods
           def uhook_collect_widgets(b, &block)
-            b.components.locale(current_locale).collect(&block)
+            b.widgets.locale(current_locale).collect(&block)
           end
           
           def uhook_root_menu_items
@@ -249,12 +249,12 @@ module UbiquoDesign
         
         def self.included(klass)
           klass.send(:extend, ClassMethods)
-          ComponentTranslation.register_uhooks klass, ClassMethods
+          WidgetTranslation.register_uhooks klass, ClassMethods
         end
         
         module ClassMethods
-          def uhook_create_components_table
-            create_table :components, :translatable => true do |t|
+          def uhook_create_widgets_table
+            create_table :widgets, :translatable => true do |t|
               yield t
             end
           end

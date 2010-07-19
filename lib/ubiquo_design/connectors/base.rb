@@ -8,7 +8,7 @@ module UbiquoDesign
           ::Page.send(:include, self::Page) if self.constants.include?("Page")
         rescue NameError; end
         begin
-          ::Component.send(:include, self::Component) if self.constants.include?("Component")
+          ::Widget.send(:include, self::Widget) if self.constants.include?("Widget")
         rescue NameError; end
         begin
           ::MenuItem.send(:include, self::MenuItem) if self.constants.include?("MenuItem")
@@ -18,10 +18,10 @@ module UbiquoDesign
         rescue NameError; end
         begin
           ::Ubiquo::DesignsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
-          ::Ubiquo::ComponentsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
+          ::Ubiquo::WidgetsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
         rescue NameError; end
         begin
-          ::Ubiquo::ComponentsController.send(:include, self::UbiquoComponentsController) if self.constants.include?("UbiquoComponentsController")
+          ::Ubiquo::WidgetsController.send(:include, self::UbiquoWidgetsController) if self.constants.include?("UbiquoWidgetsController")
         rescue NameError; end
         begin
           ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController) if self.constants.include?("UbiquoMenuItemsController")

@@ -1,81 +1,81 @@
 require File.dirname(__FILE__) + "/../../../../../../test/test_helper.rb"
 
 module Connectors
-  class ComponentTranslationTest < ActiveSupport::TestCase
-    # only tests that if component_translation connector is loaded
-    if  Ubiquo::Config.context(:ubiquo_design).get(:connector) == "component_translation"
-      test "components are translatable" do 
-        assert Component.is_translatable?
+  class WidgetTranslationTest < ActiveSupport::TestCase
+    # only tests that if widget_translation connector is loaded
+    if  Ubiquo::Config.context(:ubiquo_design).get(:connector) == "widget_translation"
+      test "widgets are translatable" do
+        assert Widget.is_translatable?
       end
       
-      test "create components migration" do
-        ActiveRecord::Migration.expects(:create_table).with(:components, :translatable => true).once
-        ActiveRecord::Migration.uhook_create_components_table
+      test "create widgets migration" do
+        ActiveRecord::Migration.expects(:create_table).with(:widgets, :translatable => true).once
+        ActiveRecord::Migration.uhook_create_widgets_table
       end
       
-      test "publication must copy component translations and their asset relations" do
+      test "publication must copy widget translations and their asset relations" do
         page = create_page
         page.blocks << pages(:one).blocks
         assert_equal page.is_public?, false
         assert_equal page.is_published?, false
-        assert_raises ActiveRecord::RecordNotFound do
+        assert_raise ActiveRecord::RecordNotFound do
           Page.public.find_by_url_name(page.url_name)          
         end
-        components = page.blocks.map(&:components).flatten
-        num_components = components.size
-        assert num_components > 1
-        components.each_with_index do |component, i|
-          component.content_id = 1
-          component.locale = "loc#{i}"
-          assert component.save
+        widgets = page.blocks.map(&:widgets).flatten
+        num_widgets = widgets.size
+        assert num_widgets > 1
+        widgets.each_with_index do |widget, i|
+          widget.content_id = 1
+          widget.locale = "loc#{i}"
+          assert widget.save
         end
-        assert_difference "Component.count",num_components do # cloned components
+        assert_difference "Widget.count",num_widgets do # cloned widgets
           assert page.publish
         end
       end
       
-      test "components_controller find component" do
-        c = components(:one)
+      test "widgets_controller find widget" do
+        c = widgets(:one)
         c.update_attribute :locale, 'es'
-        Ubiquo::ComponentsController.any_instance.stubs(
+        Ubiquo::WidgetsController.any_instance.stubs(
           :params => {:id => c.id},
           :session => {:locale => 'es'}
           )
-        assert_equal c, Ubiquo::ComponentsController.new.uhook_find_component
+        assert_equal c, Ubiquo::WidgetsController.new.uhook_find_widget
       end
-      test "components_controller dont find component" do
-        c = components(:one)
+      test "widgets_controller dont find widget" do
+        c = widgets(:one)
         c.update_attribute :locale, 'en'
-        Ubiquo::ComponentsController.any_instance.stubs(
+        Ubiquo::WidgetsController.any_instance.stubs(
           :params => {:id => c.id},
           :session => {:locale => 'es'}
           )
         assert_raise ActiveRecord::RecordNotFound do
-          Ubiquo::ComponentsController.new.uhook_find_component
+          Ubiquo::WidgetsController.new.uhook_find_widget
         end
       end
       
-      test "component_controller must set locale on the prepare component with configurable component" do 
-        c = components(:one)
+      test "widget_controller must set locale on the prepare widget with configurable widget" do
+        c = widgets(:one)
         c.widget.update_attribute :is_configurable, true
-        Ubiquo::ComponentsController.any_instance.stubs(
+        Ubiquo::WidgetsController.any_instance.stubs(
           :session => {:locale => 'es'},
           :params => {}
           )
         assert_equal nil, c.locale
-        Ubiquo::ComponentsController.new.uhook_prepare_component(c)
+        Ubiquo::WidgetsController.new.uhook_prepare_widget(c)
         assert_equal 'es', c.locale
       end
       
-      test "component_controller must set locale on the prepare component with non configurable component" do 
-        c = components(:one)
+      test "widget_controller must set locale on the prepare widget with non configurable widget" do
+        c = widgets(:one)
         c.widget.update_attribute :is_configurable, false
-        Ubiquo::ComponentsController.any_instance.stubs(
+        Ubiquo::WidgetsController.any_instance.stubs(
           :session => {:locale => 'es'},
           :params => {}
           )
         assert_equal nil, c.locale
-        Ubiquo::ComponentsController.new.uhook_prepare_component(c)
+        Ubiquo::WidgetsController.new.uhook_prepare_widget(c)
         assert_equal 'any', c.locale
       end
     end
