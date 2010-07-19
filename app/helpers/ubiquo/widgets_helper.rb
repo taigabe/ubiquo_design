@@ -1,4 +1,4 @@
-module Ubiquo::ComponentsHelper
+module Ubiquo::WidgetsHelper
   def component_form(page, component, &block)
     form_remote_for(
       :component, 
