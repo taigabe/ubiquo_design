@@ -1,28 +1,28 @@
 module Ubiquo::WidgetsHelper
-  def component_form(page, component, &block)
+  def widget_form(page, widget, &block)
     form_remote_for(
-      :component, 
-      component,
-      :url => ubiquo_page_design_component_path(page, component),
+      :widget,
+      widget,
+      :url => ubiquo_page_design_widget_path(page, widget),
       :before => "killeditor()",
       :html => {  
         :method => :put,
-        :name => "component_edit_form"
+        :name => "widget_edit_form"
       }, &block)
   end
   
-  def component_submit
+  def widget_submit
     %{
       <p class="form_buttons">
         <input type="submit" class="button" value="%s" />
       </p>
     } % [t('ubiquo.design.save')]
   end
-  def component_header(component)
+  def widget_header(widget)
     %{
       <h3>%s</h3>
       <a href="#" class="lightwindow_action close" rel="deactivate">%s</a>
       <div id="error_messages"></div>
-    } % [(t('ubiquo.design.editing_component', :name => component.name)), t('ubiquo.design.close_component')]
+    } % [(t('ubiquo.design.editing_widget', :name => widget.name)), t('ubiquo.design.close_widget')]
   end
 end

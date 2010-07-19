@@ -1,15 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  id: 10000
-  name: Free
-  key: free
-  subclass_type: Free
-  is_configurable: false
+  options: "--- \n:content: content example\n"
+  name: "name"
+  block_id: 11000
+  type: Free
+  position: 1
 
 two:
-  id: 10001
-  name: Banner
-  key: banner
-  subclass_type: TestComponent
-  is_configurable: true
+  options: "--- \n:content: content example2\n"
+  name: "name"
+  block_id: 11001
+  type: Free
+  position: 2

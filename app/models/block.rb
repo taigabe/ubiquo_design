@@ -3,7 +3,7 @@ class Block < ActiveRecord::Base
 
   has_many :block_uses, :class_name => 'Block', :foreign_key => 'shared_id'
   belongs_to :shared, :class_name => 'Block', :foreign_key => 'shared_id'
-  has_many :components, :dependent => :destroy, :order => 'components.position ASC'
+  has_many :widgets, :dependent => :destroy, :order => 'widgets.position ASC'
 # has_many :widgets
   belongs_to :page
   after_save :update_page

@@ -1,14 +1,16 @@
 class CreateWidgets < ActiveRecord::Migration
   def self.up
-    create_table :widgets do |t|
+    uhook_create_widgets_table do |t|
       t.string :name
-      t.string :key
-      t.boolean :is_configurable
-      t.string :subclass_type
+      t.text :options
+      t.integer :block_id
+      t.integer :position
+      t.string :type
 
       t.timestamps
     end
-    add_index :widgets, :key
+    add_index :widgets, :block_id
+    add_index :widgets, :type
   end
 
   def self.down

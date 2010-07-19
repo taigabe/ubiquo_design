@@ -6,20 +6,20 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
   def test_should_add_widget_through_html
     login_as
     assert_difference('Widget.count') do
-      post :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => widgets(:one)
+      post :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => widgets(:one).class.to_s
     end
     assert_redirected_to(ubiquo_page_design_path(pages(:one_design)))
     widget = assigns(:widget)
     assert_not_nil widget
     assert_equal widget.block, pages(:one_design).blocks.first
-    assert_equal widget.widget, widgets(:one)
-    assert_equal widget.widget.name, widget.name
+    assert_equal widget.key, widgets(:one).key
+    assert_equal widget.name, Widget.default_name_for(widgets(:one).key)
   end
 
   def test_should_add_editable_widget_through_js
     login_as
-    assert_not_nil editable_widget = Widget.find_by_is_configurable(true)
-    assert_not_nil not_editable_widget = Widget.find_by_is_configurable(false)
+    assert_not_nil editable_widget = pages(:one_design).available_widgets
+    assert_not_nil not_editable_widget = pages(:one_design).available_widgets.select{|widget| widget.configurable?} # TODO this or similar
     [editable_widget, not_editable_widget].each do |widget|
       assert_difference('Widget.count') do
         xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => widget
@@ -119,8 +119,8 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
   
   def test_shouldnt_change_order_without_permission
     login_with_permission
-    block_type = pages(:one_design).page_template.block_types.first
-    block = pages(:one_design).all_blocks_as_hash[block_type.key]
+    block_type = Page.blocks(pages(:one_design).page_template).first
+    block = pages(:one_design).all_blocks_as_hash[block_type]
     assert_not_equal block.id, block.block_type.id
     Widget.update_all ["block_id = ?", block.id]
     assert_operator block.widgets.size, :>, 1

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../../../../../test/test_helper.rb"
+require File.dirname(__FILE__) + "/../test_helper.rb"
 
 class WidgetTest < ActiveSupport::TestCase
   use_ubiquo_fixtures
@@ -17,33 +17,69 @@ class WidgetTest < ActiveSupport::TestCase
     end
   end
 
-    def test_should_require_key
-      assert_no_difference "Widget.count" do
-        widget = create_widget :key => ""
-        assert widget.errors.on(:key)
-      end
-    end
-    
-
-    def test_should_require_subclass_type
-      assert_no_difference "Widget.count" do
-        widget = create_widget :subclass_type => ""
-        assert widget.errors.on(:subclass_type)
-      end
-    end
-  
-  def test_should_have_unique_key
-    assert_difference "Widget.count", 1 do
-      widget1 = create_widget :key => "unique_key"
-      widget2 = create_widget :key => "unique_key"
-      
-      assert !widget1.new_record?, "#{widget1.errors.full_messages.to_sentence}"
-      assert widget2.errors.on(:key)
+  def test_should_require_block
+    assert_no_difference "Widget.count" do
+      widget = create_widget :block_id => nil
+      assert widget.errors.on(:block)
     end
   end
-  
+
+  def test_should_auto_increment_position
+    assert_difference "Widget.count", 2 do
+      widget = create_widget :position => nil
+      assert !widget.new_record?, "#{widget.errors.full_messages.to_sentence}"
+      assert_not_equal widget.position, nil
+      position = widget.position
+      widget = create_widget
+      assert !widget.new_record?, "#{widget.errors.full_messages.to_sentence}"
+      assert_equal widget.position, position+1
+    end
+  end
+
+  def test_should_create_options_for_children
+    assert_difference "Widget.count",2 do
+      #CREATION
+      widget = create_widget
+      assert !widget.new_record?, "#{widget.errors.full_messages.to_sentence}"
+      assert widget.respond_to?(:title)
+      assert widget.respond_to?(:description)
+
+      #CREATION WITH OPTIONS
+      widget = create_widget :title => "title", :description => "desc"
+      assert !widget.new_record?, "#{widget.errors.full_messages.to_sentence}"
+      assert widget.title === "title"
+      assert widget.description === "desc"
+
+      #FINDING
+      widget = Widget.find(widget.id)
+      assert widget.title === "title"
+      assert widget.description === "desc"
+
+      #MODIFY
+      widget.title = "new title"
+      assert widget.save
+      assert Widget.find(widget.id).title === "new title"
+    end
+  end
+
+  def test_should_set_is_modified_attribute_for_page_on_widget_update
+    widget = widgets(:one)
+    page = widget.block.page
+    assert !page.reload.is_modified?
+    assert widget.save
+    assert page.reload.is_modified?
+  end
+
+  def test_should_set_is_modified_attribute_for_page_on_widget_delete
+    widget = widgets(:one)
+    page = widget.block.page
+    assert !page.reload.is_modified?
+    assert widget.destroy
+    assert page.reload.is_modified?
+  end
+
   private
   def create_widget(options = {})
-    Widget.create({:name => "Generator A", :key => "gen_a", :subclass_type => "TestComponent", :is_configurable => false}.merge!(options))
+    TestWidget.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))
   end
 end

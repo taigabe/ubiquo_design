@@ -6,7 +6,7 @@ class Ubiquo::WidgetsController < UbiquoAreaController
   def show
     @widget = uhook_find_widget
 
-    template_path = "%s/views/ubiquo/_form.html.erb" % generator_directory(@widget.widget.key)
+    template_path = "/widgets/%s/ubiquo/_form.html.erb" % @widget.key
     render :file => template_path, :locals => {:page => @page, :widget => @widget}
   end
 
@@ -17,8 +17,7 @@ class Ubiquo::WidgetsController < UbiquoAreaController
     raise "#{params[:widget]} is not a widget" unless @widget.is_a? Widget
 
     @widget.block = @block
-#    @widget.widget = 1 # TODO fix
-#    @widget.name = 'a' # TODO fix #@widget.name
+    @widget.name = Widget.default_name_for params[:widget]
     @widget = uhook_prepare_widget(@widget)
     # TODO: don't do this!!
     @widget.save_without_validation

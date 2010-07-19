@@ -17,15 +17,15 @@ class Page < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :url_name, :if => lambda{|page| page.url_name.nil?}
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
-  validates_uniqueness_of :url_name, 
+  validates_uniqueness_of :url_name,
                           :scope => [:published_id],
                           :if => Proc.new { |page| page.pending_publish? },
                           :allow_blank => true
   validates_presence_of :page_template
 
-  named_scope :published, 
+  named_scope :published,
               :conditions => ["pages.published_id IS NULL AND pages.pending_publish = ?", false]
-  named_scope :drafts, 
+  named_scope :drafts,
               :conditions => ["pages.published_id IS NOT NULL OR pages.pending_publish = ?", true]
 
   # Returns the most appropiate published page for that url, raises an
@@ -43,10 +43,10 @@ class Page < ActiveRecord::Base
     end
   end
 
-  # filters: 
+  # filters:
   #   :text: String to search in page name
   #
-  # options: find_options  
+  # options: find_options
   def self.filtered_search(filters = {}, options = {})
     scopes = create_scopes(filters) do |filter, value|
       case filter
@@ -54,14 +54,18 @@ class Page < ActiveRecord::Base
           { :conditions => ["upper(pages.name) LIKE upper(?)", "%#{value}%"] }
       end
     end
-    
+
     apply_find_scopes(scopes) do
       find(:all, options)
     end
   end
 
-  def clear_published_page   
+  def clear_published_page
     published.destroy unless pending_publish?
+  end
+
+  def all_blocks_as_hash
+    blocks.as_hash
   end
 
   def publish
@@ -76,8 +80,8 @@ class Page < ActiveRecord::Base
           new_block = block.clone
           new_block.page = published_page
           new_block.save!
-          uhook_publish_block_components(block, new_block) do |component, new_component|
-            uhook_publish_component_asset_relations(component, new_component)
+          uhook_publish_block_widgets(block, new_block) do |widget, new_widget|
+            uhook_publish_widget_asset_relations(widget, new_widget)
           end
         end
         self.update_attributes(:is_modified => false,
@@ -97,9 +101,9 @@ class Page < ActiveRecord::Base
       self.draft.update_attributes(:pending_publish => true)
     end
   end
-  
-  def wrong_components_ids
-    self.blocks.map(&:components).flatten.reject(&:valid?).map(&:id)
+
+  def wrong_widgets_ids
+    self.blocks.map(&:widgets).flatten.reject(&:valid?).map(&:id)
   end
 
   def is_draft?
@@ -127,12 +131,12 @@ class Page < ActiveRecord::Base
   end
 
   def self.templates
-    UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten
+    UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten rescue []
   end
 
   def self.blocks(template = nil)
     if template
-      UbiquoDesign::Structure.get(:page_template => template)[:blocks].map(&:keys).flatten
+      UbiquoDesign::Structure.get(:page_template => template)[:blocks].map(&:keys).flatten rescue []
     else
       #TODO Implement this method with UbiquoDesign::structure
       raise NotImplementedError
@@ -163,5 +167,5 @@ class Page < ActiveRecord::Base
       self.blocks << Block.create(:block_type => block_type)
     end
   end
-    
+
 end

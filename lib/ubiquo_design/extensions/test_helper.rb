@@ -1,8 +1,8 @@
 module UbiquoDesign
   module Extensions
     module TestHelper
-      def component_form_mock
-        def @controller.render_component_form(*args)
+      def widget_form_mock
+        def @controller.render_widget_form(*args)
           render :inline => "Hi"
         end
       end
@@ -17,9 +17,9 @@ module UbiquoDesign
         end
       end
       
-      def run_generator(name, component, options)
+      def run_generator(name, widget, options)
         @controller.stubs(:session).returns(@controller.request.session)
-        @controller.send(name.to_s+"_generator", component, options)
+        @controller.send(name.to_s+"_generator", widget, options)
       end
       
       def run_menu_generator(name, options)
@@ -27,34 +27,34 @@ module UbiquoDesign
         @controller.send(name.to_s+"_generator", options)
       end
 
-      # Create a component type for testing
+      # Create a widget type for testing
       #
-      # To create a component, we need the widget_options and the component_options
+      # To create a widget, we need the widget_options and the widget_options
       # 
       # A page and a block are created on-the-fly, so there is no need to create fixtures
-      # for each component (a difficult task)
+      # for each widget (a difficult task)
       #
-      # You can disable component validation (useful to test new component forms
+      # You can disable widget validation (useful to test new widget forms
       #
-      def insert_component_in_page(widget_options, component_options, validate = true)
+      def insert_widget_in_page(widget_options, temp_options, validate = true)
         Widget.delete_all
         widget_options.reverse_merge!(:name => 'TestWidget', :is_configurable => false)
-        component, page = create_test_page(widget_options, component_options)
+        widget, page = create_test_page(widget_options, widget_options)
         if validate
-          assert component.save, "Component has errors (attributes: #{component.options.inspect})"
+          assert widget.save, "Widget has errors (attributes: #{widget.options.inspect})"
         else
-          component.save_without_validation!
+          widget.save_without_validation!
         end
-        [component, page]
+        [widget, page]
       end    
 
-      def create_test_page(widget_options, component_options)
+      def create_test_page(widget_options, temp_options)
         widget = Widget.create!(widget_options)
-        component_options.reverse_merge!(
+        widget_options.reverse_merge!(
                                          :widget => widget,
-                                         :name => 'TestComponent')
-        component_model = widget_options[:subclass_type].constantize
-        component = component_model.new(component_options)
+                                         :name => 'TestWidget')
+        widget_model = widget_options[:subclass_type].constantize
+        widget = widget_model.new(widget_options)
         thumbnail_template = Tempfile.new("template1.png")
         page_template = PageTemplate.create!(:name => "Test template", 
                                              :key => 'test', 
@@ -69,9 +69,9 @@ module UbiquoDesign
           :published_id => nil,
         }
         page = Page.create!(default_page_options)
-        component.block = block 
+        widget.block = block
         page.blocks << block
-        [component, page]
+        [widget, page]
       end
     end
   end
