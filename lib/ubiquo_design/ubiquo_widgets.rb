@@ -14,7 +14,7 @@
 #
 #This will create the views directory <tt>app/views/widgets/last_news</tt>, the widget main file <tt>app/widgets/last_news.rb</tt>, the associated model and all the corresponding tests. The file <tt>last_news.rb</tt> looks like this:
 #
-#  Widget.behaviour :last_news do |component|
+#  Widget.behaviour :last_news do |widget|
 #    ...
 #  end
 #
@@ -41,8 +41,8 @@
 #
 #Edit <tt>widgets/last_news.rb</tt>:
 #
-#  Widget.behaviour :last_news do |component|
-#    @news = component.last_news(params[:max_news])
+#  Widget.behaviour :last_news do |widget|
+#    @news = widget.last_news(params[:max_news])
 #  end
 #
 #And on the view:
@@ -58,7 +58,7 @@
 #  <% widget_form(page, widget) do |f| %>
 #      <%= f.label :news_to_show, Widget.human_attribute_name :news_to_show %><br/>
 #      <%= f.text_field :default_news_to_show, %>
-#      <%= component_submit %>
+#      <%= widget_submit %>
 #  <% end %>
 #
 #== Reading from params
@@ -67,9 +67,9 @@
 #
 #And that's it, you should now be able to insert the widget on your page, configure it, publish the page and see the results on the public page.
 #
-#== Testing the component
+#== Testing the widget
 #
-#The skeleton created the basic infrastructure to test the component:
+#The skeleton created the basic infrastructure to test the widget:
 #
 #* unit/name_test.rb: Test the associated model.
 #* functional/widgets/name_test.rb: Test the widget and public views.
@@ -107,18 +107,22 @@ module UbiquoDesign
     end
 
     # Run a widget given its name
-    def run_behaviour(name, *args)
-      send("#{name.to_s}_widget", *args)
+    def run_behaviour(widget)
+      ::Widget.behaviours[widget.key][:proc].bind(self).call(widget)
     end
 
     # Renders the widget as a string
     #
     # Example: render_widget_to_string(:test, arg1, arg2)
     # In this case, he test widget receives arg1 and arg2 as arguments.
-    def render widget
-      raise WidgetNotFound.new("Widget #{widget.to_s} not found") unless available_widgets.include?(widget)
+    def render_widget widget
+      widget_name = widget.key
+      unless available_widgets.include?(widget_name)
+        require "app/widgets/#{widget_name}_widget"
+        raise WidgetNotFound.new("Widget #{widget_name} not found") unless available_widgets.include?(widget_name)
+      end
       run_behaviour(widget)
-      template_file = search_template(widget, template_to_render)
+      template_file = search_template widget_name
       # Add template directory to view_paths, so as to render uses this directory by default
       self.view_paths.unshift(File.dirname(template_file))
       render_output = render_to_string :file => template_file
@@ -127,7 +131,7 @@ module UbiquoDesign
     end
 
     def search_template(widget)
-      returning(File.join("views", "widgets", widget, "show.html.erb")) do |template_path|
+      returning(File.join("app", "views", "widgets", widget.to_s, "show.html.erb")) do |template_path|
         raise WidgetTemplateNotFound.new("Template file not found: #{widget}") unless File.exists?(template_path)
       end
     end

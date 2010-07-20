@@ -17,7 +17,7 @@ class Widget < ActiveRecord::Base
   after_destroy :update_page
 
   def self.behaviour(name, options={}, &block)
-    @@behaviours[name] = {:options => options, :block => block}
+    @@behaviours[name] = {:options => options, :proc => block}
   end
 
   def initialize(a = {})
