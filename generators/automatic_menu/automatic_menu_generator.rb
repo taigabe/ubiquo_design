@@ -38,7 +38,7 @@
 #    [locals, render_options]
 #  end
 #
-#Note that this special generator has no associated components and it returns an array of _MenuItem_ instances on locals.
+#Note that this special generator has no associated widgets and it returns an array of _MenuItem_ instances on locals.
 class AutomaticMenuGenerator < Rails::Generator::NamedBase
 
   def initialize(*runtime_args)

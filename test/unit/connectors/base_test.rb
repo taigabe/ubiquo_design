@@ -9,25 +9,25 @@ module Connectors
       assert PagesController.new.uhook_load_page.is_a?(Page)
     end
     
-    test "find component is a component" do
-      c = components(:one)
-      Ubiquo::ComponentsController.any_instance.stubs(:params => {:id => c.id}, :session => {})
+    test "find widget is a widget" do
+      c = widgets(:one)
+      Ubiquo::WidgetsController.any_instance.stubs(:params => {:id => c.id}, :session => {})
       begin
-        assert Ubiquo::ComponentsController.new.uhook_find_component.is_a?(Component)
+        assert Ubiquo::WidgetsController.new.uhook_find_widget.is_a?(Widget)
       rescue ActiveRecord::RecordNotFound => e
         assert true
       end
     end
     
-    test "prepare component returns a component" do
-      c = components(:one)
-      assert Ubiquo::ComponentsController.new.uhook_prepare_component(c).is_a?(Component)
+    test "prepare widget returns a widget" do
+      c = widgets(:one)
+      assert Ubiquo::WidgetsController.new.uhook_prepare_widget(c).is_a?(Widget)
     end
     
-    test "destroy component should destroy one component at least" do 
-      c = components(:one)
+    test "destroy widget should destroy one widget at least" do
+      c = widgets(:one)
       c.class.any_instance.expects(:destroy).at_least(1)
-      Ubiquo::ComponentsController.new.uhook_destroy_component(c)
+      Ubiquo::WidgetsController.new.uhook_destroy_widget(c)
     end
     
     test "find menu items returns all menu item" do

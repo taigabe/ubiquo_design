@@ -38,7 +38,7 @@
 #    key: column1
 #    can_use_default_block: false
 #
-#The attribute _can_use_default_block_ is used to indicate if a given block is susceptible of being used on many pages (then it would use frontpage block components). 
+#The attribute _can_use_default_block_ is used to indicate if a given block is susceptible of being used on many pages (then it would use frontpage block widgets).
 #
 #Now we need to associate these block types with the page template on the join table :
 #
@@ -56,7 +56,7 @@
 #
 #== Public page template
 #
-#The public template should be placed at <tt>app/templates/page_template_key/public.html.erb</tt>. This template receives an instance variable (_@blocks_), a hash containing the output of each component on the block (each key corresponding to the block key name as a symbol):
+#The public template should be placed at <tt>app/templates/page_template_key/public.html.erb</tt>. This template receives an instance variable (_@blocks_), a hash containing the output of each widget on the block (each key corresponding to the block key name as a symbol):
 #
 #  <div id="top">
 #    <%= @blocks[:top] %>
@@ -109,7 +109,7 @@ module Ubiquo::DesignsHelper
   def make_blocks_sortables(page)
     keys = page.blocks.map(&:block_type).uniq
     page.blocks.collect do |block|
-      sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_components_path(page), keys
+      sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_widgets_path(page), keys
     end
   end
 
@@ -123,12 +123,12 @@ module Ubiquo::DesignsHelper
     end
     (content_tag :div, options do
       content_tag :ul, :id =>"block_type_holder_#{block_type}", :class => 'block_type_holder' do
-        components_for_block_type_holder(block) unless options[:class].match /non_draggable/
+        widgets_for_block_type_holder(block) unless options[:class].match /non_draggable/
       end
     end) +
     (page.blocks.as_hash.include?(block_type) ? drop_receiving_element(
     options[:id],
-    :url => ubiquo_page_design_components_path(@page),
+    :url => ubiquo_page_design_widgets_path(@page),
     :method => :post,
     :accept => 'widget',
     :with => "'widget='+element.id.gsub('^widget_', '')+'&block=#{block.id}'"
@@ -142,9 +142,9 @@ module Ubiquo::DesignsHelper
     options_for_select([[]] + options)
   end
   
-  def components_for_block_type_holder(block)
-    components = uhook_load_components(block)
-    render :partial => "ubiquo/components/component", :collection => components
+  def widgets_for_block_type_holder(block)
+    widgets = uhook_load_widgets(block)
+    render :partial => "ubiquo/widgets/widget", :collection => widgets
   end
 
   def sortable_block_type_holder_options(id, url, containments=[])

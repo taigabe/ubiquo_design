@@ -27,7 +27,6 @@ end
 
 groups = Ubiquo::Config.get :model_groups
 Ubiquo::Config.set :model_groups, groups.merge(
-  :ubiquo_design => %w{assets asset_relations automatic_menus block_types blocks
-          widgets components menu_items page_templates
-          page_template_block_types page_template_widgets pages})
+  :ubiquo_design => %w{assets asset_relations automatic_menus blocks
+          widgets menu_items pages})
 

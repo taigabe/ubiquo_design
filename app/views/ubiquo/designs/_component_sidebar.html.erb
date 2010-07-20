@@ -1,7 +1,0 @@
-<li id="widget_<%= component_sidebar %>" class="widget">
-  <a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.move') %></a>
-  <div class="wrap">
-	<h4><%= Widget.default_name_for component_sidebar %></h4>
-  </div>   
-</li>
-<%= draggable_element "widget_#{component_sidebar}", :handle => "'move'", :revert => true %>

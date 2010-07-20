@@ -30,20 +30,20 @@ ca:
       filter_name: "Nom"
       # Unknown
       use_frontpage_block: "Utilitza el bloc de la pàgina principal"
-      # Components
-      component_translate: "traduir"
-      component_removal: "eliminar"
-      confirm_component_removal: "Estàs segur de voler eliminar aquest component?"
-      component_move: "moure"
-      component_edit: "editar"
-      component_saving: "Guardant ..."
-      component_save: "Guardar"
-      component_cancel: "Cancel·lar"
-      component_click_to_edit: "Fes click per editar"
-      component_loading: "Carregant ..."
-      # End components
+      # Widgets
+      widget_translate: "traduir"
+      widget_removal: "eliminar"
+      confirm_widget_removal: "Estàs segur de voler eliminar aquest widget?"
+      widget_move: "moure"
+      widget_edit: "editar"
+      widget_saving: "Guardant ..."
+      widget_save: "Guardar"
+      widget_cancel: "Cancel·lar"
+      widget_click_to_edit: "Fes click per editar"
+      widget_loading: "Carregant ..."
+      # End widgets
       page_info: "Informació de la pàgina"
-      avaliable_components: "Components disponibles"
+      avaliable_widgets: "Widgets disponibles"
       open: "Obrir"
       published: "Publicat"
       pending_publish: "Pendent de publicació"
@@ -65,9 +65,9 @@ ca:
       sitemap_update_error: "Error a l'editar l'element de menú"
       sitemap_removed: "Element de menú eliminat amb èxit"
       sitemap_remove_error: "Error a l'eliminar l'element de menú"
-      # Components
-      editing_component: "Editant el component {{name}}"
-      close_component: "Tancar"
+      # Widgets
+      editing_widget: "Editant el widget {{name}}"
+      close_widget: "Tancar"
       save: "Guardar"
       page_published: "Pàgina publicada correctament"
       page_publish_error: "Error al publicar la pàgina"

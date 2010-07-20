@@ -30,20 +30,20 @@ en:
       filter_name: "Name"
       # Unknown
       use_frontpage_block: "Use frontpage block"
-      # Components
-      component_translate: "translate"
-      component_removal: "remove"
-      confirm_component_removal: "Are you sure you want to remove this component?"
-      component_move: "move"
-      component_edit: "edit"
-      component_saving: "Saving ..."
-      component_save: "Save"
-      component_cancel: "Cancel"
-      component_click_to_edit: "Click to edit"
-      component_loading: "Loading ..."
-      # End components
+      # Widgets
+      widget_translate: "translate"
+      widget_removal: "remove"
+      confirm_widget_removal: "Are you sure you want to remove this widget?"
+      widget_move: "move"
+      widget_edit: "edit"
+      widget_saving: "Saving ..."
+      widget_save: "Save"
+      widget_cancel: "Cancel"
+      widget_click_to_edit: "Click to edit"
+      widget_loading: "Loading ..."
+      # End widgets
       page_info: "Page information"
-      avaliable_components: "Avaliable components"
+      avaliable_widgets: "Avaliable widgets"
       open: "Open"
       published: "Published"
       pending_publish: "Pending publish"
@@ -65,9 +65,9 @@ en:
       sitemap_update_error: "Error editing menu item"
       sitemap_removed: " Menu item removed succesfully"
       sitemap_remove_error: "Error removing menu item"
-      # Components
-      editing_component: "Editing component {{name}}"
-      close_component: "Close"
+      # Widgets
+      editing_widget: "Editing widget {{name}}"
+      close_widget: "Close"
       save: "Save"
       page_published: "Page published succesfully"
       page_publish_error: "Error publishing the page"

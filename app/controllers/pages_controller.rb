@@ -6,7 +6,7 @@
 #* url_name: String that appears on the route
 #* page_template: Associated page templates (configure them on <tt>db/dev_bootstrap/page_template.yml</tt>).
 #
-#By default, pages are created as drafts. When a page is published, it is cloned (along with its components, blocks and asset_relations). In that moment the changes are visible on the public website.
+#By default, pages are created as drafts. When a page is published, it is cloned (along with its widgets, blocks and asset_relations). In that moment the changes are visible on the public website.
 #
 #== Public routes
 #
@@ -48,10 +48,10 @@
 class PagesController < ApplicationController
   layout 'main'
   include UbiquoDesign::RenderPage
-  # Show a designed page usint its template and associated blocks and components
+  # Show a designed page usint its template and associated blocks and widgets
   # 
-  # A page is formed of many blocks, each with containing components. Each
-  # component use a generator to get the final HTML code
+  # A page is formed of many blocks, each with containing widgets. Each
+  # widget use a generator to get the final HTML code
   def show
     page = uhook_load_page
     render_page page

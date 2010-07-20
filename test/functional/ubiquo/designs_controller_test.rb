@@ -19,11 +19,11 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
       block = page.blocks.first(:conditions => { :block_type => block_type })
       #
       last_order = 0
-      block.components.each do |component|
-        assert_operator component.position, :>, last_order
-        last_order = component.position
+      block.widgets.each do |widget|
+        assert_operator widget.position, :>, last_order
+        last_order = widget.position
       
-        assert_select "#widget_#{component.id}"
+        assert_select "#widget_#{widget.id}"
       end
     end
   end
@@ -51,12 +51,12 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_should_show_edit_component_with_editable_components
+  def test_should_show_edit_widget_with_editable_widgets
     login_as
-    component = nil
+    widget = nil
     assert_nothing_thrown do
-      component = Widget.find(:first, :conditions => ["is_configurable = ? or is_configurable is ?", false, nil]).components.first
-      page = component.block.page
+      widget = Widget.find(:first, :conditions => ["is_configurable = ? or is_configurable is ?", false, nil]).widgets.first
+      page = widget.block.page
       assert_not_nil page
     end
 
@@ -64,6 +64,6 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     template_mock(page)
     get :show, :page_id => page.id
 
-    assert_select "#component_#{component.id} .editar", false
+    assert_select "#widget_#{widget.id} .editar", false
   end
 end

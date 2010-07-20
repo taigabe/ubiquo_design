@@ -90,7 +90,7 @@ class Widget < ActiveRecord::Base
     I18n.t("ubiquo.widgets.#{widget.to_s.downcase}.description")
   end
 
-  # Returns true if the component has editable options
+  # Returns true if the widget has editable options
   def is_configurable?
     #TODO
     true

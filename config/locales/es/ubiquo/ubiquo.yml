@@ -30,20 +30,20 @@ es:
       filter_name: "Nombre"
       # Unknown
       use_frontpage_block: "Utiliza el bloque de la página principal"
-      # Components
-      component_translate: "traducir"
-      component_removal: "eliminar"
-      confirm_component_removal: "Estás seguro de que quieres eliminar este componente?"
-      component_move: "mover"
-      component_edit: "editar"
-      component_saving: "Guardando ..."
-      component_save: "Guardar"
-      component_cancel: "Cancelar"
-      component_click_to_edit: "Haz click para editar"
-      component_loading: "Cargando ..."
-      # End components
+      # Widgets
+      widget_translate: "traducir"
+      widget_removal: "eliminar"
+      confirm_widget_removal: "Estás seguro de que quieres eliminar este widgete?"
+      widget_move: "mover"
+      widget_edit: "editar"
+      widget_saving: "Guardando ..."
+      widget_save: "Guardar"
+      widget_cancel: "Cancelar"
+      widget_click_to_edit: "Haz click para editar"
+      widget_loading: "Cargando ..."
+      # End widgets
       page_info: "Información de la página"
-      avaliable_components: "Componentes disponibles"
+      avaliable_widgets: "Widgetes disponibles"
       open: "Abrir"
       published: "Publicado"
       pending_publish: "Pendiente de publicación"
@@ -65,9 +65,9 @@ es:
       sitemap_update_error: "Error al editar el elemento de menú"
       sitemap_removed: "Elemento de menú eliminado con éxito"
       sitemap_remove_error: "Error al eliminar el elemento de menú"
-      # Components
-      editing_component: "Editando el componente {{name}}"
-      close_component: "Cerrar"
+      # Widgets
+      editing_widget: "Editando el widgete {{name}}"
+      close_widget: "Cerrar"
       save: "Guardar"
       page_published: "Página publicada correctamente"
       page_publish_error: "Error al publicar la página"

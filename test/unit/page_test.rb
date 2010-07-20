@@ -44,12 +44,12 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  def test_should_get_components_for_block_type
+  def test_should_get_widgets_for_block_type
     page = pages(:one)
     block = page.blocks.first(:conditions => { :block_type => "sidebar" })
-    assert block.components.size > 0 #needs something to test.
-    block.components.each do |component|
-      assert component.block.block_type == "sidebar"
+    assert block.widgets.size > 0 #needs something to test.
+    block.widgets.each do |widget|
+      assert widget.block.block_type == "sidebar"
     end
   end
 
@@ -79,18 +79,18 @@ class PageTest < ActiveSupport::TestCase
     assert !page.is_published?
     assert_nil Page.published.find_by_url_name(page.url_name)
     
-    #creates an error on first component (Free)
-    component = page.blocks.map(&:components).flatten.first
-    assert_not_nil component
-    assert_equal component.class, Free
-    component.content = ""
-    component.save_without_validation
-    component.reload
-    assert !component.valid?
+    #creates an error on first widget (Free)
+    widget = page.blocks.map(&:widgets).flatten.first
+    assert_not_nil widget
+    assert_equal widget.class, Free
+    widget.content = ""
+    widget.save_without_validation
+    widget.reload
+    assert !widget.valid?
     
     assert_no_difference "Page.count" do # no new page
       assert_no_difference "Block.count" do # no cloned blocks
-        assert_no_difference "Component.count" do # no cloned components
+        assert_no_difference "Widget.count" do # no cloned widgets
           assert !page.publish
         end
       end
