@@ -136,7 +136,7 @@ class Page < ActiveRecord::Base
 
   def self.blocks(template = nil)
     if template
-      UbiquoDesign::Structure.get(:page_template => template)[:blocks].map(&:keys).flatten rescue []
+      UbiquoDesign::Structure.get(:page_template => template.to_sym)[:blocks].map(&:keys).flatten rescue []
     else
       #TODO Implement this method with UbiquoDesign::structure
       raise NotImplementedError
@@ -164,7 +164,7 @@ class Page < ActiveRecord::Base
   def assign_template_blocks
     block_types = Page.blocks(self.page_template)
     block_types.each do |block_type|
-      self.blocks << Block.create(:block_type => block_type)
+      self.blocks << Block.create(:block_type => block_type.to_s)
     end
   end
 

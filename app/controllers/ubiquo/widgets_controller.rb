@@ -6,7 +6,7 @@ class Ubiquo::WidgetsController < UbiquoAreaController
   def show
     @widget = uhook_find_widget
 
-    template_path = "/widgets/%s/ubiquo/_form.html.erb" % @widget.key
+    template_path = "/widgets/%s/ubiquo/edit.html.erb" % @widget.key
     render :file => template_path, :locals => {:page => @page, :widget => @widget}
   end
 
