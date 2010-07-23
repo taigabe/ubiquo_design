@@ -4,6 +4,8 @@ config.after_initialize do
   UbiquoDesign::Connectors.load!
 end
 
+ActiveSupport::Dependencies.load_paths << Rails.root.join("app", "models", "widgets")
+
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_elements_per_page
   config.add_inheritance :pages_elements_per_page, :elements_per_page

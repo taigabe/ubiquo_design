@@ -83,20 +83,6 @@ module UbiquoDesign
     class WidgetNotFound < WidgetError; end
     class WidgetTemplateNotFound < WidgetError; end
 
-    DEFAULT_WIDGETS_PATHS = ["#{RAILS_ROOT}/app/widgets"]
-    @@widgets_paths = DEFAULT_WIDGETS_PATHS
-
-    mattr_accessor :widgets_paths
-
-    # Load widgets functions (seek for app/widgets/*/*widget.rb files)
-    def initialize
-      UbiquoWidgets.widgets_paths.each do |path|
-        Dir[File.join(path, "*", "widget.rb")].each do |widget|
-          Rails.env.development? ? load(widget) : require(widget)
-        end
-      end
-    end
-
     private
 
     # Returns an array with all the available widgets
@@ -107,7 +93,7 @@ module UbiquoDesign
     end
 
     # Run a widget given its name
-    def run_behaviour(widget)
+    def run_behaviour widget
       ::Widget.behaviours[widget.key][:proc].bind(self).call(widget)
     end
 
@@ -118,7 +104,7 @@ module UbiquoDesign
     def render_widget widget
       widget_name = widget.key
       unless available_widgets.include?(widget_name)
-        require "app/widgets/#{widget_name}_widget"
+        require "widgets/#{widget_name}_widget"
         raise WidgetNotFound.new("Widget #{widget_name} not found") unless available_widgets.include?(widget_name)
       end
       run_behaviour(widget)
@@ -131,7 +117,7 @@ module UbiquoDesign
     end
 
     def search_template(widget)
-      returning(File.join("app", "views", "widgets", widget.to_s, "show.html.erb")) do |template_path|
+      returning(File.join(Rails.root, "app", "views", "widgets", widget.to_s, "show.html.erb")) do |template_path|
         raise WidgetTemplateNotFound.new("Template file not found: #{widget}") unless File.exists?(template_path)
       end
     end
