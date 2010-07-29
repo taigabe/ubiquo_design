@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 require 'mocha'
 
-class FreeGeneratorTest < ActionController::TestCase
+class FreeWidgetTest < ActionController::TestCase
   tests PagesController
 
   test "free widget should load content" do

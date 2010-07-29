@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../../test_helper'
 
-class FreeGeneratorUbiquoTest < ActionController::TestCase
+class FreeWidgetUbiquoTest < ActionController::TestCase
   tests Ubiquo::WidgetsController
 
   test "edit new form" do
