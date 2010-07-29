@@ -3,6 +3,7 @@ en:
     page:
       empty_list_title: "Design"
       empty_list_message: "Here you can see, modify and design the application pages."
+      no_parent: "None"
     menu_item:
       empty_list_title: "Sitemap"
       empty_list_message: "Here you can see and modify the application site map. You can create new sections and subsections and reorder them."

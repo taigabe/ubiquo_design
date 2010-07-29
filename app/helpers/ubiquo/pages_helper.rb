@@ -29,7 +29,7 @@ module Ubiquo::PagesHelper
   end
 
   def parent_pages_for_select(pages, selected_page)
-    options = ["<option value=''>#{t('ubiquo_design.no_parent')}</option>"]
+    options = ["<option value=''>#{t('ubiquo.page.no_parent')}</option>"]
     pages.map do |page|
       options << "<option value='#{page.id}' title='#{page.url_name}'"
       options << " selected='true'" if page == selected_page
