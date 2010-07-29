@@ -10,7 +10,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_not_nil pages=assigns(:pages)
     assert pages.size > 0
     pages.each do |page|
-      assert_equal page.is_published?, false
+      assert_equal page.is_the_published?, false
     end
   end
 
@@ -56,7 +56,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert page = assigns(:page)
     assert_equal 3, page.blocks.size
     assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
-    assert_equal page.is_published?, false
+    assert_equal page.is_the_published?, false
 
     assert_redirected_to ubiquo_pages_path
   end

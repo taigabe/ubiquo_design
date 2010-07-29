@@ -17,7 +17,7 @@ module Connectors
         page = create_page
         page.blocks << pages(:one).blocks
         assert_equal page.is_public?, false
-        assert_equal page.is_published?, false
+        assert_equal page.is_the_published?, false
         assert_raise ActiveRecord::RecordNotFound do
           Page.public.find_by_url_name(page.url_name)          
         end

@@ -10,7 +10,7 @@ module Connectors
       page = create_page
       page.blocks << pages(:one).blocks
       assert page.pending_publish?
-      assert !page.is_published?
+      assert !page.is_the_published?
       assert_nil Page.published.find_by_url_name(page.url_name)
       num_widgets = page.blocks.map(&:widgets).flatten.size
       assert num_widgets > 0

@@ -97,7 +97,7 @@ class Page < ActiveRecord::Base
 
   # if you remove published page copy, draft page will be pending publish again
   def pending_publish_on_destroy_published
-    if self.is_published? && self.draft
+    if self.is_the_published? && self.draft
       self.draft.update_attributes(:pending_publish => true)
     end
   end
@@ -106,24 +106,30 @@ class Page < ActiveRecord::Base
     self.blocks.map(&:widgets).flatten.reject(&:valid?).map(&:id)
   end
 
-  def is_draft?
+  # Returns true if the page is the draft version
+  def is_the_draft?
     published_id? || (!published_id? && pending_publish?)
   end
 
-  def is_published?
-    !is_draft?
+  # Returns true if this page is the published one
+  def is_the_published?
+    !is_the_draft?
   end
 
+  # Returns true if the page can be accessed directly,
+  # i.e. does not have required params
   def is_linkable?
     #TODO implement this method
-    is_published?
+    is_the_published?
   end
 
+  # Returns true if the page can be previewed
   def is_previewable?
     #TODO Implement this method
     false
   end
 
+  # Returns the layout to use for this page
   def layout
     #TODO Implement this method with Ubiquodesign::structure
     # reading page_template properties
