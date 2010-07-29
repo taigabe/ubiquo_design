@@ -73,11 +73,9 @@ ca:
       page_published: "Pàgina publicada correctament"
       page_publish_error: "Error al publicar la pàgina"
       block_error: "No es pot assignar aquest bloc com bloc per defecte degut a que els tipos de bloc no coincideixen"
-    generators:
+    widgets:
+      automatic_menu:
+        name: Menú automàtic
       free:
+        name: Contingut lliure
         contents: "Contingut"
-      banner_flash:
-        title: "Títol"
-        width: "Width"
-        height: "Height"
-

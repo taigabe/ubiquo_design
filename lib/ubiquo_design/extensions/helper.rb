@@ -36,7 +36,7 @@ module UbiquoDesign
         page_url_for_options = {
           :controller => '/pages', 
           :action => 'show', 
-          :url_name => page.url_name,
+          :url => page.url_name,
         }
         url_for(page_url_for_options.merge(url_for_options))
       end

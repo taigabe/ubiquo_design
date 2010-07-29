@@ -92,8 +92,12 @@ class Widget < ActiveRecord::Base
 
   # Returns true if the widget has editable options
   def is_configurable?
-    #TODO
-    true
+    self.class.is_configurable?
+  end
+
+  # Returns true if the widget type has editable options
+  def self.is_configurable?
+    allowed_options.present?
   end
 
   # Returns the key representing the widget type

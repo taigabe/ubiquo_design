@@ -57,7 +57,7 @@ class PageTest < ActiveSupport::TestCase
     page = create_page
     page.blocks << pages(:one).blocks
     assert page.pending_publish?, true
-    assert !page.is_published?
+    assert !page.is_the_published?
     assert_nil Page.published.find_by_url_name(page.url_name)
     num_blocks = page.blocks.size
     assert num_blocks > 0
@@ -69,14 +69,14 @@ class PageTest < ActiveSupport::TestCase
     published = Page.published.find_by_url_name(page.url_name)
     assert_not_nil published
     assert !page.pending_publish?
-    assert published.is_published?
+    assert published.is_the_published?
   end
 
   def test_shouldnt_publish_wrong_pages
     page = create_page :page_template => "static"
     page.blocks << pages(:one).blocks
     assert page.pending_publish?
-    assert !page.is_published?
+    assert !page.is_the_published?
     assert_nil Page.published.find_by_url_name(page.url_name)
     
     #creates an error on first widget (Free)

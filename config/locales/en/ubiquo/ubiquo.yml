@@ -21,7 +21,7 @@ en:
       section: "Section"
       situation: "Situation"
       page_template: "Page template"
-      page_created: "Página created succesfully"
+      page_created: "Page created succesfully"
       page_create_error: "Error creating page"
       page_edited: "Page updated succesfully"
       page_edit_error: "Error updating page"
@@ -73,11 +73,9 @@ en:
       page_published: "Page published succesfully"
       page_publish_error: "Error publishing the page"
       block_error: "Is not possible to assign this bloc as a default block because block types doesn't match"
-    generators:
+    widgets:
+      automatic_menu:
+        name: Automatic menu
       free:
+        name: Free content
         contents: "Content"
-      banner_flash:
-        title: "Title"
-        width: "Width"
-        height: "Height"
-

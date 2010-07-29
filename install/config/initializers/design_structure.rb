@@ -7,5 +7,5 @@ UbiquoDesign::Structure.define do
   page_template :static do
     block :top, :main
   end
-  widget :free, :assets_automatic_menu
+  widget :free, :automatic_menu
 end

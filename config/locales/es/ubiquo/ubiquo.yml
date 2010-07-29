@@ -73,11 +73,9 @@ es:
       page_published: "Página publicada correctamente"
       page_publish_error: "Error al publicar la página"
       block_error: "No se puede asignar este bloque como bloque por defecto porque los tipos de bloque no coinciden"
-    generators:
+    widgets:
+      automatic_menu:
+        name: Menú automático
       free:
+        name: Contenido libre
         contents: "Contenido"
-      banner_flash:
-        title: "Título"
-        width: "Width"
-        height: "Height"
-
