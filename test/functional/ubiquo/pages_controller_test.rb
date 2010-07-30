@@ -3,8 +3,11 @@ require File.dirname(__FILE__) + "/../../test_helper.rb"
 class Ubiquo::PagesControllerTest < ActionController::TestCase
   use_ubiquo_fixtures
 
-  def test_should_get_index
+  def setup
     login_as
+  end
+
+  def test_should_get_index
     get :index
     assert_response :success
     assert_not_nil pages=assigns(:pages)
@@ -20,33 +23,39 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
+  def test_should_get_index_without_remove_for_keyed_pages
+    get :index
+    assert_select "tr#page_#{pages(:one_design).id}" do
+      assert_select 'a:last-child', :text => I18n.t('ubiquo.remove'), :count => 0
+    end
+    assert_select "tr#page_#{pages(:two_design).id}" do
+      assert_select 'a:last-child', :text => I18n.t('ubiquo.remove'), :count => 1
+    end
+  end
+
   def test_should_get_new
-    login_as
     get :new
     assert_response :success
   end
 
   def test_should_get_new_with_possible_parent_pages
-    login_as
     get :new
     assert_response :success
     assert_not_equal [], assigns(:pages)
     draft_pages_without_home_page = [pages(:two_design), pages(:only_menu_design),
                                      pages(:test_page), pages(:unpublished),
                                      pages(:long_url)]
-    assert_equal_set draft_pages_without_home_page, assigns(:pages)    
+    assert_equal_set draft_pages_without_home_page, assigns(:pages)
   end
 
   def test_should_get_new_without_possible_parent_pages
     Page.delete_all
-    login_as
     get :new
     assert_response :success
     assert_equal [], assigns(:pages)
-  end  
-  
+  end
+
   def test_should_create_page_with_assigned_blocks
-    login_as
     assert_difference('Page.count') do
       post(:create,
            :page => {
@@ -65,13 +74,11 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
   end
 
   def test_should_get_edit
-    login_as
     get :edit, :id => pages(:one).id
     assert_response :success
   end
 
   def test_should_update_page
-    login_as
     put(:update,
         :id => pages(:one).id,
         :page => {
@@ -83,8 +90,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
   end
 
   def test_should_destroy_page
-    login_as
-    # if you remove a draft page, its published page is removed too 
+    # if you remove a draft page, its published page is removed too
     assert_difference('Page.count', -2) do
       delete :destroy, :id => pages(:one_design).id
     end

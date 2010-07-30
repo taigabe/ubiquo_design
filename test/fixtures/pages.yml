@@ -4,6 +4,7 @@ one:
   url_name: ""
   page_template: "static"
   published_id:
+
 two:
   id: 10001
   name: Article page
@@ -25,6 +26,7 @@ one_design:
   page_template: "static"
   is_modified: false
   published_id: 10000
+  key: one_design
 
 two_design:
   id: 10004

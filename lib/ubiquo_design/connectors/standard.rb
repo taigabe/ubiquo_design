@@ -192,8 +192,8 @@ module UbiquoDesign
             [
               link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page)),
               link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
-              link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete)
-            ]
+              (link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
+            ].compact
           end
           
           def uhook_edit_sidebar
