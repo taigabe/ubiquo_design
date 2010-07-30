@@ -15,7 +15,7 @@ class Block < ActiveRecord::Base
     self.create(options)
   end
 
-  def is_used_by_others_blocks?
+  def is_used_by_other_blocks?
     self.block_uses.present?
   end
 

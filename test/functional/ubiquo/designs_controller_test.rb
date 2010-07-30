@@ -55,7 +55,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     login_as
     widget = nil
     assert_nothing_thrown do
-      widget = Widget.find(:first, :conditions => ["is_configurable = ? or is_configurable is ?", false, nil]).widgets.first
+      widget = widgets(:one)
       page = widget.block.page
       assert_not_nil page
     end

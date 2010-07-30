@@ -31,7 +31,10 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     get :new
     assert_response :success
     assert_not_equal [], assigns(:pages)
-    assert_equal_set Page.drafts.all, assigns(:pages)    
+    draft_pages_without_home_page = [pages(:two_design), pages(:only_menu_design),
+                                     pages(:test_page), pages(:unpublished),
+                                     pages(:long_url)]
+    assert_equal_set draft_pages_without_home_page, assigns(:pages)    
   end
 
   def test_should_get_new_without_possible_parent_pages
@@ -54,8 +57,8 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     end
 
     assert page = assigns(:page)
-    assert_equal 3, page.blocks.size
-    assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
+    assert_equal 2, page.blocks.size
+    assert_equal ["top", "main"], page.blocks.map(&:block_type)
     assert_equal page.is_the_published?, false
 
     assert_redirected_to ubiquo_pages_path

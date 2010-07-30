@@ -40,13 +40,13 @@ class BlockTest < ActiveSupport::TestCase
   def test_shared_block_must_be_shared
     shared_block = blocks(:one)
     delegated_block = create_block(:shared_id => shared_block.id)
-    assert shared_block.is_shared?
+    assert shared_block.is_used_by_other_blocks?
   end
 
   def test_shouldnt_be_shared_delegated_block
     shared_block = blocks(:one)
     delegated_block = create_block(:shared_id => shared_block.id)
-    assert !delegated_block.is_shared?
+    assert !delegated_block.is_used_by_other_blocks?
   end
   
   def test_create_for_block_type_and_page

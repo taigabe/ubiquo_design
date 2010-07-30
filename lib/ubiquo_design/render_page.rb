@@ -16,7 +16,7 @@ module UbiquoDesign
     def render_block(block)
       uhook_collect_widgets(block) do |widget|
         next unless widget.valid?
-        returning(render_widget widget) do |output|
+        returning(render_widget(widget)) do |output|
           # A widget didn't return an string, return inmediately
           return unless output
         end
