@@ -16,9 +16,9 @@ class UbiquoWidgetGenerator < Rails::Generator::NamedBase
       m.template('widget.rb.erb', File.join('app/widgets', "#{@name}_widget.rb"))
       m.template('views/show.html.erb', File.join('app/views/widgets', @name, "show.html.erb"))
       m.template('views/ubiquo/edit.html.erb', File.join('app/views/widgets', @name, "ubiquo", "edit.html.erb"))
-      m.template('models/widget.rb.erb', File.join('app/models/widgets', "#{@name}.rb"))
+      m.template('models/widget.rb.erb', File.join('app/models/widgets', "#{@name.singularize}.rb"))
 
-      m.template('test/unit/widget_test.rb.erb', File.join('test/unit/widgets', "#{@name}_test.rb"))
+      m.template('test/unit/widget_test.rb.erb', File.join('test/unit/widgets', "#{@name.singularize}_test.rb"))
       m.template('test/functional/widget_test.rb.erb', File.join('test/functional/widgets', "#{@name}_test.rb"))
       m.template('test/functional/ubiquo/widget_test.rb.erb', File.join('test/functional/widgets/ubiquo', "#{@name}_test.rb"))
       m.ubiquo_widget @name
