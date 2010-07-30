@@ -9,12 +9,12 @@ module Connectors
     test "should publish widgets" do
       page = create_page
       page.blocks << pages(:one).blocks
-      assert page.pending_publish?
+      assert page.is_modified?
       assert !page.is_the_published?
       assert_nil Page.published.find_by_url_name(page.url_name)
       num_widgets = page.blocks.map(&:widgets).flatten.size
       assert num_widgets > 0
-      assert_difference "Widget.count",num_widgets do # cloned widgets
+      assert_difference "Widget.count", num_widgets do # cloned widgets
         assert page.publish
       end
     end

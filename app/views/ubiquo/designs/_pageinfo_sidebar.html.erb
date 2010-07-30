@@ -1,16 +1,14 @@
 <h4>
   <%= page.name %>
-  <% if !page.pending_publish? %>
-    <% if page.published.is_linkable? %>
-      <%= link_to_page("[%s]" % t('ubiquo.design.open'), page, {}, :popup => true) %>
-    <% end %>
+  <% if page.published? && page.published.is_linkable? %>
+    <%= link_to_page("[%s]" % t('ubiquo.design.open'), page, {}, :popup => true) %>
   <% end %>
 </h4>
 <% 
   is_published, page_status = case 
-    when page.published && !page.is_modified?
+    when page.published? && !page.is_modified?
       [true, t('ubiquo.design.published')]
-    when page.published && page.is_modified?
+    when page.published? && page.is_modified?
       [false, t('ubiquo.design.pending_publish')]
     else
       [false, t('ubiquo.design.non_published')]  

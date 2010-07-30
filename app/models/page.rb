@@ -2,7 +2,7 @@ class Page < ActiveRecord::Base
   belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
   belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
   has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
-  has_one :draft, :class_name => 'Page', :foreign_key => 'published_id'
+  has_one :draft, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :nullify
   has_many :blocks, :dependent => :destroy do
      def as_hash
        self.collect{|block|[block.block_type, block]}.to_hash
@@ -11,22 +11,22 @@ class Page < ActiveRecord::Base
 
   before_save :compose_url_name_with_parent_url
   before_create :assign_template_blocks
-  after_save :update_modified
-  after_destroy :pending_publish_on_destroy_published
+  before_save :update_modified, :if => :is_the_draft?
+  after_destroy :is_modified_on_destroy_published
 
   validates_presence_of :name
   validates_presence_of :url_name, :if => lambda{|page| page.url_name.nil?}
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
   validates_uniqueness_of :url_name,
-                          :scope => [:published_id],
-                          :if => Proc.new { |page| page.pending_publish? },
+                          :scope => :published_id,
+                          :if => :is_the_draft?,
                           :allow_blank => true
   validates_presence_of :page_template
 
   named_scope :published,
-              :conditions => ["pages.published_id IS NULL AND pages.pending_publish = ?", false]
+              :conditions => ["pages.published_id IS NULL AND pages.is_modified = ?", false]
   named_scope :drafts,
-              :conditions => ["pages.published_id IS NOT NULL OR pages.pending_publish = ?", true]
+              :conditions => ["pages.published_id IS NOT NULL OR pages.is_modified = ?", true]
 
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
@@ -41,6 +41,12 @@ class Page < ActiveRecord::Base
     returning page || find_by_url_name(url_name) do |page|
       raise ActiveRecord::RecordNotFound.new("Page with url '#{url_name}' not found") unless page
     end
+  end
+
+  # Initialize pages as drafts
+  def initialize(attrs = {})
+    attrs ||= {}
+    super attrs.reverse_merge!(:is_modified => true)
   end
 
   # filters:
@@ -61,7 +67,7 @@ class Page < ActiveRecord::Base
   end
 
   def clear_published_page
-    published.destroy unless pending_publish?
+    published.destroy if published?
   end
 
   def all_blocks_as_hash
@@ -73,7 +79,10 @@ class Page < ActiveRecord::Base
       transaction do
         self.clear_published_page
         published_page = self.clone
-        published_page.pending_publish = false
+        published_page.attributes = {
+          :is_modified => false,
+          :published_id => nil
+        }
         published_page.save!
         published_page.blocks.destroy_all
         self.blocks.each do |block|
@@ -84,10 +93,12 @@ class Page < ActiveRecord::Base
             uhook_publish_widget_asset_relations(widget, new_widget)
           end
         end
-        self.update_attributes(:is_modified => false,
-                               :pending_publish => false,
-                               :published_id => published_page.id)
-        published_page.reload
+        published_page.update_attribute(:is_modified, false)
+        self.update_attributes(
+          :is_modified => false,
+          :published_id => published_page.id
+        )
+#        require 'ruby-debug';debugger
       end
       return true
     rescue Exception => e
@@ -95,10 +106,15 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # Returns true if the page has been published
+  def published?
+    published_id
+  end
+
   # if you remove published page copy, draft page will be pending publish again
-  def pending_publish_on_destroy_published
+  def is_modified_on_destroy_published
     if self.is_the_published? && self.draft
-      self.draft.update_attributes(:pending_publish => true)
+      self.draft.update_attributes(:is_modified => true)
     end
   end
 
@@ -108,7 +124,7 @@ class Page < ActiveRecord::Base
 
   # Returns true if the page is the draft version
   def is_the_draft?
-    published_id? || (!published_id? && pending_publish?)
+    published_id? || (!published_id? && is_modified?)
   end
 
   # Returns true if this page is the published one
@@ -153,10 +169,9 @@ class Page < ActiveRecord::Base
     UbiquoDesign::Structure.get(:page_template => page_template)[:widgets].map(&:keys).flatten
   end
 
-  def update_modified(value = true)
-    if !self.changes["is_modified"] && self.is_modified? != value
-      self.update_attribute(:is_modified, value)
-    end
+  def update_modified(save = false)
+    write_attribute(:is_modified, true) unless is_modified_change
+    self.save if save
   end
 
   private

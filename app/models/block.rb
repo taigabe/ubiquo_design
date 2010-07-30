@@ -31,6 +31,6 @@ class Block < ActiveRecord::Base
 
   # When a block is saved, the associated page must change its modified attribute 
   def update_page
-    self.page.reload.update_modified
+    self.page.reload.update_modified(true)
   end
 end

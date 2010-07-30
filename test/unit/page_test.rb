@@ -2,10 +2,10 @@ require File.dirname(__FILE__) + "/../../../../../test/test_helper.rb"
 
 class PageTest < ActiveSupport::TestCase
   use_ubiquo_fixtures
-    
+
   # Page.publish is a transaction
   self.use_transactional_fixtures = false
-  
+
   def test_should_create_page
     assert_difference "Page.count" do
       page = create_page
@@ -44,6 +44,27 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
+  def test_should_create_page_with_is_modified_true
+    assert create_page.is_modified
+  end
+
+  def test_published_method
+    assert !pages(:one).published?
+    assert pages(:one_design).published?
+  end
+
+  def test_publish_named_scope
+    assert_nothing_raised do
+      Page.published.all
+    end
+  end
+
+  def test_drafts_named_scope
+    assert_nothing_raised do
+      Page.drafts.all
+    end
+  end
+
   def test_should_get_widgets_for_block_type
     page = pages(:one)
     block = page.blocks.first(:conditions => { :block_type => "sidebar" })
@@ -56,8 +77,8 @@ class PageTest < ActiveSupport::TestCase
   def test_publish_pages
     page = create_page
     page.blocks << pages(:one).blocks
-    assert page.pending_publish?, true
-    assert !page.is_the_published?
+    assert !page.published?
+    assert page.is_the_draft?
     assert_nil Page.published.find_by_url_name(page.url_name)
     num_blocks = page.blocks.size
     assert num_blocks > 0
@@ -66,19 +87,27 @@ class PageTest < ActiveSupport::TestCase
         assert page.publish
       end
     end
+    page.reload
     published = Page.published.find_by_url_name(page.url_name)
     assert_not_nil published
-    assert !page.pending_publish?
-    assert published.is_the_published?
+    assert !page.is_modified?
+    assert page.published?
+  end
+
+  def test_republish_page
+    page = create_page
+    page.blocks << pages(:one).blocks
+    2.times { page.publish }
+    assert_not_nil Page.published.find_by_url_name(page.url_name)
   end
 
   def test_shouldnt_publish_wrong_pages
     page = create_page :page_template => "static"
     page.blocks << pages(:one).blocks
-    assert page.pending_publish?
+    assert !page.published?
     assert !page.is_the_published?
     assert_nil Page.published.find_by_url_name(page.url_name)
-    
+
     #creates an error on first widget (Free)
     widget = page.blocks.map(&:widgets).flatten.first
     assert_not_nil widget
@@ -87,7 +116,7 @@ class PageTest < ActiveSupport::TestCase
     widget.save_without_validation
     widget.reload
     assert !widget.valid?
-    
+
     assert_no_difference "Page.count" do # no new page
       assert_no_difference "Block.count" do # no cloned blocks
         assert_no_difference "Widget.count" do # no cloned widgets
@@ -95,7 +124,7 @@ class PageTest < ActiveSupport::TestCase
         end
       end
     end
-    assert page.pending_publish?
+    assert page.is_modified?
   end
 
   def test_should_destroy_published_page_on_destroy_draft
@@ -141,7 +170,7 @@ class PageTest < ActiveSupport::TestCase
     assert_equal 3, page.blocks.size
     assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
   end
-  
+
   def test_should_compose_url_with_parent_url_name
     parent_page = pages(:two)
     page = create_page(:url_name => 'card', :parent_id => parent_page.id)
@@ -150,7 +179,7 @@ class PageTest < ActiveSupport::TestCase
     assert_equal "article/card", page.url_name
     assert_equal "long/url/foo/bar", page2.url_name
   end
-  
+
   private
 
   def create_page(options = {})
