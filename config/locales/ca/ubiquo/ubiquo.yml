@@ -75,7 +75,14 @@ ca:
       block_error: "No es pot assignar aquest bloc com bloc per defecte degut a que els tipos de bloc no coincideixen"
     widgets:
       automatic_menu:
-        name: Menú automàtic
+        name: "Menú automàtic"
       free:
-        name: Contingut lliure
+        name: "Contingut lliure"
         contents: "Contingut"
+      static_section:
+        name: "Secció estàtica"
+        title: "Títol"
+        summary: "Entradeta"
+        body: "Cos"
+        image: "Imatge"
+        docs: "Documents relacionats"

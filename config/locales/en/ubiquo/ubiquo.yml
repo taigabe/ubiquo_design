@@ -79,3 +79,10 @@ en:
       free:
         name: Free content
         contents: "Content"
+      static_section:
+        name: "Static section"
+        title: "Title"
+        summary: "Summary"
+        body: "Body"
+        image: "Image"
+        docs: "Related documents"

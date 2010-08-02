@@ -79,3 +79,10 @@ es:
       free:
         name: Contenido libre
         contents: "Contenido"
+      static_section:
+        name: "Sección estática"
+        title: "Título"
+        summary: "Entradilla"
+        body: "Cuerpo"
+        image: "Imagen"
+        docs: "Documentos relacionados"

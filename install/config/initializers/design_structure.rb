@@ -8,4 +8,5 @@ UbiquoDesign::Structure.define do
     block :top, :main
   end
   widget :free, :automatic_menu
+  widget :static_section
 end
