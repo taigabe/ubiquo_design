@@ -33,7 +33,7 @@ class FreeWidgetUbiquoTest < ActionController::TestCase
     widget, page = create_widget(:free)
     xhr :post, :update, :page_id => page.id,
                         :id => widget.id,
-                        :widget => {}
+                        :widget => { :content => '' }
     assert_response :success
     assert_select_rjs "error_messages"
   end
