@@ -8,7 +8,7 @@ ca:
     attributes:
       page:
         name: "Nom"
-        url_name: "Nom de pàgina"
+        url_name: "URL"
         page_template: "plantilla"
       page_category:
         name: "Nom"
