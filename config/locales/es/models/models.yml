@@ -8,7 +8,7 @@ es:
     attributes:
       page:
         name: "Nombre"
-        url_name: "Nombre de página"
+        url_name: "URL"
         page_template: "plantilla"
       page_category:
         name: "Nombre"
