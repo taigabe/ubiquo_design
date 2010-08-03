@@ -6,6 +6,9 @@ en:
     menu_item:
       empty_list_title: "Sitemap"
       empty_list_message: "Here you can see and modify the application site map. You can create new sections and subsections and reorder them."
+    page_category:
+      empty_list_title: "Categories de pàgina"
+      empty_list_message: "Here you can see and modify page categories. With them, you'll be able to group pages that share part of the URL"
     design:
       design: "Design"
       design_title: "Go to page design"

@@ -6,6 +6,9 @@ es:
     menu_item:
       empty_list_title: "Mapa Web"
       empty_list_message: "Aquí puede ver y modificar el mapa web de la aplicación. Puede crear nuevas secciones y subsecciones, y reordenarlas."
+    page_category:
+      empty_list_title: "Categorías de página"
+      empty_list_message: "Aquí puede ver y modificar las categorías de página. Con ellas, podrá agrupar páginas que comparten parte de la URL"
     design:
       design: "Maquetación"
       design_title: "Ir a maquetación de páginas"
