@@ -4,11 +4,11 @@ top:
   can_use_default_block: true
   
 banners:
-  name: Banners block
-  key: banners
+  name: Sidebar block
+  key: sidebar
   can_use_default_block: true
 
 col1:
-  name: Column 1
-  key: col1
+  name: Main block
+  key: main
   can_use_default_block: false
