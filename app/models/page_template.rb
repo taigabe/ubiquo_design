@@ -1,5 +1,7 @@
 class PageTemplate < ActiveRecord::Base
-  has_attached_file :thumbnail
+  has_attached_file :thumbnail,
+    :path => ":rails_root/public/media/:class/:filename",
+    :url => "/media/:class/:filename"
   has_many :page_template_block_types
   has_many :block_types, :through => :page_template_block_types 
   has_many :page_template_component_types
