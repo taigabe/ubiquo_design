@@ -26,10 +26,10 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
   def test_should_get_index_without_remove_for_keyed_pages
     get :index
     assert_select "tr#page_#{pages(:one_design).id}" do
-      assert_select 'a:last-child', :text => I18n.t('ubiquo.remove'), :count => 0
+      assert_select 'td:last-child a', :text => I18n.t('ubiquo.remove'), :count => 0
     end
     assert_select "tr#page_#{pages(:two_design).id}" do
-      assert_select 'a:last-child', :text => I18n.t('ubiquo.remove'), :count => 1
+      assert_select 'td:last-child a', :text => I18n.t('ubiquo.remove'), :count => 1
     end
   end
 
