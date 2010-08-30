@@ -10,14 +10,14 @@ two:
   name: Article page
   url_name: "article"
   page_template: "interior"
-  published_id: 
+  published_id:
 
 only_menu:
   id: 10002
   name: Menu page
   url_name: "menu_page"
   page_template: "extra"
-  published_id: 
+  published_id:
 
 one_design:
   id: 10003
@@ -25,6 +25,7 @@ one_design:
   url_name: ""
   page_template: "static"
   is_modified: false
+  key: one_design
   published_id: 10000
 
 two_design:
@@ -50,4 +51,32 @@ test_page:
   page_template: "static"
   url_name: test_page
   created_at: 2008-06-03 09:06:35.571694
-  published_id: 
+  published_id:
+
+long_url:
+  name: LongUrl
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10007
+  page_template: "static"
+  url_name: long/url
+  created_at: 2008-06-03 09:06:35.571694
+  published_id: 10008
+
+long_url_published:
+  name: LongUrl
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10008
+  page_template: "static"
+  url_name: long/url
+  is_modified: false
+  created_at: 2008-06-03 09:06:35.571694
+  published_id:
+
+unpublished:
+  name: Unpublished
+  updated_at: 2008-06-03 09:19:32.529112
+  id: 10009
+  page_template: "static"
+  url_name: unpublished
+  created_at: 2008-06-03 09:06:35.571694
+  published_id:
