@@ -1,6 +1,6 @@
 # Manages the declaration of widget cache policies
 module UbiquoDesign
-  module WidgetCache
+  module CachePolicies
 
     @@policies  ||= {}
 

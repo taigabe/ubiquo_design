@@ -1,4 +1,4 @@
-UbiquoDesign::WidgetCache.define do
+UbiquoDesign::CachePolicies.define do
   {
     :free => :self,
     :static_section => :self
