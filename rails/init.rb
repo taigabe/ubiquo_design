@@ -25,6 +25,17 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_default_order_field, 'pages.url_name'
   config.add :pages_default_sort_order, 'ASC'
   config.add :connector, :standard
+
+  config.add :cache_manager_class, lambda{
+#    case Rails.env
+#    when 'development', 'test'
+#      UbiquoDesign::CacheManagers::Filesystem
+#    else
+      UbiquoDesign::CacheManagers::Memcache
+#    end
+  }
+
+  config.add :memcache, {:server => '127.0.0.1', :timeout => 0}
 end
 
 groups = Ubiquo::Config.get :model_groups
