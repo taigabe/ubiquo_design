@@ -167,8 +167,8 @@ class PageTest < ActiveSupport::TestCase
 
   def test_should_assign_blocks_on_create
     page = create_page(:url_name => 'about')
-    assert_equal 3, page.blocks.size
-    assert_equal ["top", "sidebar", "main"], page.blocks.map(&:block_type)
+    assert_equal 2, page.blocks.size
+    assert_equal ["top", "main"], page.blocks.map(&:block_type)
   end
 
   def test_should_compose_url_with_parent_url_name
@@ -178,6 +178,56 @@ class PageTest < ActiveSupport::TestCase
     page2 = create_page(:url_name => "foo/bar", :parent_id => parent_long_url.id)
     assert_equal "article/card", page.url_name
     assert_equal "long/url/foo/bar", page2.url_name
+  end
+
+  def test_should_create_block_on_add_widget
+    # static template has this structure:
+    # page_template :static do
+    #   block :top, :main
+    # end
+    page = create_page
+    page.blocks = []
+    widget = StaticSection.create(:name => 'Test static', :title => 'Test')    
+    assert_difference 'Block.count' do
+      page.add_widget(:main, widget)
+    end
+  end
+
+  def test_should_rollback_if_page_has_error_on_add_widget
+    page = Page.new(:url_name => "test", :name => "", :page_template => "static")
+    assert_no_difference 'Page.count' do
+      assert_no_difference 'Widget.count' do
+        assert !page.add_widget(:main, StaticSection.new(:name => 'Test static', :title => 'Test'))
+      end
+    end
+    assert page.errors.on(:name)
+  end
+
+  def test_should_rollback_if_widget_has_error_on_add_widget
+    page = Page.new(:url_name => "test", :name => "test", :page_template => "static")
+    widget = StaticSection.new(:name => '', :title => '')
+    assert_no_difference 'Page.count' do
+      assert_no_difference 'Widget.count' do
+          assert !page.add_widget(:main, widget)
+      end
+    end
+    assert widget.errors.on(:name)
+  end
+  
+  def test_should_use_existing_block_on_add_widget
+    page = create_page
+    page.blocks.create(:block_type => 'main')
+    widget = StaticSection.create(:name => 'Test static', :title => 'Test')
+    assert_no_difference 'Block.count' do
+      page.add_widget(:main, widget)
+    end
+  end
+
+  def test_should_return_static_section_widget
+    page = create_page
+    widget = StaticSection.create(:name => 'Test static', :title => 'Test')
+    page.add_widget(:main, widget)
+    assert_equal widget, page.static_section_widget
   end
 
   private

@@ -1,0 +1,12 @@
+<h1><%= render :partial => 'title' %></h1>
+<h2><%= render :partial => 'submenu' %></h2>
+<%= render :partial => "shared/ubiquo/feedback" %>
+
+<%= static_pages_filters_info(params) %>
+<%= static_pages_list(@static_pages, @static_pages_pages) %>
+
+<% content_for :sidebar do %>
+  <%= static_pages_filters %>
+  <h3><%= t("ubiquo.help") %></h3>
+  <p><%= t("ubiquo.helpmsg.design.static_page.index") %></p>
+<% end %>

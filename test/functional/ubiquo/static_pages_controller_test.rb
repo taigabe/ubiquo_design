@@ -1,16 +1,25 @@
 require File.dirname(__FILE__) + "/../../test_helper.rb"
 
-class Ubiquo::PagesControllerTest < ActionController::TestCase
+class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
   use_ubiquo_fixtures
 
   def setup
     login_as
   end
 
+  def test_should_get_index_with_only_static_pages
+    get :index
+    assert_response :success
+    pages = assigns(:static_pages)
+    assert_not_nil pages
+    static_pages = [pages(:one_design), pages(:long_url)]
+    assert_equal static_pages, pages
+  end
+
   def test_should_get_index
     get :index
     assert_response :success
-    pages = assigns(:pages)
+    pages = assigns(:static_pages)
     assert_not_nil pages
     assert pages.size > 0
     pages.each do |page|
@@ -24,27 +33,16 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
-  def test_should_get_index_without_remove_for_keyed_pages
-    get :index
-    assert_select "tr#page_#{pages(:one_design).id}" do
-      assert_select 'td:last-child a', :text => I18n.t('ubiquo.remove'), :count => 0
-    end
-    assert_select "tr#page_#{pages(:two_design).id}" do
-      assert_select 'td:last-child a', :text => I18n.t('ubiquo.remove'), :count => 1
-    end
-  end
-
   def test_should_get_new
     get :new
     assert_response :success
   end
-
+  
   def test_should_get_new_with_possible_parent_pages
     get :new
     assert_response :success
-    assert_not_equal [], assigns(:pages)
+    assert_not_equal [], assigns(:static_pages)
     draft_pages_without_home_page = [pages(:two_design), pages(:only_menu_design),
-                                     pages(:test_page), pages(:unpublished),
                                      pages(:long_url)]
     assert_equal_set draft_pages_without_home_page, assigns(:pages)
   end
@@ -56,38 +54,55 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     assert_equal [], assigns(:pages)
   end
 
-  def test_should_create_page_with_assigned_blocks
+  def test_should_create_page_with_blocks_and_static_section_widget
     assert_difference('Page.count') do
       post(:create,
            :page => {
              :name => "Custom page",
              :url_name => "custom_page",
              :page_template => "static"
+           },
+           :static_section => {
+             :title => "About Ubiquo",
+             :body => "Ubiquo description"
            })
     end
-
-    assert page = assigns(:page)
+    page = assigns(:static_page)
+    assert page
     assert_equal 2, page.blocks.size
     assert_equal ["top", "main"], page.blocks.map(&:block_type)
+    assert_equal StaticSection, page.static_section_widget.class
     assert_equal page.is_the_published?, false
 
-    assert_redirected_to ubiquo_pages_path
+    assert_redirected_to ubiquo_static_pages_path
   end
 
   def test_should_get_edit
-    get :edit, :id => pages(:one).id
+    page = pages(:one)
+    page.add_widget(:main, StaticSection.new(:name => "about",
+                                             :title => "about ubiquo",
+                                             :body => "Description"))
+    get :edit, :id => page.id
     assert_response :success
   end
 
   def test_should_update_page
+    page = pages(:one)
+    page.add_widget(:main, StaticSection.new(:name => "about",
+                                             :title => "about ubiquo",
+                                             :body => "Description"))
     put(:update,
-        :id => pages(:one).id,
+        :id => page.id,
         :page => {
           :name => "Custom page",
           :url_name => "custom_page",
           :page_template => "static"
+        },
+        :static_section => {
+          :title => "About Ubiquo updated",
+          :body => "updated description"
         })
-    assert_redirected_to ubiquo_pages_path
+    assert_redirected_to ubiquo_static_pages_path
   end
 
   def test_should_destroy_page
@@ -96,6 +111,6 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
       delete :destroy, :id => pages(:one_design).id
     end
 
-    assert_redirected_to ubiquo_pages_path
+    assert_redirected_to ubiquo_static_pages_path
   end
 end

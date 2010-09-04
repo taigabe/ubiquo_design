@@ -20,6 +20,17 @@ ca:
       confirm_page_removal: "Estàs segur de voler eliminar aquesta pàgina?"
       section: "Secció"
       situation: "Situació"
+      static_pages:
+        title: "Pàgines estàtiques"
+        new: "Nova pàgina"
+        page_info: "Informació de la pàgina"
+        widget_info: "Contingut de la pàgina"
+        save_and_publish: "Guardar i publicar"
+        create_and_publish: "Crear i publicar"
+      status:
+        unpublished: "No publicada"
+        published: "Publicada"
+        pending_publish: "Canvis pendents de publicar"
       page_template: "Plantilla de pàgina"
       page_created: "Pàgina creada con èxit"
       page_create_error: "Error al crear la pàgina"

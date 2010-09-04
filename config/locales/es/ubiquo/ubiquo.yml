@@ -20,6 +20,17 @@ es:
       confirm_page_removal: "Estás seguro de querer eliminar esta página?"
       section: "Sección"
       situation: "Situación"
+      static_pages:
+        title: "Páginas estáticas"
+        new: "Nueva página"
+        page_info: "Información de la página"
+        widget_info: "Contenido de la página"
+        save_and_publish: "Guardar y publicar"
+        create_and_publish: "Crear y publicar"
+      status:
+        unpublished: "No publicada"
+        published: "Publicada"
+        pending_publish: "Cambios pendientes de publicar"
       page_template: "Plantilla de página"
       page_created: "Página creada con éxito"
       page_create_error: "Error al crear la página"

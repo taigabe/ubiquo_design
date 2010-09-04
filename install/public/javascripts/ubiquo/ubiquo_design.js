@@ -18,7 +18,17 @@ document.observe("dom:loaded", function() {
         update_url_example();
       }
     );
-  } 
+  }
+  if($('save_publish')) {
+    var save_publish_button = $('save_publish');
+    save_publish_button.observe(
+      "click",
+      function() {
+        $('publish_page').value = 'true';
+        this.up('form').submit();
+      }
+    )
+  }
 });
 
 function update_url_example() {

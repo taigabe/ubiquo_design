@@ -27,7 +27,10 @@ class Page < ActiveRecord::Base
               :conditions => ["pages.published_id IS NULL AND pages.is_modified = ?", false]
   named_scope :drafts,
               :conditions => ["pages.published_id IS NOT NULL OR pages.is_modified = ?", true]
-
+  named_scope :statics,
+              :conditions => ["pages.is_static = ?", true]
+   
+   
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
@@ -98,7 +101,6 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => published_page.id
         )
-#        require 'ruby-debug';debugger
       end
       return true
     rescue Exception => e
@@ -174,6 +176,25 @@ class Page < ActiveRecord::Base
     self.save if save
   end
 
+  def add_widget(block_key, widget)
+    begin
+      transaction do
+        self.save! if self.new_record?
+        block = self.blocks.select { |b| b.block_type == block_key.to_s }.first
+        block ||= Block.create!(:page_id => self.id, :block_type => block_key.to_s)
+        block.widgets << widget
+        widget.save!
+      end
+    rescue Exception => e
+      return false
+    end
+  end
+
+  def static_section_widget
+    block = self.blocks.select { |b| b.block_type == "main" }.first
+    Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
+  end
+  
   private
 
   def compose_url_name_with_parent_url

@@ -23,5 +23,11 @@
 </p>
 
 <% unless is_published %>
-    <%= button_to t('ubiquo.design.publish'), publish_ubiquo_page_design_path(page), :method => :put %>
+  <% if type == "static_page" %>
+    <%= button_to t('ubiquo.design.publish'), 
+                  publish_ubiquo_static_page_path(page), :method => :put %>
+  <% else %>
+    <%= button_to t('ubiquo.design.publish'), 
+                  publish_ubiquo_page_design_path(page), :method => :put %>  
+  <% end %>
 <% end %>

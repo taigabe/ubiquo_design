@@ -180,6 +180,25 @@ module UbiquoDesign
         end
       end
 
+      module UbiquoStaticPagesController
+        def self.included(klass)
+          klass.send(:helper, Helper)
+        end
+        
+        module Helper
+          def uhook_static_page_actions(page)
+            [
+              link_to(t('ubiquo.edit'), edit_ubiquo_static_page_path(page)),
+              (link_to(t('ubiquo.remove'), ubiquo_static_page_path(page), :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
+            ].compact
+          end
+          
+          def uhook_edit_sidebar
+            ""
+          end
+        end
+      end
+
       module UbiquoPagesController
         def self.included(klass)
           klass.send(:include, InstanceMethods)

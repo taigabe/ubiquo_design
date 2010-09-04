@@ -7,7 +7,8 @@
 <div class="sidebar_box">
   <div class="sidebar_title"><h3><%= t('ubiquo.design.page_info') %></h3></div>
   <div id="page_info">
-    <%= render :partial => 'pageinfo_sidebar', :locals => { :page => @page } %>
+    <%= render :partial => 'pageinfo_sidebar',
+               :locals => { :page => @page, :type => 'page' } %>
   </div>
 </div>
 <div class="sidebar_box">

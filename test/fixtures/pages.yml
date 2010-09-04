@@ -4,6 +4,7 @@ one:
   url_name: ""
   page_template: "static"
   published_id:
+  is_static: true
 
 two:
   id: 10001
@@ -27,6 +28,7 @@ one_design:
   is_modified: false
   published_id: 10000
   key: one_design
+  is_static: true
 
 two_design:
   id: 10004
@@ -52,6 +54,7 @@ test_page:
   url_name: test_page
   created_at: 2008-06-03 09:06:35.571694
   published_id:
+  is_static: true
 
 long_url:
   name: LongUrl
@@ -61,6 +64,7 @@ long_url:
   url_name: long/url
   created_at: 2008-06-03 09:06:35.571694
   published_id: 10008
+  is_static: true
 
 long_url_published:
   name: LongUrl
@@ -71,6 +75,7 @@ long_url_published:
   is_modified: false
   created_at: 2008-06-03 09:06:35.571694
   published_id:
+  is_static: true
 
 unpublished:
   name: Unpublished
@@ -80,3 +85,4 @@ unpublished:
   url_name: unpublished
   created_at: 2008-06-03 09:06:35.571694
   published_id:
+  is_static: true

@@ -20,6 +20,17 @@ en:
       confirm_page_removal: "Are you sure you want to remove this page?"
       section: "Section"
       situation: "Situation"
+      static_pages:
+        title: "Static pages"
+        new: "New static page"
+        page_info: "Page info"
+        widget_info: "Page content"
+        save_and_publish: "Save & publish"
+        create_and_publish: "Create & publish"
+      status:
+        unpublished: "Unpublished"
+        published: "Published"
+        pending_publish: "Changes pending publish"
       page_template: "Page template"
       page_created: "Page created succesfully"
       page_create_error: "Error creating page"

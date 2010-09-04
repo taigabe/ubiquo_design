@@ -1,0 +1,25 @@
+<h1><%= render :partial => 'title' %></h1>
+<h2><%= render :partial => "submenu" %></h2>
+<%= render(:partial => "shared/ubiquo/feedback") %>
+
+<% form_for @static_page, 
+            :url => ubiquo_static_page_path(@static_page), 
+            :html => { :method => :put } do |form| %>
+  <%= render :partial => 'form', :locals => { :form => form } %>
+  <p class="form_buttons">
+    <input type="button" id="save_publish" value="<%=t('ubiquo.design.static_pages.save_and_publish')%>" />
+    <%= form.submit t('ubiquo.save') %>
+    <input type="button" value="<%= t('ubiquo.back_to_index') %>" onclick="document.location.href='<%= ubiquo_static_pages_path %>'" />
+  </p>
+<% end %>
+
+<% content_for :sidebar do %>
+  <div class="sidebar_box">
+    <div class="sidebar_title"><h3><%= t('ubiquo.design.page_info') %></h3></div>
+    <div id="page_info">
+      <%= render :partial => 'ubiquo/designs/pageinfo_sidebar', 
+                 :locals => { :page => @static_page, :type => 'static_page' } %>
+    </div>
+  </div>
+  <%= help_block_sidebar(t("ubiquo.helpmsg.design.page.edit")) %>
+<% end %>

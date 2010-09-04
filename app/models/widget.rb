@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Widget < ActiveRecord::Base
 
   INACCEPTABLE_OPTIONS = %w{options widget widget_id block block_id position}
@@ -67,7 +68,6 @@ class Widget < ActiveRecord::Base
     hash
   end
 
-  # cattr_accessor :allowed_options_storage
   def self.allowed_options=(opts)
     opts = [opts].flatten
     unallowed_options = opts.map(&:to_s)&INACCEPTABLE_OPTIONS

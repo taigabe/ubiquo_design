@@ -27,6 +27,9 @@ module UbiquoDesign
           ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController) if self.constants.include?("UbiquoMenuItemsController")
         rescue NameError; end
         begin
+          ::Ubiquo::StaticPagesController.send(:include, self::UbiquoStaticPagesController) if self.constants.include?("UbiquoStaticPagesController")
+        rescue NameError; end        
+        begin
           ::Ubiquo::PagesController.send(:include, self::UbiquoPagesController) if self.constants.include?("UbiquoPagesController")
         rescue NameError; end
         begin

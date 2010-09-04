@@ -21,6 +21,9 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :sitemap_permit, lambda{
     permit?("sitemap_management")
   }
+  config.add :static_pages_permit, lambda{
+    permit?("static_pages_management")
+  }  
   config.add :page_string_filter_enabled, true
   config.add :pages_default_order_field, 'pages.url_name'
   config.add :pages_default_sort_order, 'ASC'

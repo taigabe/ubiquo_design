@@ -1,25 +1,24 @@
 module Ubiquo::PagesHelper
 
   def pages_filters_info(params)
-    string_filter = if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-                      filter_info(:string, params,
+    if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
+      string_filter = filter_info(:string, params,
                                   :field => :filter_text,
                                   :caption => t('ubiquo.design.name'))
-                    else
-                      nil
-                    end
+    else
+      string_filter = nil
+    end
     build_filter_info(string_filter)
   end
 
   def pages_filters(url_for_options = {})
-    string_filter = if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-                      render_filter(:string, url_for_options,
-                                    :field => :filter_text,
-                                    :caption => t('ubiquo.design.name'))
-                    else
-                      ""
-                    end
-    string_filter
+    if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
+      render_filter(:string, url_for_options,
+                    :field => :filter_text,
+                    :caption => t('ubiquo.design.name'))
+    else
+      ""
+    end
   end
 
   def page_url(page)
@@ -28,14 +27,4 @@ module Ubiquo::PagesHelper
     self.send("#{page.page_type.key}_url", {:page_name => page.url_name, :host => host})
   end
 
-  def parent_pages_for_select(pages, selected_page)
-    options = ["<option value=''>#{t('ubiquo.page.no_parent')}</option>"]
-    pages.map do |page|
-      options << "<option value='#{page.id}' title='#{page.url_name}'"
-      options << " selected='true'" if page == selected_page
-      options << ">#{page.name}</option>"
-    end
-    options.join("\n")
-  end
-  
 end
