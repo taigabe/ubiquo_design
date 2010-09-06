@@ -8,4 +8,8 @@ ca:
         page:
           edit: "Aquí pots configurar les opcions de la pàgina. El nom de la ruta, la secció i la categoria són camps que determinen la URL final de la pàgina."
           new: "Aquí pots configurar les opcions de la pàgina. El nom de la ruta, la secció i la categoria són camps que determinen la URL final de la pàgina."
-          index: "Aquí pot veure, modificar i maquetar les pàgines de l'aplicació."
+          index: "Aquí pots veure, modificar i maquetar les pàgines de l'aplicació."
+        static_page: 
+          index: "Aquí pots veure, modificar i esborrar les pàgines estàtiques de l'aplicació"
+          new: ""
+

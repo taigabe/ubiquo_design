@@ -9,6 +9,7 @@ es:
         name: "Nombre"
         url_name: "Nombre de página"
         page_template: "plantilla"
+        publish_status: "Estado"
       menu_item:
         caption: "Título"
         is_linkable: "¿es linkable?"

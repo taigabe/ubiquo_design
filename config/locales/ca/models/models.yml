@@ -9,6 +9,7 @@ ca:
         name: "Nom"
         url_name: "Nom de pàgina"
         page_template: "plantilla"
+        publish_status: "Estat"
       menu_item:
         caption: "Títol"
         is_linkable: "¿és linkable?"
