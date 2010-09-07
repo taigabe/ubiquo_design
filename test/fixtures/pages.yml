@@ -5,6 +5,7 @@ one:
   page_template: "static"
   published_id:
   is_static: true
+  is_modified: false
 
 two:
   id: 10001
@@ -12,6 +13,7 @@ two:
   url_name: "article"
   page_template: "interior"
   published_id:
+  is_modified: false
 
 only_menu:
   id: 10002
@@ -45,6 +47,7 @@ only_menu_design:
   page_template: "extra"
   is_modified: false
   published_id: 10002
+  is_modified: false
 
 test_page:
   name: TestPage
@@ -55,6 +58,7 @@ test_page:
   created_at: 2008-06-03 09:06:35.571694
   published_id:
   is_static: true
+  is_modified: false
 
 long_url:
   name: LongUrl
@@ -65,6 +69,7 @@ long_url:
   created_at: 2008-06-03 09:06:35.571694
   published_id: 10008
   is_static: true
+  is_modified: false
 
 long_url_published:
   name: LongUrl
@@ -76,6 +81,7 @@ long_url_published:
   created_at: 2008-06-03 09:06:35.571694
   published_id:
   is_static: true
+  is_modified: false
 
 unpublished:
   name: Unpublished
@@ -86,3 +92,4 @@ unpublished:
   created_at: 2008-06-03 09:06:35.571694
   published_id:
   is_static: true
+  is_modified: false
