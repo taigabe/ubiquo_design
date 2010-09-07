@@ -78,7 +78,7 @@ ca:
       sitemap_removed: "Element de menú eliminat amb èxit"
       sitemap_remove_error: "Error a l'eliminar l'element de menú"
       # Widgets
-      editing_widget: "Editant el widget {{name}}"
+      editing_widget: "Editant el widget %{name}"
       close_widget: "Tancar"
       save: "Guardar"
       page_published: "Pàgina publicada correctament"

@@ -78,7 +78,7 @@ es:
       sitemap_removed: "Elemento de menú eliminado con éxito"
       sitemap_remove_error: "Error al eliminar el elemento de menú"
       # Widgets
-      editing_widget: "Editando el widgete {{name}}"
+      editing_widget: "Editando el widgete %{name}"
       close_widget: "Cerrar"
       save: "Guardar"
       page_published: "Página publicada correctamente"
