@@ -10,6 +10,7 @@ ca:
         url_name: "Nom de pàgina"
         page_template: "plantilla"
         publish_status: "Estat"
+        parent_id: "Subpàgina de"
       menu_item:
         caption: "Títol"
         is_linkable: "¿és linkable?"

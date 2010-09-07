@@ -10,6 +10,7 @@ es:
         url_name: "Nombre de página"
         page_template: "plantilla"
         publish_status: "Estado"
+        parent_id: "Subpágina de"
       menu_item:
         caption: "Título"
         is_linkable: "¿es linkable?"
