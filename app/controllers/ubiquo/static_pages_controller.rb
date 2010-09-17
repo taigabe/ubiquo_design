@@ -5,7 +5,8 @@ class Ubiquo::StaticPagesController < UbiquoAreaController
   before_filter :load_parent_pages, :except => [:index, :destroy]
   uses_tiny_mce(:options => default_tiny_mce_options, 
                 :only => [:edit, :update, :create, :new])
-  helper :pages
+  helper 'ubiquo/pages'
+  
   def index
     order_by = params[:order_by] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_order_field)
     sort_order = params[:sort_order] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_sort_order)

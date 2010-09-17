@@ -21,10 +21,43 @@ module Ubiquo::PagesHelper
     end
   end
 
-  def page_url(page)
-    method_route = Ubiquo::Config.get(:app_name) + "_host"
-    host = self.send(method_route) if self.respond_to?(method_route)
-    self.send("#{page.page_type.key}_url", {:page_name => page.url_name, :host => host})
+  def pages_list(collection, pages, options = {})
+    render(:partial => "shared/ubiquo/lists/standard",
+      :locals => {
+        :name => 'page',
+        :headers => [:name, :url_name, :publish_status],
+        :rows => collection.collect do |page| 
+          {
+            :id => page.id,
+            :columns => [
+              (if page.published? && page.published.is_linkable?
+                 link_to_page(page.name, page, {}, :popup => true)
+               else
+                 page.name    
+               end),
+              page.url_name,
+              publish_status(page),
+            ],
+            :actions => uhook_page_actions(page)
+          }
+        end,
+        :pages => pages,
+        :link_to_new => link_to(t("ubiquo.design.new_page"),
+          new_ubiquo_page_path, :class => 'new')})
   end
 
+  def publish_status(page)
+    status,icon_name = if page.published? && !page.is_modified?
+      ['published', 'ok']
+    elsif page.published? && page.is_modified?
+      ['pending_publish', 'pending']
+    else
+      ['unpublished', 'ko']
+    end
+    ubiquo_image_tag("#{icon_name}.gif",
+                     :alt => t("ubiquo.design.status.#{status}"),
+                     :title => t("ubiquo.design.status.#{status}")) + " " +
+      t("ubiquo.design.status.#{status}")
+  end
+  
 end

@@ -45,18 +45,4 @@ module Ubiquo::StaticPagesHelper
                                      new_ubiquo_static_page_path, :class => 'new')})
   end
 
-  def publish_status(page)
-    status,icon_name = if page.published? && !page.is_modified?
-      ['published', 'ok']
-    elsif page.published? && page.is_modified?
-      ['pending_publish', 'pending']
-    else
-      ['unpublished', 'ko']
-    end
-    ubiquo_image_tag("#{icon_name}.gif",
-                     :alt => t("ubiquo.design.status.#{status}"),
-                     :title => t("ubiquo.design.status.#{status}")) + " " +
-      t("ubiquo.design.status.#{status}")
-  end
-
 end
