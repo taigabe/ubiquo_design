@@ -38,6 +38,11 @@ ul.block_type_holder {
 .column_3 ul.block_type_holder, .column_2 ul.block_type_holder, .column_1 ul.block_type_holder {
   min-height: 28em;
 }
+.available_widgets {
+  overflow: auto;
+  height: 404px;
+  position:relative;
+}
 li.widget {
   position: relative;
   width: 13.9em;
