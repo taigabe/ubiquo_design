@@ -55,3 +55,9 @@ function update_error_on_widgets(widget_ids) {
     $("widget_" + id).addClassName("error");
   })
 }
+
+function toggleShareActions(id) {
+  $(id).select('div').each(function(div) {
+    div.toggle();
+  });
+}

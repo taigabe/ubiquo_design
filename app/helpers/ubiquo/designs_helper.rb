@@ -79,16 +79,14 @@ module Ubiquo::DesignsHelper
 
   def design_block_4cols(page, type_key, options={})
     block = page.blocks.first(:conditions => { :block_type => type_key })
+    unless block
+      raise ActiveRecord::RecordNotFound.new("Block with block_type '#{type_key}' not found")
+    end
     options.reverse_merge!({:class => "column_4"})
-    s = "<div class='top_options'>"
-    s << render(:partial => "ubiquo/designs/is_shared_form",
-                :locals => { :page => page, :block => block, :style_class => options[:class]})
-    s << "</div>"
-    s << block_type_holder(page, type_key, block, options)
-    s << "<div class='bottom_options'>"
-    s << render(:partial => "ubiquo/designs/shared_blocks_select",
-                :locals => { :page => page, :block => block })
-    s << "</div>"
+    content_tag(:div, :class => options.delete(:class)) do
+      block_actions(page, block) +
+        block_type_holder(page, type_key, block, options)
+    end
   end
 
   def design_block_1col(page, type_key, options={})
@@ -116,7 +114,7 @@ module Ubiquo::DesignsHelper
   def block_type_holder(page, block_type, block, options = {})
     options.merge!(:id => "block_#{block_type}" )
     options[:class] ||= ''
-    if page.blocks.as_hash.include?(block_type)
+    if !block.shared
       options[:class] << " draggable_target"
     else
       options[:class] << " non_draggable_target"
@@ -136,10 +134,11 @@ module Ubiquo::DesignsHelper
   end
 
   def options_for_shared_blocks_select(block)
-    options = block.available_shared_blocks.map do |block|
+    options = [[t("ubiquo.design.select_available_shared_blocks"), ""]]
+    options += block.available_shared_blocks.map do |block|
       ["#{block.page.name} - #{block.block_type}", block.id]
     end
-    options_for_select([[]] + options)
+    options_for_select(options)
   end
   
   def widgets_for_block_type_holder(block)
@@ -157,9 +156,44 @@ module Ubiquo::DesignsHelper
       :with => "Sortable.serialize('block_type_holder_#{id}',{name: 'block[#{id}]'})"}
     ]
   end
+  
   def sortable_block_type_holder(id,url, containments=[])
     id, opts = sortable_block_type_holder_options(id,url, containments)
     sortable_element id, opts
+  end
+
+  def block_actions(page, block)
+    content_tag(:div,
+      :id => "share_options_#{block.id}",
+      :class => 'share_block_options') do
+      if block.is_shared?
+        link_to_remote(t('ubiquo.design.stop_share_block'),
+          :url => ubiquo_page_design_block_path(page, block),
+          :method => :put,
+          :with => "'is_shared=false'")
+      elsif block.shared_id
+        link_to_remote(t('ubiquo.design.stop_use_shared_block', :key => block.shared.block_type),
+          :url => ubiquo_page_design_block_path(page, block),
+          :method => :put,
+          :with => "'shared_id='")
+      else
+        content_tag(:div) do
+          link_to_remote(t('ubiquo.design.share_block'),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :with => "'is_shared=true'") + " #{t('ubiquo.or')} " +
+            link_to_function(t('ubiquo.design.use_shared_block'), "toggleShareActions('share_options_#{block.id}')")
+        end +
+          content_tag(:div, :id => 'select_shared_block', :style => 'display:none') do
+            select_tag("shared_blocks_#{block.id}", options_for_shared_blocks_select(block)) +
+            link_to_remote(t('ubiquo.add'),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :with => "'shared_id='+$F('shared_blocks_#{block.id}')") +
+            link_to_function(t('ubiquo.cancel'), "toggleShareActions('share_options_#{block.id}')")
+          end
+      end
+    end
   end
 
 end

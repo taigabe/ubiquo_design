@@ -1,0 +1,8 @@
+page.replace("share_options_#{@block.id}", block_actions(@page, @block))
+if @block.shared_id
+  page.call "Element.removeClassName", "block_#{@block.block_type}", "draggable_target"
+  page.call "Element.addClassName", "block_#{@block.block_type}", "non_draggable_target"
+else
+  page.call "Element.removeClassName", "block_#{@block.block_type}", "non_draggable_target"
+  page.call "Element.addClassName", "block_#{@block.block_type}", "draggable_target"
+end

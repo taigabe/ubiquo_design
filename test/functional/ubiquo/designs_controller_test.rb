@@ -40,17 +40,6 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
-  def test_should_show_default_form_on_available_blocks
-    login_as
-    page = pages(:two_design)
-    template_mock(page)
-
-    get :show, :page_id => page.id
-    page.blocks.map(&:block_types).each do |block_type|
-      assert_select "#use_default_#{block_type}"
-    end
-  end
-
   def test_should_show_edit_widget_with_editable_widgets
     login_as
     widget = nil

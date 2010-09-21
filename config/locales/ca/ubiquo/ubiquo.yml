@@ -1,3 +1,4 @@
+
 ca:
   ubiquo:
     page:
@@ -84,6 +85,11 @@ ca:
       page_published: "Pàgina publicada correctament"
       page_publish_error: "Error al publicar la pàgina"
       block_error: "No es pot assignar aquest bloc com bloc per defecte degut a que els tipos de bloc no coincideixen"
+      stop_share_block: "Deixar de compartir el bloc"
+      share_block: "Compartir aquest bloc"
+      use_shared_block: "Fer servir un bloc compartit"
+      select_available_shared_blocks: "Sel·lecciona un bloc disponible"
+      stop_use_shared_block: "Deixar de fer servir el block '{{key}}'"
     widgets:
       automatic_menu:
         name: "Menú automàtic"

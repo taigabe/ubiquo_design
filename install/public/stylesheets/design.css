@@ -23,12 +23,12 @@
 #template .non_draggable_target {
   background: #F7F7F7 url(../images/ubiquo/bg_no_dragdrop.jpg) no-repeat center center;
 }
-.top_options p {
-  margin-bottom: .4em;
-  font-size: 1.1em;
+.share_block_options {
+  font-size: 11px;
+  margin-bottom: 4px;
 }
-.top_options input {
-  vertical-align: middle;
+#select_shared_block a {
+  margin-left: 5px;
 }
 ul.block_type_holder {
   min-height: 15em;
