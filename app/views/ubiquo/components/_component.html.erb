@@ -10,19 +10,19 @@
 			<h4 id="component_name_field_<%= component.id %>"><%= component.name %></h4>
 			<% javascript_tag do %>
 				new Ajax.InPlaceEditor(
-					"component_name_field_<%= component.id %>", 
-					"<%= change_name_ubiquo_page_design_component_path(@page, component) %>", 
+					"component_name_field_<%= component.id %>",
+					"<%= change_name_ubiquo_page_design_component_path(@page, component) %>",
 					{
-						savingText:"<%= t('ubiquo.design.component_saving')%>", 
-						okText:"<%= t('ubiquo.design.component_save') %>", 
-						cancelText: "<%= t('ubiquo.design.component_cancel') %>", 
-						clickToEditText: "<%= t('ubiquo.design.component_click_to_edit') %>", 
+						savingText:"<%= t('ubiquo.design.component_saving')%>",
+						okText:"<%= t('ubiquo.design.component_save') %>",
+						cancelText: "<%= t('ubiquo.design.component_cancel') %>",
+						clickToEditText: "<%= t('ubiquo.design.component_click_to_edit') %>",
 						loadingText:"<%= t('ubiquo.design.component_click_to_edit') %>",
 						callback: function(form, value) {
-							return 'authenticity_token=' + encodeURIComponent('<%= RAILS_ENV == 'test' ? "" : form_authenticity_token %>') + '&' + Form.serialize(form);
+							return 'authenticity_token=' + encodeURIComponent('<%= Rails.env.test? ? "" : form_authenticity_token %>') + '&' + Form.serialize(form);
 						},
 					}
 				);
 			<% end %>
-	</div>			
+	</div>
 </li>

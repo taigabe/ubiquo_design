@@ -6,7 +6,7 @@
 #
 #We combine the simplicity of this generators with the design data-model (pages, page templates, blocks, components and component types) to build the website.
 #
-#=== How to use it 
+#=== How to use it
 #
 #Let's see an example of a generator that displays the last news. The first step is using the _simple_generator_ generator to build the skeleton:
 #
@@ -28,7 +28,7 @@
 #
 #The local namespace is available on the generator view, by default at <tt>app/generators/last_news/views/_show.html.erb</tt>.
 #
-#== Creating the component type 
+#== Creating the component type
 #
 #A generator has an associated component (a model derived from _Component_) and cannot be included in our pages until we create its associated _component type_:
 #
@@ -56,10 +56,10 @@
 #  class LastNews < Component
 #    self.allowed_options = [:default_news_to_show]
 #    validates_numericality_of :default_news_to_show
-#    
+#
 #    def last_news(news_to_show = nil)
-#      News.find(:all, :limit => news_to_show || self.default_news_to_show, 
-#                      :order => 'publish_date DESC')  
+#      News.find(:all, :limit => news_to_show || self.default_news_to_show,
+#                      :order => 'publish_date DESC')
 #    end
 #  end
 #
@@ -80,9 +80,9 @@
 #
 #  <% last_news.each do |news| %>
 #    <p><%= news.body %></p>
-#  <% end %> 
+#  <% end %>
 #
-#As the component is configurable, we have to prepare a ubiquo view, which could look like this: 
+#As the component is configurable, we have to prepare a ubiquo view, which could look like this:
 #
 #  # app/generators/last_news/views/ubiquo/_form.html.erb
 #  <%= component_header component %>
@@ -92,12 +92,12 @@
 #      <%= component_submit %>
 #  <% end %>
 #
-#== Configuring the conponent params 
-# 
+#== Configuring the conponent params
+#
 #The last parameter of the generator (_options_) is a hash containing a filtered copy of the controller _params_. Only the component params associated with a given component type will be received on the component:
 #
 #  # db/dev_bootstrap/component_params.yml
-#  component_params_001: 
+#  component_params_001:
 #    name: max_news
 #    id: "1"
 #    component_type_id: "1"
@@ -111,54 +111,54 @@
 #
 #The skeleton created the basic infrastructure to test the component:
 #
-#* unit/name_test.rb: Test the associated model. 
+#* unit/name_test.rb: Test the associated model.
 #* functional/generators/name_test.rb: Test the generator and public views.
-#* functional/generators/ubiquo/name_test.rb: Test the ubiquo views. 
+#* functional/generators/ubiquo/name_test.rb: Test the ubiquo views.
 #
 #Check the exisiting tests for more details.
 module UbiquoDesign
   module SimpleGenerators
-    # Define error exceptions       
-    class GeneratorError < StandardError; end    
+    # Define error exceptions
+    class GeneratorError < StandardError; end
     class GeneratorNotFound < GeneratorError; end
-    class GeneratorTemplateNotFound < GeneratorError; end    
+    class GeneratorTemplateNotFound < GeneratorError; end
     class GeneratorResourceError < GeneratorError; end
 
-    DEFAULT_GENERATORS_PATHS = ["#{RAILS_ROOT}/app/generators"]
+    DEFAULT_GENERATORS_PATHS = [Rails.root.join('app/generators').to_s]
     @generators_paths = DEFAULT_GENERATORS_PATHS
-    
+
     def self.generators_paths=(paths)
       @generators_paths = paths
     end
-    
+
     def self.generators_paths
       @generators_paths
     end
-    
-    # Load generators functions (seek for app/generators/*/*generator.rb files)      
+
+    # Load generators functions (seek for app/generators/*/*generator.rb files)
     def initialize
       SimpleGenerators.generators_paths.each do |path|
         Dir[File.join(path, "*", "generator.rb")].each do |generator|
-          RAILS_ENV == "development" ? load(generator) : require(generator)
+          Rails.env.development? ? load(generator) : require(generator)
         end
       end
     end
-    
+
     def generator_directory(generator)
       SimpleGenerators.generators_paths.each do |path|
         path = File.join(path, generator.to_s)
         return path if File.directory?(path)
       end
-      raise GeneratorNotFound.new("Generator not found: #{generator.to_s}")   
+      raise GeneratorNotFound.new("Generator not found: #{generator.to_s}")
     end
-    
+
     private
 
     # Returns an array with all available generators
     #
     # Example: available_generators.include?(:my_generator)
     def available_generators
-      self.private_methods.grep(/_generator$/).collect do |generator| 
+      self.private_methods.grep(/_generator$/).collect do |generator|
         generator.sub(/_generator/, '').to_sym
       end
     end
@@ -171,7 +171,7 @@ module UbiquoDesign
     # Renders the generator as a string
     #
     # Example: render_generator_to_string(:test, arg1, arg2)
-    # In this case, he test generator receives arg1 and arg2 as arguments.     
+    # In this case, he test generator receives arg1 and arg2 as arguments.
     def render_generator_to_string(generator, options)
       raise GeneratorNotFound.new("Generator #{generator.to_s} not found") unless available_generators.include?(generator)
       args = options.delete(:generator_args) || []
@@ -179,22 +179,22 @@ module UbiquoDesign
       locals, render_options = run_generator(generator, *args)
       return unless locals
       generator_to_render = (render_options[:generator] || generator).to_s
-      template_to_render = (render_options[:template] || template)  
+      template_to_render = (render_options[:template] || template)
       template_file = search_template(generator_to_render, template_to_render)
-      # Add template directory to view_paths, so as to render partials 
+      # Add template directory to view_paths, so as to render partials
       # use this directory as defaults
-      self.view_paths.unshift(File.dirname(template_file)) 
+      self.view_paths.unshift(File.dirname(template_file))
       render_output = render_to_string :file => template_file, :locals => locals
       self.view_paths.shift
       render_output
     end
-    
+
     def search_template(generator, name)
       generator_path = generator_directory(generator)
       template_path = File.join(generator_path, "views", "_#{name}.html.erb")
-      raise GeneratorTemplateNotFound.new("template file not found: #{name}") unless File.exists?(template_path)   
+      raise GeneratorTemplateNotFound.new("template file not found: #{name}") unless File.exists?(template_path)
       template_path
     end
-    
+
   end
 end

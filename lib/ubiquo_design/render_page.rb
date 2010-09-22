@@ -15,7 +15,7 @@ module UbiquoDesign
     # Render all components contained on a block (calling the configured
     # generator) as string
     def render_block(block)
-      uhook_collect_components(block) do |component| 
+      uhook_collect_components(block) do |component|
         # Build a hash containing the options for this component (get info
         # from params). Copy only those keys found in component_params,
         # checking also that the required params are present.
@@ -37,7 +37,7 @@ module UbiquoDesign
                                                       generator,
                                                       :generator_args => [component, generator_options],
                                                       :template => 'show')
-        # A generator didn't returned an string, return inmediately 
+        # A generator didn't returned an string, return inmediately
         return unless generator_output
         generator_output
       end
@@ -57,7 +57,7 @@ module UbiquoDesign
         children = if root.automatic_menu
                      locals, render_options = run_generator(root.automatic_menu.generator)
                      locals[:menu_items]
-                   else                        
+                   else
                      root.active_children
                    end
         [root, children, is_current_root]
@@ -65,8 +65,8 @@ module UbiquoDesign
     end
 
     def template_directory
-      (RAILS_ENV == 'test')? File.join(ActiveSupport::TestCase.fixture_path, "templates") : 
-        "#{RAILS_ROOT}/app/templates"
+      Rails.env.test? ? File.join(ActiveSupport::TestCase.fixture_path, "templates") :
+        Rails.root.join('app/templates').to_s
     end
 
     def render_template_file(key, layout = 'main')
