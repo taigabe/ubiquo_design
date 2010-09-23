@@ -97,7 +97,7 @@ class Page < ActiveRecord::Base
             uhook_publish_widget_asset_relations(widget, new_widget)
           end
         end
-        published_page.update_attribute(:is_modified, false)
+        published_page.reload.update_attribute(:is_modified, false)
         self.update_attributes(
           :is_modified => false,
           :published_id => published_page.id
