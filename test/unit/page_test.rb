@@ -230,6 +230,19 @@ class PageTest < ActiveSupport::TestCase
     assert_equal widget, page.static_section_widget
   end
 
+  def test_should_return_layout_from_template_in_structure
+    UbiquoDesign::Structure.define do
+      page_template :example, :layout => 'test_layout'
+    end
+    page = create_page(:page_template => 'example')
+    assert_equal 'test_layout', page.layout
+    assert_equal Page::DEFAULT_LAYOUT, create_page.layout
+  end
+
+  def test_should_get_default_layout
+    assert_equal 'main', Page::DEFAULT_LAYOUT
+  end
+
   private
 
   def create_page(options = {})

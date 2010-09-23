@@ -29,8 +29,10 @@ class Page < ActiveRecord::Base
               :conditions => ["pages.published_id IS NOT NULL OR pages.is_modified = ?", true]
   named_scope :statics,
               :conditions => ["pages.is_static = ?", true]
-   
-   
+
+
+  DEFAULT_LAYOUT = 'main'
+
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
@@ -150,9 +152,7 @@ class Page < ActiveRecord::Base
 
   # Returns the layout to use for this page
   def layout
-    #TODO Implement this method with Ubiquodesign::structure
-    # reading page_template properties
-    "main"
+    UbiquoDesign::Structure.get(:page_template => page_template.to_sym)[:options][:layout] rescue DEFAULT_LAYOUT
   end
 
   def self.templates
@@ -195,7 +195,7 @@ class Page < ActiveRecord::Base
     block = self.blocks.select { |b| b.block_type == "main" }.first
     Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
   end
-  
+
   private
 
   def compose_url_name_with_parent_url
