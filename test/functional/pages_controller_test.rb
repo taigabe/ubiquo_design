@@ -70,4 +70,16 @@ class PagesControllerTest < ActionController::TestCase
     )
   end
 
+  def test_should_get_page_by_key
+    assert_nothing_raised do
+      get :show, :key => pages(:one).key
+    end
+  end
+
+  def test_should_not_get_page_by_inexistent_key
+    assert_raise ActiveRecord::RecordNotFound do
+      get :show, :key => 'non_existent'
+    end
+  end
+
 end

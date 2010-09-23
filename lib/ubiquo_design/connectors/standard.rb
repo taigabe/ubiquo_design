@@ -53,11 +53,16 @@ module UbiquoDesign
           klass.send(:helper, Helper)
         end
         module InstanceMethods
-          # Loads the page for the public part. 
-          # Can use params[:url] to decide what page to show.
-          # Must returns the expected Page instance.
+          # Loads the page for the public part.
+          # If present, uses an key to retrieve the page
+          # Else uses params[:url] to decide what page to show.
+          # Must return the expected Page instance or raise a not found exception.
           def uhook_load_page
-            ::Page.published.with_url(params[:url])
+            if params[:key].present?
+              ::Page.published.find_by_key!(params[:key])
+            else
+              ::Page.published.with_url(params[:url])
+            end
           end
         end
       end

@@ -36,6 +36,7 @@ class Page < ActiveRecord::Base
   def self.with_url url
     url_name = url.is_a?(Array) ? url.join('/') : url
     page = find_by_url_name(url_name)
+
     # Try to consider the last portion as the slug
     url_name = returning(url_name.split('/')) do |portions|
       portions.size > 1 ? portions.pop : portions

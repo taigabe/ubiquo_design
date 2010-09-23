@@ -4,6 +4,7 @@ one:
   url_name: ""
   page_template: "static"
   published_id:
+  key: one
   is_static: true
   is_modified: false
 
@@ -29,7 +30,7 @@ one_design:
   page_template: "static"
   is_modified: false
   published_id: 10000
-  key: one_design
+  key: one
   is_static: true
 
 two_design:
@@ -89,7 +90,8 @@ unpublished:
   id: 10009
   page_template: "static"
   url_name: unpublished
+  key: unpublished
   created_at: 2008-06-03 09:06:35.571694
   published_id:
   is_static: true
-  is_modified: false
+  is_modified: true
