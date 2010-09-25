@@ -19,7 +19,7 @@ es:
       new_page: "Nueva página"
       no_name: "(Sin nombre)"
       name: "nombre"
-      page_name_example: "Ejemplo: http://www.mywebpage/{{name}}"
+      page_name_example: "Ejemplo: http://www.mywebpage/%{name}"
       confirm_page_removal: "Estás seguro de querer eliminar esta página?"
       section: "Sección"
       situation: "Situación"
@@ -79,7 +79,7 @@ es:
       sitemap_removed: "Elemento de menú eliminado con éxito"
       sitemap_remove_error: "Error al eliminar el elemento de menú"
       # Components
-      editing_component: "Editando el componente {{name}}"
+      editing_component: "Editando el componente %{name}"
       close_component: "Cerrar"
       save: "Guardar"
       page_published: "Página publicada correctamente"
