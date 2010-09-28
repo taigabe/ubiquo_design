@@ -13,10 +13,10 @@ ca:
         parent_id: "Subpàgina de"
       menu_item:
         caption: "Títol"
-        is_linkable: "¿és linkable?"
+        is_linkable: "És enllaçable?"
         url: "Url"
         description: "Descripció"
-        is_active: "¿està actiu?"
+        is_active: "És visible?"
         menu_generator: "Generador de menú"
       banner_flash:
         flash_file: "fitxer flash"

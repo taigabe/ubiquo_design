@@ -15,41 +15,35 @@
 <%= error_messages_for 'menu_item' %>
 
 <div class="form_box">
-
   <%= f.hidden_field :parent_id %>
   <%= uhook_extra_hidden_fields(f) %>
-  
-	<p>
-		<%= f.label :caption, MenuItem.human_attribute_name("caption") %>
-		<%= f.text_field :caption %>
-	</p>
-	
-	<p>
-		<%= f.check_box :is_linkable, :onclick => "toggle_element(this, 'menu_item_url'); return true;" %>
-		<%= f.label :is_linkable, MenuItem.human_attribute_name("is_linkable") %>
-	</p>
-	<p style="display: none;">	
-          <%= f.label :url, MenuItem.human_attribute_name("url") %>
-          <%= f.text_field :url %>
-	</p>
-	
-	<p>
-		<%= f.label :description, MenuItem.human_attribute_name("description") %>
-		<%= f.text_area :description, :rows => 4 %>
-	</p>
-	
-	<p>
-		<%= f.label :is_active, MenuItem.human_attribute_name("is_active") %>
-		<%= f.check_box :is_active %>
-	</p>
-	
+
+  <p>
+    <%= f.label :caption, MenuItem.human_attribute_name("caption") %>
+    <%= f.text_field :caption %>
+  </p>
+  <p>
+    <%= f.label :is_linkable, MenuItem.human_attribute_name("is_linkable") %>
+    <%= f.check_box :is_linkable, :onclick => "toggle_element(this, 'menu_item_url'); return true;" %>
+  </p>
+  <p style="display: none;">
+    <%= f.label :url, MenuItem.human_attribute_name("url") %>
+    <%= f.text_field :url %>
+  </p>
+  <p>
+    <%= f.label :description, MenuItem.human_attribute_name("description") %>
+    <%= f.text_area :description, :rows => 4 %>
+  </p>
+  <p>
+    <%= f.label :is_active, MenuItem.human_attribute_name("is_active") %>
+    <%= f.check_box :is_active %>
+  </p>
   <% if f.object.is_root? %>
-	  <p>
-		  <%= f.label :menu_generator_id, MenuItem.human_attribute_name("menu_generator") %>
-		  <%= f.collection_select :automatic_menu_id, @automatic_menus, :id, :name, :include_blank => t('ubiquo.design.subsections') %>
-	  </p>
-	<% end %>
-	
+    <p>
+      <%= f.label :menu_generator_id, MenuItem.human_attribute_name("menu_generator") %>
+      <%= f.collection_select :automatic_menu_id, @automatic_menus, :id, :name, :include_blank => t('ubiquo.design.subsections') %>
+    </p>
+  <% end %>
 </div>
 
 <% content_for :sidebar do %>
