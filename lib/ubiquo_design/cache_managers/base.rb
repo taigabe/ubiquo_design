@@ -36,14 +36,15 @@ module UbiquoDesign
 
         protected
 
-        # Calculates a string content identifier depending on the widget_id
+        # Calculates a string content identifier depending on the widget
+        # +widget+ can be either a Widget instance or a widget id
         # possible options:
         #   policy_context:  cache Policies definition context (default nil)
         #   scope:    object where the params and lambdas will be evaluated
-        def calculate_content_id(widget_id, options = {})
-          widget = ::Widget.find(widget_id)
+        def calculate_content_id(widget, options = {})
+          widget = widget.is_a?(Widget) ? widget : Widget.find(widget)
           policies = UbiquoDesign::CachePolicies.get(options[:policy_context])[widget.key]
-          content_id = widget_id.to_s
+          content_id = widget.id.to_s
 
           unless policies[:params].blank?
             param_ids = policies[:params].map do |param_id|

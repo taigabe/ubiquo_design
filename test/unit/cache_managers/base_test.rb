@@ -13,6 +13,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
   test 'should cache a widget and get it back' do
     widget_id = widgets(:one).id
     @manager.cache(widget_id, 'content')
+    assert_equal 'content', @manager.get(widget_id)
   end
 
   test 'should expire a widget cache' do
@@ -85,6 +86,14 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
     )
     assert_equal "#{widget.id}_params_##id##test_procs_##one", content_id
   end
+
+  test 'should accept a widget instead of the id' do
+    widget = widgets(:one)
+    Widget.expects(:find).never
+    @manager.cache(widget, 'free')
+    assert_equal 'free', @manager.get(widget)
+  end
+
 
   protected
 

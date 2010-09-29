@@ -102,6 +102,9 @@ module UbiquoDesign
     # Example: render_widget_to_string(:test, arg1, arg2)
     # In this case, he test widget receives arg1 and arg2 as arguments.
     def render_widget widget
+      cached = UbiquoDesign.cache_manager.get(widget)
+      return cached if cached
+
       widget_name = widget.key
       unless available_widgets.include?(widget_name)
         require "widgets/#{widget_name}_widget"
