@@ -18,26 +18,26 @@ module UbiquoDesign
         # Gets the cached content of a widget. Returns false if this widget is not
         # currently cached
         def get(widget_id, options = {})
-          content_id = calculate_content_id(widget_id, options)
-          valid = not_expired(widget_id, content_id, options)
-          retrieve(content_id) if valid
+          key = calculate_key(widget_id, options)
+          valid = not_expired(widget_id, key, options)
+          retrieve(key) if valid
         end
 
         # Caches the content of a widget, with a possible expiration date.
         def cache(widget_id, contents, options = {})
-          content_id = calculate_content_id(widget_id, options)
-          validate(widget_id, content_id, options)
-          store(content_id, contents) if content_id
+          key = calculate_key(widget_id, options)
+          validate(widget_id, key, options)
+          store(key, contents) if key
         end
 
         # Expires the applicable content of a widget given its id
         def expire(widget_id, options = {})
-          model_content_id = calculate_content_id(widget_id, options.slice(:scope))
-          delete(model_content_id)
+          model_key = calculate_key(widget_id, options.slice(:scope))
+          delete(model_key)
 
-          with_instance_content(widget_id, options) do |instance_content_id|
-            content_ids = retrieve(instance_content_id)[:content_ids] rescue []
-            content_ids.each{|content_id| delete(content_id)}
+          with_instance_content(widget_id, options) do |instance_key|
+            keys = retrieve(instance_key)[:keys] rescue []
+            keys.each{|key| delete(key)}
           end
         end
 
@@ -49,62 +49,62 @@ module UbiquoDesign
         #   policy_context:  cache Policies definition context (default nil)
         #   scope:    object where the params and lambdas will be evaluated
         # Returns nil if the widget should not be cached according to the policies
-        def calculate_content_id(widget, options = {})
+        def calculate_key(widget, options = {})
           widget, policies = policies_for_widget(widget, options)
           return unless policies
 
-          content_id = widget.id.to_s
+          key = widget.id.to_s
 
           unless policies[:params].blank?
             param_ids = policies[:params].map do |param_id|
               "###{param_id}###{options[:scope].send(:params)[param_id]}"
             end
-            content_id += '_params_' + param_ids.join
+            key += '_params_' + param_ids.join
           end
 
           unless policies[:procs].blank?
             proc_ids = policies[:procs].map do |proc|
               "###{proc.bind(options[:scope]).call}"
             end
-            content_id += '_procs_' + proc_ids.join
+            key += '_procs_' + proc_ids.join
           end
 
-          content_id
+          key
         end
 
-        # retrieves the widget content identified by +content_id+
-        def retrieve(content_id)
-          raise NotImplementedError.new 'Implement retrieve(content_id) in your CacheManager'
+        # retrieves the widget content identified by +key+
+        def retrieve(key)
+          raise NotImplementedError.new 'Implement retrieve(key) in your CacheManager'
         end
 
-        # Stores a widget content indexing by a +content_id+
-        def store(content_id, contents)
-          raise NotImplementedError.new 'Implement store(content_id, contents) in your CacheManager'
+        # Stores a widget content indexing by a +key+
+        def store(key, contents)
+          raise NotImplementedError.new 'Implement store(key, contents) in your CacheManager'
         end
 
         # removes the widget content from the store
-        def delete(content_id)
-          raise NotImplementedError.new 'Implement delete(content_id) in your CacheManager'
+        def delete(key)
+          raise NotImplementedError.new 'Implement delete(key) in your CacheManager'
         end
 
-        # Returns true if the content_id fragment is not expired and still vigent
-        def not_expired(widget, content_id, options)
-          with_instance_content(widget, options) do |instance_content_id|
-            valid_content_ids = retrieve(instance_content_id)
-            return valid_content_ids[:content_ids].include? content_id rescue false
+        # Returns true if the key fragment is not expired and still vigent
+        def not_expired(widget, key, options)
+          with_instance_content(widget, options) do |instance_key|
+            valid_keys = retrieve(instance_key)
+            return valid_keys[:keys].include? key rescue false
           end
 
           true
         end
 
-        # Marks the content_id as valid if necessary
-        def validate(widget, content_id, options)
-          with_instance_content(widget, options) do |instance_content_id|
-            valid_content_ids = retrieve(instance_content_id)
-            valid_content_ids ||= {}
-            (valid_content_ids[:content_ids] ||= []) << content_id
-            valid_content_ids[:content_ids].uniq
-            store(instance_content_id, valid_content_ids)
+        # Marks the key as valid if necessary
+        def validate(widget, key, options)
+          with_instance_content(widget, options) do |instance_key|
+            valid_keys = retrieve(instance_key)
+            valid_keys ||= {}
+            (valid_keys[:keys] ||= []) << key
+            valid_keys[:keys].uniq
+            store(instance_key, valid_keys)
           end
 
         end
@@ -122,8 +122,8 @@ module UbiquoDesign
               else
                 options[:scope].send(:id)
               end
-              instance_content_id = "#{widget.id.to_s}####{instance_id}"
-              yield(instance_content_id)
+              instance_key = "#{widget.id.to_s}####{instance_id}"
+              yield(instance_key)
             end
           end
         end
