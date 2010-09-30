@@ -93,4 +93,16 @@ class UbiquoDesign::CachePoliciesTest < ActiveSupport::TestCase
     UbiquoDesign::CachePolicies.clear(:test)
     assert_equal({}, UbiquoDesign::CachePolicies.get(:test))
   end
+
+  def test_should_get_by_model
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :page => Page,
+        :widget => Widget,
+        :free => Free
+      }
+    end
+    assert_equal([:page], UbiquoDesign::CachePolicies.get_by_model(Page.new, :test))
+    assert_equal_set([:widget, :free], UbiquoDesign::CachePolicies.get_by_model(Free.new, :test))
+  end
 end

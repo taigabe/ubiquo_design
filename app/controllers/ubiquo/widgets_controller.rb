@@ -13,7 +13,7 @@ class Ubiquo::WidgetsController < UbiquoAreaController
   def create
     @block = Block.find(params[:block])
 
-    @widget = params[:widget].classify.constantize.new
+    @widget = Widget.class_by_key(params[:widget]).new
     raise "#{params[:widget]} is not a widget" unless @widget.is_a? Widget
 
     @widget.block = @block

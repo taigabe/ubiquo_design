@@ -116,6 +116,7 @@ module UbiquoDesign
       self.view_paths.unshift(File.dirname(template_file))
       render_output = render_to_string :file => template_file
       self.view_paths.shift
+      UbiquoDesign.cache_manager.cache(widget, render_output, :scope => self)
       render_output
     end
 

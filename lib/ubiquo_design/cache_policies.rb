@@ -14,10 +14,21 @@ module UbiquoDesign
         end
       end
 
-      # Returns a hash with the required policies
+      # Returns a hash with the stored policies
       def get(context = nil)
         with_scope(context) do
           current_base
+        end
+      end
+
+      # Returns a list of widget types which have policies that affect a given +instance+
+      def get_by_model(instance, context = nil)
+        returning(widgets = []) do
+          get(context).each_pair do |widget, policies|
+            if (policies[:models] || []).detect{|model| instance.is_a?(model)}
+              widgets << widget
+            end
+          end
         end
       end
 

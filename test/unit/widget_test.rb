@@ -78,6 +78,14 @@ class WidgetTest < ActiveSupport::TestCase
     assert page.reload.is_modified?
   end
 
+  def test_should_get_widget_key
+    assert_equal :test_widget, TestWidget.new.key
+  end
+
+  def test_should_get_widget_class
+    assert_equal TestWidget, Widget.class_by_key(:test_widget)
+  end
+
   private
   def create_widget(options = {})
     TestWidget.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))

@@ -94,7 +94,6 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
     assert_equal 'free', @manager.get(widget)
   end
 
-
   protected
 
   def create_widget

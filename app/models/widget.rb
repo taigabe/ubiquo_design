@@ -105,6 +105,11 @@ class Widget < ActiveRecord::Base
     self.class.to_s.underscore.to_sym
   end
 
+  # Returns a Widget class given a key (inverse of Widget#key)
+  def self.class_by_key key
+    key.to_s.classify.constantize
+  end
+
   # Fixes clone method. Also copy 'options' attribute
   def clone
     cloned = super
