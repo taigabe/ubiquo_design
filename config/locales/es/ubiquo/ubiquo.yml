@@ -1,3 +1,4 @@
+
 es:
   ubiquo:
     page:
@@ -84,6 +85,12 @@ es:
       page_published: "Página publicada correctamente"
       page_publish_error: "Error al publicar la página"
       block_error: "No se puede asignar este bloque como bloque por defecto porque los tipos de bloque no coinciden"
+      stop_share_block: "Dejar de compartir el bloque"
+      share_block: "Compartir este bloque"
+      use_shared_block: "Utilizar un bloque compartido"
+      select_available_shared_blocks: "Selecciona un bloque disponible"
+      stop_use_shared_block: "Dejar de utilizar el bloque '{{key}}'"
+      replace_block_confirm: "¿Estas seguro de remplazar el contenido del bloque?"
     widgets:
       automatic_menu:
         name: Menú automático

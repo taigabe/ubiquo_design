@@ -86,7 +86,13 @@ class BlockTest < ActiveSupport::TestCase
     uses_block = Block.new(:block_type => "sidebar", :is_shared => false)
     assert_equal_set [block, block2], uses_block.available_shared_blocks
   end
-  
+
+  def test_should_return_real_block
+    block_to_share = create_block(:is_shared => true)
+    using_share_block = create_block(:shared_id => block_to_share.id)
+    assert_equal block_to_share, block_to_share.real_block
+    assert_equal block_to_share, using_share_block.real_block
+  end
   
   private
   

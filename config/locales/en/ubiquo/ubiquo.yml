@@ -84,6 +84,12 @@ en:
       page_published: "Page published succesfully"
       page_publish_error: "Error publishing the page"
       block_error: "Is not possible to assign this bloc as a default block because block types doesn't match"
+      stop_share_block: "Stop sharing the block"
+      share_block: "Share this block"
+      use_shared_block: "Using a shared block"
+      select_available_shared_blocks: "Select an available block"
+      stop_use_shared_block: "Stop using the block '{{key}}'"
+      replace_block_confirm: "Are sure to replace the contents of the block?"
     widgets:
       automatic_menu:
         name: Automatic menu

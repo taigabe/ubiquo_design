@@ -6,7 +6,9 @@ class Ubiquo::BlocksController < UbiquoAreaController
     @block.update_attributes(
       :is_shared => params[:is_shared],
       :shared_id => params[:shared_id])
-
+    if @block.shared_id
+      @block.widgets.map(&:destroy)
+    end
     respond_to do |format|
       format.html { redirect_to(ubiquo_page_design_path(@page)) }
       format.js

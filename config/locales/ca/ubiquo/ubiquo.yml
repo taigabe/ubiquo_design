@@ -89,7 +89,8 @@ ca:
       share_block: "Compartir aquest bloc"
       use_shared_block: "Fer servir un bloc compartit"
       select_available_shared_blocks: "Sel·lecciona un bloc disponible"
-      stop_use_shared_block: "Deixar de fer servir el block '{{key}}'"
+      stop_use_shared_block: "Deixar de fer servir el bloc '{{key}}'"
+      replace_block_confirm: "Estàs segur de voler remplaçar el contingut del block?"
     widgets:
       automatic_menu:
         name: "Menú automàtic"

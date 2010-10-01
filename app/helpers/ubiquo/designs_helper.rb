@@ -1,3 +1,4 @@
+# -*- coding: undecided -*-
 #= Page templates
 #
 #All pages on the design system belong to a page template which  holds the view structure for both the public and the ubiquo page. Page templates are located at <tt>app/templates</tt>.
@@ -107,7 +108,9 @@ module Ubiquo::DesignsHelper
   def make_blocks_sortables(page)
     keys = page.blocks.map(&:block_type).uniq
     page.blocks.collect do |block|
-      sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_widgets_path(page), keys
+      if block == block.real_block
+        sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_widgets_path(page), keys
+      end
     end
   end
 
@@ -119,18 +122,21 @@ module Ubiquo::DesignsHelper
     else
       options[:class] << " non_draggable_target"
     end
-    (content_tag :div, options do
+    result = content_tag :div, options do
       content_tag :ul, :id =>"block_type_holder_#{block_type}", :class => 'block_type_holder' do
-        widgets_for_block_type_holder(block) unless options[:class].match /non_draggable/
+        widgets_for_block_type_holder(block.real_block)
       end
-    end) +
-    (page.blocks.as_hash.include?(block_type) ? drop_receiving_element(
-    options[:id],
-    :url => ubiquo_page_design_widgets_path(@page),
-    :method => :post,
-    :accept => 'widget',
-    :with => "'widget='+element.id.gsub('^widget_', '')+'&block=#{block.id}'"
-    ) : "")
+    end
+    if block == block.real_block
+      result += drop_receiving_element(
+        options[:id],
+        :url => ubiquo_page_design_widgets_path(@page),
+        :method => :post,
+        :accept => 'widget',
+        :with => "'widget='+element.id.gsub('^widget_', '')+'&block=#{block.id}'"
+      )
+    end
+    result
   end
 
   def options_for_shared_blocks_select(block)
@@ -189,6 +195,7 @@ module Ubiquo::DesignsHelper
             link_to_remote(t('ubiquo.add'),
             :url => ubiquo_page_design_block_path(page, block),
             :method => :put,
+            :confirm => t('ubiquo.design.replace_block_confirm'),
             :with => "'shared_id='+$F('shared_blocks_#{block.id}')") +
             link_to_function(t('ubiquo.cancel'), "toggleShareActions('share_options_#{block.id}')")
           end

@@ -4,7 +4,6 @@ class Block < ActiveRecord::Base
   has_many :block_uses, :class_name => 'Block', :foreign_key => 'shared_id'
   belongs_to :shared, :class_name => 'Block', :foreign_key => 'shared_id'
   has_many :widgets, :dependent => :destroy, :order => 'widgets.position ASC'
-# has_many :widgets
   belongs_to :page
   after_save :update_page
   after_destroy :update_page
@@ -20,7 +19,14 @@ class Block < ActiveRecord::Base
   end
 
   def available_shared_blocks
-    Block.all(:conditions => { :is_shared => true, :block_type => self.block_type })
+    Block.all(:conditions => ["blocks.is_shared = ? AND blocks.block_type = ? AND " +
+                              "(pages.published_id IS NOT NULL OR pages.is_modified = ?)",
+                              true, self.block_type, true],
+              :include => [:page])
+  end
+
+  def real_block
+    self.shared_id ? self.shared : self
   end
 
 #  def available_widgets

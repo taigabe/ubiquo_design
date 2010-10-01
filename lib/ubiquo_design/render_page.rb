@@ -4,7 +4,7 @@ module UbiquoDesign
     def render_page(page)
       @menu = build_menu
       @blocks = page.blocks.collect do |block|
-        block_output = render_block(block)
+        block_output = render_block(block.real_block)
         # Return if block is void (normally, a redirect ocurred)
         return unless block_output
         [block.block_type.to_sym, block_output.join]
