@@ -11,9 +11,14 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
   end
 
   test 'should cache a widget and get it back' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => :self
+      }
+    end
     widget_id = widgets(:one).id
-    @manager.cache(widget_id, 'content')
-    assert_equal 'content', @manager.get(widget_id)
+    @manager.cache(widget_id, 'content', {:policy_context => :test})
+    assert_equal 'content', @manager.get(widget_id, :policy_context => :test)
   end
 
   test 'should expire a widget cache' do
@@ -30,7 +35,14 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
       }
     end
     widget = create_widget
-    assert_equal widget.id.to_s, @manager.send(:calculate_key, widget.id)
+    key = @manager.send(
+      :calculate_key,
+      widget.id,
+      {
+        :policy_context => :test
+      }
+    )
+    assert_equal widget.id.to_s, key
   end
 
   test 'calculate_key for a widget with params' do
@@ -88,10 +100,21 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
   end
 
   test 'should accept a widget instead of the id' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => :self
+      }
+    end
     widget = widgets(:one)
     Widget.expects(:find).never
+    @manager.cache(widget, 'free', {:policy_context => :test})
+    assert_equal 'free', @manager.get(widget, {:policy_context => :test})
+  end
+
+  test 'should not get anything from a non cacheable widget' do
+    widget = widgets(:one)
     @manager.cache(widget, 'free')
-    assert_equal 'free', @manager.get(widget)
+    assert_equal nil, @manager.get(widget)
   end
 
   protected

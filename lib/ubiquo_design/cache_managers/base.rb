@@ -18,9 +18,10 @@ module UbiquoDesign
         # Gets the cached content of a widget. Returns false if this widget is not
         # currently cached
         def get(widget_id, options = {})
-          key = calculate_key(widget_id, options)
-          valid = not_expired(widget_id, key, options)
-          retrieve(key) if valid
+          if (key = calculate_key(widget_id, options))
+            valid = not_expired(widget_id, key, options)
+            retrieve(key) if valid
+          end
         end
 
         # Caches the content of a widget, with a possible expiration date.
@@ -33,7 +34,7 @@ module UbiquoDesign
         # Expires the applicable content of a widget given its id
         def expire(widget_id, options = {})
           model_key = calculate_key(widget_id, options.slice(:scope))
-          delete(model_key)
+          delete(model_key) if model_key
 
           with_instance_content(widget_id, options) do |instance_key|
             keys = retrieve(instance_key)[:keys] rescue []
