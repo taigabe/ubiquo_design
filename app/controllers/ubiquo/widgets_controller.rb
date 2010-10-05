@@ -32,7 +32,7 @@ class Ubiquo::WidgetsController < UbiquoAreaController
           page.visual_effect :slide_down, "widget_#{@widget.id}"
           id, opts = sortable_block_type_holder_options(@block.block_type,
                                                         change_order_ubiquo_page_design_widgets_path(@page),
-                                                        [1,2])
+                                                        @page.blocks.map(&:block_type))
           page.sortable id, opts
           page << "myLightWindow._processLink($('edit_widget_#{@widget.id}'));" if @widget.is_configurable?
           page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
