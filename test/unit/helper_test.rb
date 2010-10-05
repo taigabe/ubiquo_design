@@ -32,4 +32,9 @@ class UbiquoDesign::Extensions::HelperTest < ActionView::TestCase
     link_to_page(caption, page_key, url_for_options, link_to_options)
   end
 
+  test 'url_for_page does not encode slashes' do
+    page = Page.new(:url_name => 'with/slash')
+    assert url_for_page(page) =~ /with\/slash/
+  end
+
 end

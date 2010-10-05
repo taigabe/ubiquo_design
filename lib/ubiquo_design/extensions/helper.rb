@@ -45,7 +45,8 @@ module UbiquoDesign
         page_url_for_options = {
           :controller => '/pages',
           :action => 'show',
-          :url => page.url_name,
+          # FIXME split due to rails bug #5135
+          :url => page.url_name.split('/'),
         }
         url_for(page_url_for_options.merge(url_for_options))
       end
