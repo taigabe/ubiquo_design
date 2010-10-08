@@ -47,6 +47,7 @@ module UbiquoDesign
           :action => 'show',
           # FIXME split due to rails bug #5135
           :url => page.url_name.split('/'),
+          :key => nil # to overwrite current key in params
         }
         url_for(page_url_for_options.merge(url_for_options))
       end
