@@ -114,7 +114,7 @@ module UbiquoDesign
       template_file = search_template widget_name
       # Add template directory to view_paths, so as to render uses this directory by default
       self.view_paths.unshift(File.dirname(template_file))
-      render_output = render_to_string :file => template_file
+      render_output = render_to_string :file => File.basename(template_file)
       self.view_paths.shift
       UbiquoDesign.cache_manager.cache(widget, render_output, :scope => self)
       render_output
