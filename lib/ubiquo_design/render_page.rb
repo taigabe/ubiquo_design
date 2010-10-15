@@ -2,7 +2,11 @@ module UbiquoDesign
   module RenderPage
     private
     def render_page(page)
-      @menu = build_menu
+
+      # Uncomment that line to get all menu items with related info in each page request
+      # @menu = build_menu
+      @menu = []
+
       @blocks = page.blocks.collect do |block|
         block_output = render_block(block.real_block)
         # Return if block is void (normally, a redirect ocurred)
