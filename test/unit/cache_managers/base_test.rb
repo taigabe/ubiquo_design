@@ -74,7 +74,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
       :calculate_key,
       widget.id,
       {
-        :scope => OpenStruct.new(:one => 'one', :two => 'two'),
+        :scope => OpenStruct.new(:one => 'one', :two => 'two', :params => []),
         :policy_context => :test
       }
     )
@@ -113,8 +113,65 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
 
   test 'should not get anything from a non cacheable widget' do
     widget = widgets(:one)
-    @manager.cache(widget, 'free')
+    @manager.cache(widget, 'free', {:policy_context => :test})
     assert_equal nil, @manager.get(widget)
+  end
+  
+  test 'calculate_key for widget with param mappings' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => ['Page', {:slug => :id}]
+      }
+    end
+    page = pages(:one)
+    widget = create_widget
+    key = @manager.send(
+      :calculate_key,
+      widget.id,
+      {
+        :scope => OpenStruct.new(:params => {:slug => page.id}, :one => 'one'),
+        :policy_context => :test
+      }
+      )
+
+    assert_equal "#{widget.id}_params_##slug###{page.id}", key
+    key2 = @manager.send(
+      :calculate_key,
+      widget.id,
+      {
+        :scope => page,
+        :policy_context => :test
+      }
+      )
+    assert_equal key, key2
+  end
+
+  test 'calculate_key for widget with proc mappings' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => ['Page', {:identifier => [lambda{|a| one}, :id]}]
+      }
+    end
+    page = pages(:one)
+    widget = create_widget
+    key = @manager.send(
+      :calculate_key,
+      widget.id,
+      {
+        :scope => OpenStruct.new(:params => {}, :one => page.id),
+        :policy_context => :test
+      }
+      )
+    assert_equal "#{widget.id}_procs_###{page.id}", key
+    key2 = @manager.send(
+      :calculate_key,
+      widget.id,
+      {
+        :scope => page,
+        :policy_context => :test
+      }
+      )
+    assert_equal key, key2
   end
 
   protected

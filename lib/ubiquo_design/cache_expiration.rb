@@ -16,6 +16,7 @@ module UbiquoDesign
         def self.included(klass)
           klass.alias_method_chain :create, :cache_expiration
           klass.alias_method_chain :update, :cache_expiration
+          klass.alias_method_chain :destroy, :cache_expiration
         end
 
         def create_with_cache_expiration
@@ -28,13 +29,20 @@ module UbiquoDesign
           update_without_cache_expiration
         end
 
+        def destroy_with_cache_expiration
+          expire_by_model
+          destroy_without_cache_expiration
+        end
         protected
 
         def expire_by_model
           expirable_widgets = UbiquoDesign::CachePolicies.get_by_model(self, @cache_policy_context)
           expirable_widgets.each do |key|
             Widget.class_by_key(key).all.each do |widget|
-              UbiquoDesign.cache_manager.expire(widget, :scope => self, :policy_context => @cache_policy_context)
+              UbiquoDesign.cache_manager.expire(widget,
+                :scope => self,
+                :policy_context => @cache_policy_context,
+                :current_model => self.class.name)
             end
           end
           # TODO if the model contains one of: publication_date, published_at, then expire at that time

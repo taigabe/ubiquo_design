@@ -102,6 +102,7 @@ module UbiquoDesign
     # Example: render_widget_to_string(:test, arg1, arg2)
     # In this case, he test widget receives arg1 and arg2 as arguments.
     def render_widget widget
+      start = Time.zone.now
       cached = UbiquoDesign.cache_manager.get(widget, :scope => self)
       return cached if cached
 
@@ -117,6 +118,8 @@ module UbiquoDesign
       render_output = render_to_string :file => File.basename(template_file)
       self.view_paths.shift
       UbiquoDesign.cache_manager.cache(widget, render_output, :scope => self)
+
+      logger.debug "elapsed time for widget #{widget_name}#{widget.id} #{(Time.zone.now - start)}"
       render_output
     end
 

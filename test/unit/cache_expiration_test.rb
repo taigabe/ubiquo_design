@@ -28,7 +28,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
   test 'should_expire_widget_on_model_creation' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :free => Widget
+        :free => Free
       }
     end
     widget = widgets(:one)
@@ -58,15 +58,94 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
     assert @manager.get(widget, caching_options('other'))
   end
 
+
+  test 'should_expire_correct_widgets_on_different_model_instance_updates' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => [['Page', :id], ['Free']]
+      }
+    end
+    free_widget = Free.first
+    widget = widgets(:one)
+    page = pages(:one)
+    page.instance_variable_set(:@cache_policy_context, :test)
+    free_widget.instance_variable_set(:@cache_policy_context, :test)
+
+    @manager.cache(widget, 'content', caching_options(page.id))
+    @manager.cache(widget, 'content', caching_options('other'))
+    
+    assert @manager.get(widget, caching_options(page.id))
+    assert @manager.get(widget, caching_options('other'))
+    page.save
+    assert !@manager.get(widget, caching_options(page.id))
+    assert @manager.get(widget, caching_options('other'))
+
+    @manager.cache(widget, 'content', caching_options(page.id))
+    assert @manager.get(widget, caching_options(page.id))
+
+    free_widget.save
+    assert !@manager.get(widget, caching_options(page.id))
+    assert !@manager.get(widget, caching_options('other'))  
+  end
+
+  test 'should_expire_correct_widgets_on_different_model_instance_updates_with_proc_mapping' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => [['Page', {:identifier => [lambda{one}, :id]}], ['Free']]
+      }
+    end
+    free_widget = Free.first
+    widget = widgets(:one)
+    page = pages(:one)
+    page.instance_variable_set(:@cache_policy_context, :test)
+    free_widget.instance_variable_set(:@cache_policy_context, :test)
+
+    @manager.cache(widget, 'content', caching_options('aa', page.id))
+    @manager.cache(widget, 'content', caching_options('aa', 'other'))
+    
+    assert @manager.get(widget, caching_options('aa', page.id))
+    assert @manager.get(widget, caching_options('aa', 'other'))
+    page.save
+    assert !@manager.get(widget, caching_options('aa', page.id))
+    assert @manager.get(widget, caching_options('aa', 'other'))
+
+    @manager.cache(widget, 'content', caching_options('aa', page.id))
+    assert @manager.get(widget, caching_options('aa', page.id))
+
+    free_widget.save
+    assert !@manager.get(widget, caching_options('aa', page.id))
+    assert !@manager.get(widget, caching_options('aa', 'other'))  
+  end
+
+  test 'should_expire_correct_widgets_on_different_model_instance_destroys' do
+    UbiquoDesign::CachePolicies.define(:test) do
+      {
+        :free => ['Page', :id]
+      }
+    end
+    widget = widgets(:one)
+    page = pages(:one)
+    page.instance_variable_set(:@cache_policy_context, :test)
+    widget.instance_variable_set(:@cache_policy_context, :test)
+    @manager.cache(widget, 'content', caching_options(page.id))
+    @manager.cache(widget, 'content', caching_options('other'))
+    assert @manager.get(widget, caching_options(page.id))
+    assert @manager.get(widget, caching_options('other'))
+
+    page.destroy
+    assert !@manager.get(widget, caching_options(page.id))
+    assert @manager.get(widget, caching_options('other'))  
+  end
+  
   protected
 
   def create_widget
     Free.create(:name => 'free', :block => blocks(:one), :content => 'test')
   end
 
-  def caching_options(id = 'test')
+  def caching_options(id = 'test', one = 'one')
     {
-      :scope => OpenStruct.new(:params => {:id => id}, :one => 'one'),
+      :scope => OpenStruct.new(:params => {:id => id}, :one => one),
       :policy_context => :test
     }
   end

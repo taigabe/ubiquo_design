@@ -7,7 +7,7 @@ module UbiquoDesign
 
       CONFIG = Ubiquo::Config.context(:ubiquo_design).get(:memcache)
       DATA_TIMEOUT = CONFIG[:timeout]
-      
+
       class << self
 
         protected
@@ -24,6 +24,7 @@ module UbiquoDesign
 
         # removes the widget content from the store
         def delete content_id
+          Rails.logger.debug "Widget cache expiration request for key #{content_id}"
           connection.delete content_id
         end
 

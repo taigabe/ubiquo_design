@@ -17,7 +17,7 @@ class UbiquoDesign::CachePoliciesTest < ActiveSupport::TestCase
         :widget => Page
       }
     end
-    assert_equal([Page], UbiquoDesign::CachePolicies.get(:test)[:widget][:models])
+    assert_equal(['Page'], UbiquoDesign::CachePolicies.get(:test)[:widget][:models].keys)
   end
 
   def test_should_store_self_key
@@ -59,29 +59,13 @@ class UbiquoDesign::CachePoliciesTest < ActiveSupport::TestCase
   def test_should_store_array_of_elements
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :widget => [Page, :id, Widget, :name, lambda{'result'}]
+        :widget => [[Page, :id], [Widget, :name, lambda{'result'}]]
       }
     end
-    assert_equal [:id, :name], UbiquoDesign::CachePolicies.get(:test)[:widget][:params]
-    assert_equal [Page, Widget], UbiquoDesign::CachePolicies.get(:test)[:widget][:models]
-    assert_equal 'result', UbiquoDesign::CachePolicies.get(:test)[:widget][:procs].first.call
-  end
-
-  def test_should_store_directly_a_hash
-    UbiquoDesign::CachePolicies.define(:test) do
-      {
-        :widget => {
-          :models => [Page, Widget],
-          :params => :id,
-          :procs => [lambda{'result'}],
-          :self => false
-        }
-      }
-    end
-    assert_equal [:id], UbiquoDesign::CachePolicies.get(:test)[:widget][:params]
-    assert_equal [Page, Widget], UbiquoDesign::CachePolicies.get(:test)[:widget][:models]
-    assert_equal 'result', UbiquoDesign::CachePolicies.get(:test)[:widget][:procs].first.call
-    assert !UbiquoDesign::CachePolicies.get(:test)[:widget][:self]
+    assert_equal [:name], UbiquoDesign::CachePolicies.get(:test)[:widget][:models]['Widget'][:params]
+    assert_equal [:id], UbiquoDesign::CachePolicies.get(:test)[:widget][:models]['Page'][:params]
+    assert_equal ['Page', 'Widget'], UbiquoDesign::CachePolicies.get(:test)[:widget][:models].keys.sort
+    assert_equal 'result', UbiquoDesign::CachePolicies.get(:test)[:widget][:models]['Widget'][:procs].first.call
   end
 
   def test_should_clear

@@ -25,7 +25,7 @@ module UbiquoDesign
       def get_by_model(instance, context = nil)
         returning(widgets = []) do
           get(context).each_pair do |widget, policies|
-            if (policies[:models] || []).detect{|model| instance.is_a?(model)}
+            if (policies[:models] || []).to_a.detect{|model| instance.is_a?(model.first.to_s.constantize)}
               widgets << widget
             end
           end
@@ -51,7 +51,7 @@ module UbiquoDesign
           policy = base[widget] || {
             :self => true,
             :params => [],
-            :models => [],
+            :models => {},
             :procs => []
           }
           add_conditions(policy, conditions)
@@ -60,24 +60,78 @@ module UbiquoDesign
       end
 
       # Adds the +conditions+ to the current widget cache +policy+
-      def add_conditions policy, conditions
+      def add_conditions policy, conditions, current_model = nil
         case conditions
-        when String, Symbol
+        when Symbol
           if conditions == :self
             policy[:self] = true
           else
-            policy[:params] << conditions
+            if current_model.present?
+              policy[:models][current_model][:params] << conditions
+              if policy[:models][current_model][:identifier].blank?
+                policy[:models][current_model][:identifier] = conditions
+              end
+            else
+              policy[:params] << conditions
+            end
           end
         when Proc
-          policy[:procs] << conditions
+          if current_model.present?
+            policy[:models][current_model][:procs] << conditions
+          else
+            policy[:procs] << conditions
+          end
+        when String
+          policy[:models][conditions] = {:params => [],
+            :procs => [],
+            :identifier => nil}
+          current_model = conditions
         when Class
-          policy[:models] << conditions
+          policy[:models][conditions.name] = {:params => [],
+            :procs => [],
+            :identifier => nil}
+          current_model = conditions.name
         when Array
-          conditions.each{|condition| add_conditions(policy, condition)}
+          c_model = nil
+          conditions.each do |condition|
+            case condition
+            when String
+              policy[:models][condition] = {:params => [],
+                :procs => [],
+                :identifier => nil}
+              c_model = condition
+            when Class
+              policy[:models][condition.name] = {:params => [],
+                :procs => [],
+                :identifier => nil}
+              c_model = condition.name
+            when Array
+              add_conditions(policy, condition)
+            else
+              add_conditions(policy, condition, c_model)
+            end
+          end
         when Hash
-          conditions.each_pair do |key, condition|
-            condition = Array(condition) unless key == :self
-            policy[key] = condition
+          if(conditions.keys.first.is_a?(Symbol) &&
+              conditions.keys.first == :identifier)
+            policy[:models][current_model][:identifier] = conditions.values.first
+          end
+          case conditions.values.first
+          when Symbol
+            if current_model.present?
+              policy[:models][current_model][:params] << conditions
+              if policy[:models][current_model][:identifier].blank?
+                policy[:models][current_model][:identifier] = conditions
+              end
+            else
+              policy[:params] << conditions
+            end
+          when Array
+            if current_model.present?
+              policy[:models][current_model][:procs] << conditions.values.first
+            else
+              policy[:procs] << conditions.values.first
+            end
           end
         end
       end
@@ -95,4 +149,5 @@ module UbiquoDesign
 
     end
   end
+
 end
