@@ -70,8 +70,10 @@ module UbiquoDesign
           key = widget.id.to_s
           options[:widget] = widget
           policies[:models].each do |_key, val|
-            key += process_params(policies[:models][_key], options)
-            key += process_procs(policies[:models][_key], options)
+            if options[:scope].respond_to?(:params) || _key == options[:scope].class.name
+              key += process_params(policies[:models][_key], options)
+              key += process_procs(policies[:models][_key], options)
+            end
           end
           if options[:scope].respond_to?(:params)
             key += process_params(policies, options)
