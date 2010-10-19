@@ -4,6 +4,11 @@ require 'ubiquo_design/render_page'
 require 'ubiquo_design/version'
 require 'ubiquo_design/cache_managers/base'
 require 'ubiquo_design/cache_expiration'
+require 'ubiquo_design/cache_rendering'
 
 ActionController::Base.send(:include, UbiquoDesign::UbiquoWidgets)
-ActiveRecord::Base.send(:include, UbiquoDesign::CacheExpiration::ActiveRecord)
+
+if ActionController::Base.perform_caching
+  ActionController::Base.send(:include, UbiquoDesign::CacheRendering)
+  ActiveRecord::Base.send(:include, UbiquoDesign::CacheExpiration::ActiveRecord)
+end
