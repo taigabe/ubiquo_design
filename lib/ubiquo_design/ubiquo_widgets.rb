@@ -20,13 +20,13 @@
 #
 #This is equivalent to a piece of a controller, and all the code you put in the block will be executed in the controller space.
 #
-#* template: defines the template file to render. By default, the template file is located at <tt>app/widgets/NAME/views/_show.html.erb</tt>.
+#By default, the view of the widget is located at <tt>app/views/widgets/NAME/show.html.erb</tt>.
 #
 #== Creating the widget model
 #
 #A widget has an associated model (subclass of _Widget_), since we are always rendering an instance of a model.
 #
-#You can edit the associated model (<tt>app/models/last_news.rb</tt>) and use the class method _allowed_options_ to define the configurable attributes. We can also add validations over these fields:
+#You can edit the associated model (<tt>app/models/widgets/last_news.rb</tt>) and use the class method _allowed_options_ to define the configurable attributes. We can also add validations over these fields:
 #
 #  class LastNews < Widget
 #    self.allowed_options = [:news_to_show]
@@ -71,11 +71,11 @@
 #
 #The skeleton created the basic infrastructure to test the widget:
 #
-#* unit/name_test.rb: Test the associated model.
+#* unit/widgets/name_test.rb: Test the associated model.
 #* functional/widgets/name_test.rb: Test the widget and public views.
 #* functional/widgets/ubiquo/name_test.rb: Test the ubiquo views.
 #
-#Check the exisiting tests for more details.
+#Check the bundled tests of existing widgets for more details and examples.
 module UbiquoDesign
   module UbiquoWidgets
     # Define error exceptions
@@ -90,17 +90,15 @@ module UbiquoDesign
       ::Widget.behaviours.keys
     end
 
-    # Run a widget given its name
+    # Run a widget behaviour, given a +widget+ instance
     def run_behaviour widget
       ::Widget.behaviours[widget.key][:proc].bind(self).call(widget)
     end
 
     # Renders the widget as a string
     #
-    # Example: render_widget_to_string(:test, arg1, arg2)
-    # In this case, he test widget receives arg1 and arg2 as arguments.
+    # The +widget+ is the instance to be rendered
     def render_widget widget
-      require 'ruby-debug';debugger
       widget_name = widget.key
       unless available_widgets.include?(widget_name)
         require "widgets/#{widget_name}_widget"
