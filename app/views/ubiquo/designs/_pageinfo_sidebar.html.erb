@@ -1,3 +1,4 @@
+<% page_type ||= 'page' %>
 <h4>
   <%= page.name %>
   <% if page.published? && page.published.is_linkable? %>
@@ -23,7 +24,7 @@
 </p>
 
 <% unless is_published %>
-  <% if type == "static_page" %>
+  <% if page_type == "static_page" %>
     <%= button_to t('ubiquo.design.publish'), 
                   publish_ubiquo_static_page_path(page), :method => :put %>
   <% else %>

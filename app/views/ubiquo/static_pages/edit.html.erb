@@ -18,7 +18,7 @@
     <div class="sidebar_title"><h3><%= t('ubiquo.design.page_info') %></h3></div>
     <div id="page_info">
       <%= render :partial => 'ubiquo/designs/pageinfo_sidebar', 
-                 :locals => { :page => @static_page, :type => 'static_page' } %>
+                 :locals => { :page => @static_page, :page_type => 'static_page' } %>
     </div>
   </div>
   <%= help_block_sidebar(t("ubiquo.helpmsg.design.page.edit")) %>
