@@ -15,11 +15,8 @@ module UbiquoDesign
 
       def render_widget_with_cache(widget)
         start = Time.now.to_f
-        rendered = UbiquoDesign.cache_manager.get(widget, :scope => self)
-        unless rendered
-          rendered = render_widget_without_cache widget
-          UbiquoDesign.cache_manager.cache(widget, rendered, :scope => self)
-        end
+        rendered = render_widget_without_cache widget
+        UbiquoDesign.cache_manager.cache(widget, rendered, :scope => self)
         Rails.logger.debug "Elapsed time for widget #{widget.key} ##{widget.id}: #{(Time.now.to_f- start)}"
         rendered
       end

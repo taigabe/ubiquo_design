@@ -17,6 +17,11 @@ module UbiquoDesign
           connection.get content_id
         end
 
+        # retrieves the widgets content bty han array of +content_ids+
+        def multi_retrieve content_ids
+          connection.get_multi content_ids 
+        end
+
         # Stores a widget content indexing by a +content_id+
         def store content_id, contents
           connection.set content_id, contents, DATA_TIMEOUT

@@ -2,13 +2,13 @@ module UbiquoDesign
   module RenderPage
     private
     def render_page(page)
-
       # Uncomment that line to get all menu items with related info in each page request
       # @menu = build_menu
       @menu = []
+      cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
 
       @blocks = page.blocks.collect do |block|
-        block_output = render_block(block.real_block)
+        block_output = render_block(block.real_block, cached_widgets)
         # Return if block is void (normally, a redirect ocurred)
         return unless block_output
         [block.block_type.to_sym, block_output.join]
@@ -17,10 +17,10 @@ module UbiquoDesign
     end
 
     # Renders all the widgets contained in a block
-    def render_block(block)
+    def render_block(block, cached_widgets = {})
       uhook_collect_widgets(block) do |widget|
         next unless widget.valid?
-        returning(render_widget(widget)) do |output|
+        returning(cached_widgets[widget.id]||render_widget(widget)) do |output|
           # A widget didn't return an string, return inmediately
           return unless output
         end

@@ -31,6 +31,31 @@ module UbiquoDesign
             end
           end
         end
+        
+        # Gets all of the cached widgets content of a web. Return a hash where
+        # the key is the id of the widget and the value is the content
+        def multi_get(page, options = {})
+          widgets_with_key = {}
+          page.blocks.each do |block|
+            block.real_block.widgets.each do |widget|
+              key = calculate_key(widget, options)
+              if key
+                widgets_with_key[widget.id] = key
+              end
+            end
+          end
+
+          cached_widgets = multi_retrieve widgets_with_key.values
+          widgets = {} 
+          cached_widgets.each do |cached_widget|
+            if cached_widget.last
+              key = widgets_with_key.index(cached_widget.first)
+              Rails.logger.debug "Widget cache hit for widget with id: #{key} with key #{cached_widget.first}"
+              widgets[key] = cached_widget.last
+            end
+          end
+          widgets
+        end
 
         # Caches the content of a widget, with a possible expiration date.
         def cache(widget_id, contents, options = {})
