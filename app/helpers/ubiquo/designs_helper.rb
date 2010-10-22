@@ -133,7 +133,7 @@ module Ubiquo::DesignsHelper
         :url => ubiquo_page_design_widgets_path(@page),
         :method => :post,
         :accept => 'widget',
-        :with => "'widget='+element.id.gsub('^widget_', '')+'&block=#{block.id}'"
+        :with => "'widget='+element.id.gsub(/^widget_/, '')+'&block=#{block.id}'"
       )
     end
     result
