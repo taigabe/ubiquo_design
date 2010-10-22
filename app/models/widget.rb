@@ -121,6 +121,7 @@ class Widget < ActiveRecord::Base
 
   # When a block is saved, the associated page must change its modified attribute
   def update_page
-    self.block.reload.page.reload.update_modified(true)
+    widget_page = self.block.reload.page.reload
+    widget_page.update_modified(true) unless widget_page.is_modified?
   end
 end
