@@ -18,24 +18,24 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
 
   def test_should_add_editable_widget_through_js
     login_as
-    assert_not_nil editable_widget = pages(:one_design).available_widgets
-    assert_not_nil not_editable_widget = pages(:one_design).available_widgets.select{|widget| widget.configurable?} # TODO this or similar
-    [editable_widget, not_editable_widget].each do |widget|
-      assert_difference('Widget.count') do
-        xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => widget
-      end
-      widget = assigns(:widget)
-      assert_not_nil widget
-      assert widget.block == pages(:one_design).blocks.first
-      assert widget.widget == widget
+    widgets = pages(:one_design).available_widgets
+    editable_widget = widgets.select do |widget_key|
+      Widget.class_by_key(widget_key).is_configurable?
+    end.first
+    assert_not_nil editable_widget
 
-      assert_select_rjs :insert_html, "block_type_holder_#{widget.block.block_type.id}" do
-        assert_select "#widget_name_field_#{widget.id}"
-      end
-      edition_matches = @response.body.match(/myLightWindow\._processLink\(\$\(\'edit_widget_#{widget.id}\'\)\)\;/)
-      assert_equal edition_matches.nil?, !widget.widget.is_configurable?
-
+    assert_difference('Widget.count') do
+      xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => editable_widget
     end
+    widget = assigns(:widget)
+    assert_not_nil widget
+    assert widget.block == pages(:one_design).blocks.first
+    assert_equal widget.key, editable_widget
+
+    assert_select_rjs :insert_html, "block_type_holder_#{widget.block.block_type}" do
+      assert_select "#widget_name_field_#{widget.id}"
+    end
+    assert_match /myLightWindow\._processLink\(\$\(\'edit_widget_#{widget.id}\'\)\)\;/, @response.body
   end
 
   def test_shouldnt_add_widget_without_permission
@@ -78,7 +78,7 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
     assert_not_nil widget = assigns(:widget)
     assert_not_nil page = assigns(:page)
   end
-  
+
   def test_shouldnt_show_widget_form_without_permission
     login_with_permission
     get :show, :page_id => pages(:one_design).id, :id => widgets(:one)
@@ -100,33 +100,21 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
-  # TODO: We need refactorize change_order action and redo this test
-  # because aren't very clean
-  #def test_should_change_order
-  #  login_as
-  #  block_type = pages(:one_design).page_template.block_types.first
-  #  block = pages(:one_design).all_blocks_as_hash[block_type.key]
-  #  assert_not_equal block.id, block.block_type.id
-  #  Widget.update_all ["block_id = ?", block.id]
-  #  assert_operator block.widgets.size, :>, 1
-  #  original = block.widgets.map(&:id)
-  #
-  #  get :change_order, :page_id => pages(:one_design).id, "block" => {block.block_type.id => original.reverse}
-  #  require 'ruby-debug';debugger
-  #  assert_equal original.reverse, block.reload.widgets.map(&:id)
-  #  assert_redirected_to(ubiquo_page_design_path(pages(:one_design)))
-  #end
-  
-  def test_shouldnt_change_order_without_permission
-    login_with_permission
-    block_type = Page.blocks(pages(:one_design).page_template).first
-    block = pages(:one_design).all_blocks_as_hash[block_type]
-    assert_not_equal block.id, block.block_type.id
+  def test_should_change_order
+    login_as
+    block = pages(:one_design).all_blocks_as_hash['sidebar']
     Widget.update_all ["block_id = ?", block.id]
     assert_operator block.widgets.size, :>, 1
     original = block.widgets.map(&:id)
 
-    get :change_order, :page_id => pages(:one_design).id, "block" => {block.block_type.id => original.reverse}
+    get :change_order, :page_id => pages(:one_design).id, "block" => {block.block_type => original.reverse}
+    assert_equal original.reverse, block.reload.widgets.map(&:id)
+    assert_redirected_to(ubiquo_page_design_path(pages(:one_design)))
+  end
+
+  def test_shouldnt_change_order_without_permission
+    login_with_permission
+    get :change_order, :page_id => pages(:test_page).id
     assert_response :forbidden
   end
 
@@ -143,7 +131,7 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal widget.name, "New name"
   end
-  
+
   def test_shouldnt_change_name_without_permission
     login_with_permission
     get :change_name, :page_id => pages(:one_design).id, :id => widgets(:one).id, :value => "New name"

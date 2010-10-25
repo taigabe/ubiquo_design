@@ -23,7 +23,7 @@ module UbiquoDesign
 
       # Returns a list of widget types which have policies that affect a given +instance+
       def get_by_model(instance, context = nil)
-        returning(widgets = []) do
+        (widgets = []).tap do
           get(context).each_pair do |widget, policies|
             if (policies[:models] || []).to_a.detect{|model| instance.is_a?(model.first.to_s.constantize)}
               widgets << widget

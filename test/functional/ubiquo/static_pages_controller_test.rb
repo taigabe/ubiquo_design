@@ -12,8 +12,7 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
     assert_response :success
     pages = assigns(:static_pages)
     assert_not_nil pages
-    static_pages = [pages(:one_design), pages(:long_url)]
-    assert_equal static_pages, pages
+    assert_equal_set Page.drafts.statics, pages
   end
 
   def test_should_get_index
@@ -42,8 +41,7 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
     get :new
     assert_response :success
     assert_not_equal [], assigns(:static_pages)
-    draft_pages_without_home_page = [pages(:two_design), pages(:only_menu_design),
-                                     pages(:long_url)]
+    draft_pages_without_home_page = Page.drafts - [pages(:one_design)]
     assert_equal_set draft_pages_without_home_page, assigns(:pages)
   end
 

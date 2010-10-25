@@ -43,9 +43,7 @@ class Ubiquo::PagesControllerTest < ActionController::TestCase
     get :new
     assert_response :success
     assert_not_equal [], assigns(:pages)
-    draft_pages_without_home_page = [pages(:two_design), pages(:only_menu_design),
-                                     pages(:test_page), pages(:unpublished),
-                                     pages(:long_url)]
+    draft_pages_without_home_page = Page.drafts - [pages(:one_design)]
     assert_equal_set draft_pages_without_home_page, assigns(:pages)
   end
 

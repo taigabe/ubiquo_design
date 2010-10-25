@@ -63,7 +63,7 @@ module UbiquoDesign
         args.inject(base) do |acc, element|
           container = {element => []}
           container[element] << {:options => options} unless options.empty?
-          returning (acc << container) do
+          (acc << container).tap do
             with_scope(element, &block) if block_given?
           end
         end
@@ -133,7 +133,7 @@ module UbiquoDesign
 
       # Performs a merge concatenating the results sharing keys
       def concat_merge original
-        returning({}) do |result|
+        {}.tap do |result|
           original.each do |element|
             element.each_pair do |key, value|
               if value.is_a?(Array)

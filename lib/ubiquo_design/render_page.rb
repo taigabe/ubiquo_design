@@ -20,7 +20,7 @@ module UbiquoDesign
     def render_block(block, cached_widgets = {})
       uhook_collect_widgets(block) do |widget|
         next unless widget.valid?
-        returning(cached_widgets[widget.id]||render_widget(widget)) do |output|
+        (cached_widgets[widget.id] || render_widget(widget)).tap do |output|
           # A widget didn't return an string, return inmediately
           return unless output
         end
@@ -49,8 +49,8 @@ module UbiquoDesign
     end
 
     def template_directory
-      (RAILS_ENV == 'test')? File.join(ActiveSupport::TestCase.fixture_path, "templates") : 
-        "#{RAILS_ROOT}/app/templates"
+      Rails.env.test? ? File.join(ActiveSupport::TestCase.fixture_path, "templates") :
+        Rails.root.join('app', 'templates')
     end
 
     def render_template_file(key, layout = 'main')

@@ -19,10 +19,8 @@ class Ubiquo::WidgetsController < UbiquoAreaController
     @widget.block = @block
     @widget.name = Widget.default_name_for params[:widget]
     @widget = uhook_prepare_widget(@widget)
-    # TODO: don't do this!!
     @widget.save_without_validation
 
-    #TODO: Afegir el nou widget al block de la pagina
     respond_to do |format|
       format.html { redirect_to(ubiquo_page_design_path(@page)) }
       format.js {
@@ -48,7 +46,6 @@ class Ubiquo::WidgetsController < UbiquoAreaController
 
     uhook_destroy_widget(@widget)
 
-    #TODO: Afegir el nou widget al block de la pagina
     respond_to do |format|
       format.html { redirect_to(ubiquo_page_design_path(@page))}
       format.js {

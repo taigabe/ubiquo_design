@@ -40,11 +40,11 @@ class Page < ActiveRecord::Base
     page = find_by_url_name(url_name)
 
     # Try to consider the last portion as the slug
-    url_name = returning(url_name.split('/')) do |portions|
+    url_name = url_name.split('/').tap do |portions|
       portions.size > 1 ? portions.pop : portions
     end.join('/') unless page
 
-    returning page || find_by_url_name(url_name) do |page|
+    (page || find_by_url_name(url_name)).tap do |page|
       raise ActiveRecord::RecordNotFound.new("Page with url '#{url_name}' not found") unless page
     end
   end

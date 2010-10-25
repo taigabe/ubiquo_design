@@ -116,7 +116,7 @@ module UbiquoDesign
     private
 
     def search_template(widget)
-      returning(File.join(Rails.root, "app", "views", "widgets", widget.to_s, "show.html.erb")) do |template_path|
+      Rails.root.join("app", "views", "widgets", widget.to_s, "show.html.erb").tap do |template_path|
         raise WidgetTemplateNotFound.new("Template file not found: #{widget}") unless File.exists?(template_path)
       end
     end
