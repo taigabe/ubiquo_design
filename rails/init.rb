@@ -43,6 +43,6 @@ end
 
 groups = Ubiquo::Config.get :model_groups
 Ubiquo::Config.set :model_groups, groups.merge(
-  :ubiquo_design => %w{assets asset_relations automatic_menus blocks
-          widgets menu_items pages})
+  :ubiquo_design => %w{blocks widgets pages}
+)
 
