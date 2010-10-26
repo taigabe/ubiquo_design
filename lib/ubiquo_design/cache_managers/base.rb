@@ -228,18 +228,9 @@ module UbiquoDesign
                 true_identifier = val[:identifier]
               end
 
-              p_i = if true_identifier.blank?
-                "_#{key.to_s}"
-              elsif options[:scope].respond_to?(:params)
-                if true_identifier.is_a? Proc
-                  "_#{key.to_s}_#{true_identifier.bind(options[:scope]).call(options[:widget])}"
-                else
-                  "_#{key.to_s}_#{options[:scope].send(:params)[true_identifier]}"
-                end
-              else
-                "_#{key.to_s}_#{options[:scope].send(true_identifier)}"
-              end
-
+              p_i = '_'
+              p_i += process_params(val, options)
+              p_i += process_procs(val, options)
               yield(widget_pre_key + p_i)
             end
           else
