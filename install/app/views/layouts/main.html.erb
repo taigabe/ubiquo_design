@@ -7,8 +7,8 @@
     <link rel="shortcut icon" href="/images/icon_app.ico" />
     <%= stylesheet_link_tag 'public', 'menu', :cache => true %>
     <%= javascript_include_tag :defaults, 'iehover', :cache => true %>	
-    <title><%= yield :meta_title || @page.meta_title %></title>
-    <%= yield :metatags || metatags(@page) %>
+    <title><%= yield(:meta_title) || @page.meta_title %></title>
+    <%= yield(:metatags) || metatags(@page) %>
   </head>
   <body>
     <div id="menu">
