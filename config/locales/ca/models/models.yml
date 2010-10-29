@@ -11,6 +11,9 @@ ca:
         page_template: "plantilla"
         publish_status: "Estat"
         parent_id: "Subpàgina de"
+        meta_title: "Títol"
+        meta_description: "Descripció"
+        meta_keywords: "Paraules clau"
       menu_item:
         caption: "Títol"
         is_linkable: "És enllaçable?"

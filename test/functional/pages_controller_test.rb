@@ -76,6 +76,11 @@ class PagesControllerTest < ActionController::TestCase
     end
   end
 
+  def test_should_use_metatags
+    get :show, :key => pages(:one).key
+    assert_select "title", pages(:one).meta_title
+  end
+
   def test_should_not_get_page_by_inexistent_key
     assert_raise ActiveRecord::RecordNotFound do
       get :show, :key => 'non_existent'

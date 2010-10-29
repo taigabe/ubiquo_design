@@ -4,9 +4,9 @@ class Page < ActiveRecord::Base
   has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
   has_one :draft, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :nullify
   has_many :blocks, :dependent => :destroy do
-     def as_hash
-       self.collect{|block|[block.block_type, block]}.to_hash
-     end
+    def as_hash
+      self.collect{|block|[block.block_type, block]}.to_hash
+    end
   end
 
   before_save :compose_url_name_with_parent_url

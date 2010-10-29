@@ -11,6 +11,9 @@ es:
         page_template: "plantilla"
         publish_status: "Estado"
         parent_id: "Subpágina de"
+        meta_title: "Título"
+        meta_description: "Descripción"
+        meta_keywords: "Palabras clave"
       menu_item:
         caption: "Título"
         is_linkable: "¿es linkable?"

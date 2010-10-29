@@ -9,6 +9,7 @@ ca:
       empty_list_title: "Mapa Web"
       empty_list_message: "Aquí pots veure i modificar el mapa web de l'aplicació. Pots crear noves seccions, subseccions i reordenar-les."
     design:
+      metatags: "Metatags"
       design: "Maquetació"
       design_title: "Anar a maquetació de pàgines"
       sitemap: "Mapa web"

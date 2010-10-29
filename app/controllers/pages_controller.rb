@@ -53,8 +53,8 @@ class PagesController < ApplicationController
   # A page is formed of many blocks, each with containing widgets. Each
   # widget use a generator to get the final HTML code
   def show
-    page = uhook_load_page
-    render_page page
+    @page = uhook_load_page
+    render_page @page
   end
   
 end

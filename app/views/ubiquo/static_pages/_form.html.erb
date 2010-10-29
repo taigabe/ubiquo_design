@@ -35,6 +35,21 @@
       </ul>
     </fieldset>
   <% end %>
+  <fieldset>
+    <legend><%= t('ubiquo.design.metatags') %></legend>
+    <p>
+      <%= form.label :meta_title, Page.human_attribute_name("meta_title") %>
+      <%= form.text_field :meta_title %>
+    </p>
+    <p>
+      <%= form.label :meta_keywords, Page.human_attribute_name("meta_keywords") %>
+      <%= form.text_field :meta_keywords %>
+    </p>
+    <p>
+      <%= form.label :meta_description, Page.human_attribute_name("meta_description") %>
+      <%= form.text_area :meta_description, :rows => 5 %>
+    </p>
+  </fieldset>
   <%= hidden_field_tag :publish_page, 'false' %>
 </div>
 <div class="form_box">

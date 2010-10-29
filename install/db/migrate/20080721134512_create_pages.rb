@@ -9,6 +9,9 @@ class CreatePages < ActiveRecord::Migration
       t.boolean :is_static
       t.integer :published_id
       t.integer :parent_id
+      t.string :meta_title
+      t.text :meta_keywords
+      t.text :meta_description
       
       t.timestamps
     end

@@ -7,6 +7,9 @@ one:
   key: one
   is_static: true
   is_modified: false
+  meta_title: "Static example page"
+  meta_description: "Meta description text"
+  meta_keywords: "static,test,start"
 
 two:
   id: 10001
@@ -32,6 +35,9 @@ one_design:
   published_id: 10000
   key: one
   is_static: true
+  meta_title: "Static example page"
+  meta_description: "Meta description text"
+  meta_keywords: "static,test,start"
 
 two_design:
   id: 10004
