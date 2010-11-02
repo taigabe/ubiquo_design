@@ -21,6 +21,7 @@ module Connectors
     
     test "prepare widget returns a widget" do
       c = widgets(:one)
+      Ubiquo::WidgetsController.any_instance.stubs(:params => {}, :session => {})
       assert Ubiquo::WidgetsController.new.uhook_prepare_widget(c).is_a?(Widget)
     end
     

@@ -1,29 +1,16 @@
 module UbiquoDesign
   module Connectors
     class Standard < Base
-      
-      
-      module Widget
-        def self.included(klass)
-          klass.send :belongs_to, :block
-        end
-      end
 
-      module MenuItem
-        def self.included(klass)
-          
-        end
-      end
-      
       module Page
-        
+
         def self.included(klass)
           klass.send(:include, self::InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
         end
-        
+
         module InstanceMethods
-          
+
           def uhook_publish_block_widgets(block, new_block)
             block.widgets.each do |widget|
               new_widget = widget.clone
@@ -33,6 +20,7 @@ module UbiquoDesign
               new_widget.save! # must validate now
             end
           end
+
           def uhook_publish_widget_asset_relations(widget, new_widget)
             [:asset_relations, :category_relations].each do |relation_type|
               if widget.respond_to?(relation_type)
@@ -50,7 +38,6 @@ module UbiquoDesign
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
-          klass.send(:helper, Helper)
         end
         module InstanceMethods
           # Loads the page for the public part.
@@ -78,9 +65,9 @@ module UbiquoDesign
           def uhook_load_widgets(block)
             block.widgets
           end
-        end        
+        end
       end
-      
+
       module UbiquoWidgetsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
@@ -88,23 +75,23 @@ module UbiquoDesign
           klass.send(:helper, Helper)
         end
         module InstanceMethods
-          
+
           # returns the widget for the lightwindow.
           # Will be rendered in their ubiquo/_form view
           def uhook_find_widget
             @widget = ::Widget.find(params[:id])
           end
-          
+
           # modify the created widget and return it. It's executed in drag-drop.
           def uhook_prepare_widget(widget)
             widget
          end
-          
+
           # Destroys a widget
           def uhook_destroy_widget(widget)
             widget.destroy
           end
-          
+
           # updates a widget.
           # Fields can be found in params[:widget] and widget_id in params[:id]
           # must returns the updated widget
@@ -131,12 +118,12 @@ module UbiquoDesign
           klass.send(:helper, Helper)
         end
         module InstanceMethods
-          
+
           # gets Menu items instances for the list and return it
           def uhook_find_menu_items
             ::MenuItem.roots
           end
-          
+
           # initialize a new instance of menu item
           def uhook_new_menu_item
             ::MenuItem.new(:parent_id => (params[:parent_id] || 0), :is_active => true)
@@ -144,20 +131,20 @@ module UbiquoDesign
           def uhook_edit_menu_item(menu_item)
             true
           end
-            
-          
+
+
           # creates a new instance of menu item
           def uhook_create_menu_item
             mi = ::MenuItem.new(params[:menu_item])
             mi.save
             mi
           end
-          
+
           #updates a menu item instance. returns a boolean that means if update was done.
           def uhook_update_menu_item(menu_item)
             menu_item.update_attributes(params[:menu_item])
           end
-          
+
           #destroys a menu item instance. returns a boolean that means if destroy was done.
           def uhook_destroy_menu_item(menu_item)
             menu_item.destroy
@@ -165,7 +152,7 @@ module UbiquoDesign
 
           # loads all automatic menu items
           def uhook_load_automatic_menus
-            ::AutomaticMenu.find(:all, :order => 'name ASC')  
+            ::AutomaticMenu.find(:all, :order => 'name ASC')
           end
         end
         module Helper
@@ -173,15 +160,15 @@ module UbiquoDesign
           end
           def uhook_menu_item_links(menu_item)
             links = []
-            
+
             links << link_to(t('ubiquo.edit'), edit_ubiquo_menu_item_path(menu_item))
-            links << link_to(t('ubiquo.remove'), [:ubiquo, menu_item],  
-              :confirm => t('ubiquo.design.confirm_sitemap_removal'), 
+            links << link_to(t('ubiquo.remove'), [:ubiquo, menu_item],
+              :confirm => t('ubiquo.design.confirm_sitemap_removal'),
               :method => :delete)
             if menu_item.can_have_children?
               links << link_to(t('ubiquo.design.new_subsection'), new_ubiquo_menu_item_path(:parent_id => menu_item))
             end
-            
+
             links.join(" | ")
           end
         end
@@ -191,7 +178,7 @@ module UbiquoDesign
         def self.included(klass)
           klass.send(:helper, Helper)
         end
-        
+
         module Helper
           def uhook_static_page_actions(page)
             [
@@ -199,7 +186,7 @@ module UbiquoDesign
               (link_to(t('ubiquo.remove'), ubiquo_static_page_path(page), :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
             ].compact
           end
-          
+
           def uhook_edit_sidebar
             ""
           end
@@ -212,7 +199,7 @@ module UbiquoDesign
           Standard.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
-        
+
         module Helper
           def uhook_page_actions(page)
             [
@@ -221,7 +208,7 @@ module UbiquoDesign
               (link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
             ].compact
           end
-          
+
           def uhook_edit_sidebar
             ""
           end
@@ -233,24 +220,24 @@ module UbiquoDesign
           end
         end
         module InstanceMethods
-          
+
           # Returns all private pages
           def uhook_find_private_pages(filters, order_by, sort_order)
             ::Page.drafts.filtered_search(filters, :order => order_by + " " + sort_order)
           end
-          
+
           # initializes a new instance of page.
           def uhook_new_page
             ::Page.new
           end
-          
+
           # create a new instance of page.
           def uhook_create_page
             p = ::Page.new(params[:page])
             p.save
             p
           end
-         
+
           #updates a page instance. returns a boolean that means if update was done.
           def uhook_update_page(page)
             page.update_attributes(params[:page])
@@ -262,33 +249,33 @@ module UbiquoDesign
           end
         end
       end
-      
+
       module RenderPage
-        
+
         def self.included(klass)
           klass.send(:include, InstanceMethods)
           Standard.register_uhooks klass, InstanceMethods
         end
-        
+
         module InstanceMethods
           def uhook_collect_widgets(b, &block)
             b.widgets.collect(&block)
           end
-          
+
           def uhook_root_menu_items
             ::MenuItem.active_roots.all
           end
-          
+
         end
       end
-      
+
       module Migration
-        
+
         def self.included(klass)
           klass.send(:extend, ClassMethods)
           Standard.register_uhooks klass, ClassMethods
         end
-        
+
         module ClassMethods
           def uhook_create_pages_table
             create_table :pages do |t|
@@ -307,7 +294,7 @@ module UbiquoDesign
           end
         end
       end
-      
+
     end
   end
 end

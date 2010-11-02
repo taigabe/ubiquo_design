@@ -1,46 +1,28 @@
 module UbiquoDesign
   module Connectors
     class Base
-      
+
       # loads this connector. It's called if that connector is used
       def self.load!
-        begin
-          ::Page.send(:include, self::Page) if self.constants.include?("Page")
-        rescue NameError; end
-        begin
-          ::Widget.send(:include, self::Widget) if self.constants.include?("Widget")
-        rescue NameError; end
-        begin
-          ::MenuItem.send(:include, self::MenuItem) if self.constants.include?("MenuItem")
-        rescue NameError; end
-        begin
-          ::PagesController.send(:include, self::PagesController) if self.constants.include?("PagesController")
-        rescue NameError; end
-        begin
-          ::Ubiquo::DesignsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
-          ::Ubiquo::WidgetsController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
-          ::Ubiquo::BlocksController.send(:include, self::UbiquoDesignsHelper) if self.constants.include?("UbiquoDesignsHelper")
-        rescue NameError; end
-        begin
-          ::Ubiquo::WidgetsController.send(:include, self::UbiquoWidgetsController) if self.constants.include?("UbiquoWidgetsController")
-        rescue NameError; end
-        begin
-          ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController) if self.constants.include?("UbiquoMenuItemsController")
-        rescue NameError; end
-        begin
-          ::Ubiquo::StaticPagesController.send(:include, self::UbiquoStaticPagesController) if self.constants.include?("UbiquoStaticPagesController")
-        rescue NameError; end        
-        begin
-          ::Ubiquo::PagesController.send(:include, self::UbiquoPagesController) if self.constants.include?("UbiquoPagesController")
-        rescue NameError; end
-        begin
-          ::ActiveRecord::Migration.send(:include, self::Migration) if self.constants.include?("Migration")
-        rescue NameError; end
-        begin
-          ::UbiquoDesign::RenderPage.send(:include, self::RenderPage) if self.constants.include?("RenderPage")
-        rescue NameError; end
+        [::Widget, ::MenuItem].each(&:reset_column_information)
+        if current = UbiquoDesign::Connectors::Base.current_connector
+          current.unload!
+        end
+        validate_requirements
+        ::Page.send(:include, self::Page)
+        ::PagesController.send(:include, self::PagesController)
+        ::Ubiquo::DesignsController.send(:include, self::UbiquoDesignsHelper)
+        ::Ubiquo::WidgetsController.send(:include, self::UbiquoDesignsHelper)
+        ::Ubiquo::BlocksController.send(:include, self::UbiquoDesignsHelper)
+        ::Ubiquo::WidgetsController.send(:include, self::UbiquoWidgetsController)
+        ::Ubiquo::MenuItemsController.send(:include, self::UbiquoMenuItemsController)
+        ::Ubiquo::StaticPagesController.send(:include, self::UbiquoStaticPagesController)
+        ::Ubiquo::PagesController.send(:include, self::UbiquoPagesController)
+        ::ActiveRecord::Migration.send(:include, self::Migration)
+        ::UbiquoDesign::RenderPage.send(:include, self::RenderPage)
+        UbiquoDesign::Connectors::Base.set_current_connector self
       end
-      
+
       # Register the uhooks methods in connectors to be used in klass
       def self.register_uhooks klass, *connectors
         connectors.each do |connector|
@@ -53,13 +35,30 @@ module UbiquoDesign
               else
                 class << klass
                   self
-                end.send :alias_method, method, connectorized_method              
+                end.send :alias_method, method, connectorized_method
               end
               connector.send :undef_method, connectorized_method
             end
           end
         end
       end
+
+      def self.current_connector
+        @current_connector
+      end
+
+      def self.set_current_connector klass
+        @current_connector = klass
+      end
+
+      # Possible cleanups to perform
+      def self.unload!; end
+
+      # Validate here the possible connector requirements and dependencies
+      def self.validate_requirements; end
     end
+
+    # Raised when a connector requirement is not met
+    class ConnectorRequirementError < StandardError; end
   end
-end 
+end
