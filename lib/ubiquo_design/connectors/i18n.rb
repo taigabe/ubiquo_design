@@ -34,12 +34,18 @@ module UbiquoDesign
       end
 
       def self.unload!
+        # TODO create generic methods for these cleanups
         [::Widget, ::MenuItem].each do |klass|
           klass.instance_variable_set :@translatable, false
         end
         ::Widget.send :alias_method, :block, :block_without_shared_translations
         ::MenuItem.send :alias_method, :children, :children_without_shared_translations
         ::MenuItem.send :alias_method, :parent, :parent_without_shared_translations
+        # Unfortunately there's no neat way to clear the helpers mess
+        %w{Widgets MenuItems}.each do |controller_name|
+          ::Ubiquo.send(:remove_const, "#{controller_name}Controller")
+          load "ubiquo/#{controller_name.tableize}_controller.rb"
+        end
       end
 
       module Widget
