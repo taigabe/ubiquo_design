@@ -1,13 +1,13 @@
 require File.dirname(__FILE__) + "/../../../../../../test/test_helper.rb"
 
 module Connectors
-  class WidgetTranslationTest < ActiveSupport::TestCase
+  class I18nTest < ActiveSupport::TestCase
 
     if Ubiquo::Plugin.registered[:ubiquo_i18n]
 
       def setup
         save_current_design_connector
-        UbiquoDesign::Connectors::WidgetTranslation.load!
+        UbiquoDesign::Connectors::I18n.load!
       end
 
       def teardown

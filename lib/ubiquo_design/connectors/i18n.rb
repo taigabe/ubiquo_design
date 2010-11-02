@@ -1,6 +1,6 @@
 module UbiquoDesign
   module Connectors
-    class WidgetTranslation < Standard
+    class I18n < Standard
 
       def self.load!
         super
@@ -60,7 +60,7 @@ module UbiquoDesign
 
         def self.included(klass)
           klass.send(:include, self::InstanceMethods)
-          WidgetTranslation.register_uhooks klass, InstanceMethods
+          I18n.register_uhooks klass, InstanceMethods
         end
 
         module InstanceMethods
@@ -107,7 +107,7 @@ module UbiquoDesign
       module UbiquoWidgetsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          WidgetTranslation.register_uhooks klass, InstanceMethods
+          I18n.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
         module InstanceMethods
@@ -154,7 +154,7 @@ module UbiquoDesign
       module UbiquoMenuItemsController
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          WidgetTranslation.register_uhooks klass, InstanceMethods
+          I18n.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
         module InstanceMethods
@@ -226,7 +226,7 @@ module UbiquoDesign
 
         def self.included(klass)
           klass.send(:include, InstanceMethods)
-          WidgetTranslation.register_uhooks klass, InstanceMethods
+          I18n.register_uhooks klass, InstanceMethods
         end
 
         module InstanceMethods
@@ -245,7 +245,7 @@ module UbiquoDesign
 
         def self.included(klass)
           klass.send(:extend, ClassMethods)
-          WidgetTranslation.register_uhooks klass, ClassMethods
+          I18n.register_uhooks klass, ClassMethods
         end
 
         module ClassMethods
