@@ -19,8 +19,7 @@ class Page < ActiveRecord::Base
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
   validates_uniqueness_of :url_name,
                           :scope => :published_id,
-                          :if => :is_the_draft?,
-                          :allow_blank => true
+                          :if => :is_the_draft?
   validates_presence_of :page_template
 
   named_scope :published,

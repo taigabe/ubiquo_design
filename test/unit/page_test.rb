@@ -15,6 +15,7 @@ class PageTest < ActiveSupport::TestCase
 
   def test_should_create_page_with_empty_url
     Page.delete_all("url_name IS NULL")
+    Page.delete_all({:url_name =>  ""})
     assert_difference "Page.count" do
       page = create_page :url_name => ""
       assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
@@ -41,6 +42,19 @@ class PageTest < ActiveSupport::TestCase
         page = create_page :url_name => url
         assert page.errors.on(:url_name), "Url name should be wrong: '#{url}'"
       end
+    end
+  end
+
+  def test_should_validate_uniqueness_of_url_name
+    Page.delete_all("url_name IS NULL")
+    Page.delete_all({ :url_name =>  ""})
+    assert_difference "Page.count" do
+      page = create_page :url_name => ""
+      assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
+    end
+    assert_no_difference "Page.count" do
+      page = create_page :url_name => ""
+      assert page.new_record?, "#{page.errors.full_messages.to_sentence}"
     end
   end
 

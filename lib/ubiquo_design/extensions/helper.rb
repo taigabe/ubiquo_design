@@ -50,6 +50,7 @@ module UbiquoDesign
       end
 
       def parent_pages_for_select(pages, selected_page)
+        pages ||= []
         options = ["<option value=''>#{t('ubiquo.page.no_parent')}</option>"]
         pages.map do |page|
           options << "<option value='#{page.id}' title='#{page.url_name}'"
