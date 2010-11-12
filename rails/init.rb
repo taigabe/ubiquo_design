@@ -12,14 +12,8 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :design_access_control, lambda{
     access_control :DEFAULT => "design_management"
   }
-  config.add :sitemap_access_control, lambda{
-    access_control :DEFAULT => "sitemap_management"
-  }
   config.add :design_permit, lambda{
     permit?("design_management")
-  }
-  config.add :sitemap_permit, lambda{
-    permit?("sitemap_management")
   }
   config.add :static_pages_permit, lambda{
     permit?("static_pages_management")

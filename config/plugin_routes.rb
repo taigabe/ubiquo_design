@@ -6,7 +6,6 @@ map.namespace :ubiquo do |ubiquo|
       design.resources :blocks
     end
   end
-  ubiquo.resources :menu_items, :collection => {:update_positions => :put}
 end
   
 # Proposal for public routes. 

@@ -4,15 +4,10 @@ en:
       empty_list_title: "Design"
       empty_list_message: "Here you can see, modify and design the application pages."
       no_parent: "None"
-    menu_item:
-      empty_list_title: "Sitemap"
-      empty_list_message: "Here you can see and modify the application site map. You can create new sections and subsections and reorder them."
     design:
       metatags: "Metatags"
       design: "Design"
       design_title: "Go to page design"
-      sitemap: "Sitemap"
-      sitemap_title: "Go to sitemap"
       pages: "Pages"
       new_page: "New page"
       no_name: "(No name)"
@@ -64,20 +59,6 @@ en:
       preview: "preview"
       publish: "Publish"
       move: "move"
-      # Menu items (Sitemap)
-      new_section: "New section"
-      title: "Title"
-      actions: "Actions"
-      empty_sitemap: "No sitemap entries found"
-      confirm_sitemap_removal: "Are you sure you want to remove this sitemap entry (and their children nodes)?"
-      new_subsection: "New subsection"
-      subsections: "Subsections"
-      sitemap_created: "Menu item created succesfully"
-      sitemap_create_error: "Error creating menu item"
-      sitemap_updated: "Menu item updated succesfully"
-      sitemap_update_error: "Error editing menu item"
-      sitemap_removed: " Menu item removed succesfully"
-      sitemap_remove_error: "Error removing menu item"
       # Widgets
       editing_widget: "Editing widget {{name}}"
       close_widget: "Close"
@@ -92,8 +73,6 @@ en:
       stop_use_shared_block: "Stop using the block '{{key}}'"
       replace_block_confirm: "Are sure to replace the contents of the block?"
     widgets:
-      automatic_menu:
-        name: Automatic menu
       free:
         name: Free content
         contents: "Content"

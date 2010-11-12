@@ -5,15 +5,10 @@ es:
       empty_list_title: "Maquetación"
       empty_list_message: "Aquí puede ver, modificar y maquetar las páginas de la aplicación."
       no_parent: "Ninguna"
-    menu_item:
-      empty_list_title: "Mapa Web"
-      empty_list_message: "Aquí puede ver y modificar el mapa web de la aplicación. Puede crear nuevas secciones y subsecciones, y reordenarlas."
     design:
       metatags: "Metatags"
       design: "Maquetación"
       design_title: "Ir a maquetación de páginas"
-      sitemap: "Mapa web"
-      sitemap_title: "Ir al mapa web"
       pages: "Páginas"
       new_page: "Nueva página"
       no_name: "(Sin nombre)"
@@ -65,20 +60,6 @@ es:
       preview: "preview"
       publish: "Publicar"
       move: "mover"
-      # Menu items (Sitemap)
-      new_section: "Nueva sección"
-      title: "Título"
-      actions: "Acciones"
-      empty_sitemap: "No hay entradas del mapa web que mostrar"
-      confirm_sitemap_removal: "Estás seguro de querer eliminar esta entrada el mapa web (y sus nodos hijos)?"
-      new_subsection: "Nueva subsección"
-      subsections: "Subsecciones"
-      sitemap_created: "Elemento de menú creado con éxito"
-      sitemap_create_error: "Error al crear el elemento de menú"
-      sitemap_updated: "Elemento de menú editado con éxito"
-      sitemap_update_error: "Error al editar el elemento de menú"
-      sitemap_removed: "Elemento de menú eliminado con éxito"
-      sitemap_remove_error: "Error al eliminar el elemento de menú"
       # Widgets
       editing_widget: "Editando el widgete %{name}"
       close_widget: "Cerrar"
@@ -93,8 +74,6 @@ es:
       stop_use_shared_block: "Dejar de utilizar el bloque '{{key}}'"
       replace_block_confirm: "¿Estas seguro de remplazar el contenido del bloque?"
     widgets:
-      automatic_menu:
-        name: Menú automático
       free:
         name: Contenido libre
         contents: "Contenido"

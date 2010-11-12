@@ -12,15 +12,6 @@ module UbiquoDesign
         end if ubiquo_config_call :design_permit, {:context => :ubiquo_design}
       end
 
-      def sitemap_tab(tabnav)
-        tabnav.add_tab do |tab|
-          tab.text =  I18n.t("ubiquo.design.sitemap")
-          tab.title =  I18n.t("ubiquo.design.sitemap_title")
-          tab.highlights_on({:controller => "ubiquo/menu_items"})
-          tab.link = ubiquo_menu_items_path
-        end if ubiquo_config_call :sitemap_permit, {:context => :ubiquo_design}
-      end
-
       def static_pages_tab(tabnav)
         tabnav.add_tab do |tab|
           tab.text =  I18n.t("ubiquo.design.static_pages.title")

@@ -2,7 +2,6 @@ es:
   activerecord:
     models:
       page: "Página"
-      menu item: "Elemento de menu"
       banner_flash: "Baner Flash"
     attributes:
       page:
@@ -14,12 +13,5 @@ es:
         meta_title: "Título"
         meta_description: "Descripción"
         meta_keywords: "Palabras clave"
-      menu_item:
-        caption: "Título"
-        is_linkable: "¿es linkable?"
-        url: "Url"
-        description: "Descripción"
-        is_active: "¿está activo?"
-        menu_generator: "Generador de menú"
       banner_flash:
         flash_file: "fichero flash"

@@ -3,7 +3,6 @@ module UbiquoDesign
     private
     def render_page(page)
       # Uncomment that line to get all menu items with related info in each page request
-      # @menu = build_menu
       @menu = []
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
 
@@ -24,27 +23,6 @@ module UbiquoDesign
           # A widget didn't return an string, return inmediately
           return unless output
         end
-      end
-    end
-
-    # Build a menu info array containing [root, children, is_current_root] elements
-    # To check if a menuitem is selected, sort all the menu_items by url string
-    # length and detect the first that matches the beginning of the url
-    # with the request path.
-    def build_menu
-      menu_items = MenuItem.find(:all, :conditions => ['is_linkable = ?', true])
-      current_menuitem = menu_items.sort_by { |mi| -mi.url.size }.detect do |mi|
-        request.path =~ /^#{mi.url}/
-      end
-      uhook_root_menu_items.collect do |root|
-        is_current_root = ([root] + root.children).include?(current_menuitem)
-        children = if root.automatic_menu
-                     locals, render_options = run_generator(root.automatic_menu.generator)
-                     locals[:menu_items]
-                   else                        
-                     root.active_children
-                   end
-        [root, children, is_current_root]
       end
     end
 
