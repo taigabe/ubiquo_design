@@ -2,8 +2,6 @@ module UbiquoDesign
   module RenderPage
     private
     def render_page(page)
-      # Uncomment that line to get all menu items with related info in each page request
-      @menu = []
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
 
       @blocks = page.blocks.collect do |block|

@@ -11,9 +11,6 @@
     <%= yield(:metatags) || metatags(@page) %>
   </head>
   <body>
-    <div id="menu">
-      <%= render :partial => 'shared/menu', :object => @menu %>
-    </div>
     <%= yield %>		
   </body>  
 </html>
