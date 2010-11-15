@@ -8,21 +8,21 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
 
   test 'store should set to memcache' do
     connection = mock()
-    connection.expects(:set).with('id', 'content', @manager::DATA_TIMEOUT)
+    connection.expects(:set).with(@manager.send('crypted_key', 'id'), 'content', 2.seconds)
     @manager.stubs(:connection).returns(connection)
-    @manager.send :store, 'id', 'content'
+    @manager.send :store, 'id', 'content', 2.seconds
   end
 
   test 'retrieve should get from memcache' do
     connection = mock()
-    connection.expects(:get).with('id')
+    connection.expects(:get).with(@manager.send('crypted_key', 'id'))
     @manager.stubs(:connection).returns(connection)
     @manager.send :retrieve, 'id'
   end
 
   test 'delete should delete from memcache' do
     connection = mock()
-    connection.expects(:delete).with('id')
+    connection.expects(:delete).with(@manager.send('crypted_key', 'id'))
     @manager.stubs(:connection).returns(connection)
     @manager.send :delete, 'id'
   end

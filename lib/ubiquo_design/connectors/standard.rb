@@ -17,7 +17,9 @@ module UbiquoDesign
               new_widget.block = new_block
               new_widget.save_without_validation!
               yield widget, new_widget
-              new_widget.save! # must validate now
+              new_widget.without_page_expiration do
+                new_widget.save! # must validate now
+              end
             end
           end
 

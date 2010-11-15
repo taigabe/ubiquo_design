@@ -75,8 +75,9 @@ module UbiquoDesign
               mapped_content_ids[widget.content_id] = new_widget.content_id
 
               yield widget, new_widget
-
-              new_widget.save! # must validate now
+              new_widget.without_page_expiration do
+                new_widget.save! # must validate now
+              end
             end
           end
         end

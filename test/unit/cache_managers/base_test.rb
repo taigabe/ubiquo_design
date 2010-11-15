@@ -43,13 +43,13 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
     )
-    assert_equal widget.id.to_s, key
+    assert_equal "#{widget.id.to_s}_#{widget.version.to_s}", key
   end
 
   test 'calculate_key for a widget with params' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :free => [:id, :name]
+        :free => [:params]
       }
     end
     widget = create_widget
@@ -61,7 +61,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
     )
-    assert_equal "#{widget.id}_params_##id##10##name##test", key
+    assert_equal "#{widget.id}_#{widget.version}_params_c_params_name@test&id@10", key
   end
 
   test 'calculate_key for a widget with procs' do
@@ -79,13 +79,13 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
     )
-    assert_equal "#{widget.id}_procs_##one##two", key
+    assert_equal "#{widget.id}_#{widget.version}_params_c_params__procs_##one##two", key
   end
 
   test 'calculate_key for a widget with params and procs' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :free => [lambda{ one }, :id]
+        :free => [lambda{ one }, :params]
       }
     end
     widget = create_widget
@@ -97,7 +97,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
     )
-    assert_equal "#{widget.id}_params_##id##test_procs_##one", key
+    assert_equal "#{widget.id}_#{widget.version}_params_c_params_id@test_procs_##one", key
   end
 
   test 'should accept a widget instead of the id' do
@@ -121,7 +121,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
   test 'calculate_key for widget with param mappings' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :free => ['Page', {:slug => :id}]
+        :free => [{'Page' => {:id => :slug}}]
       }
     end
     page = pages(:one)
@@ -135,22 +135,14 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
       }
       )
 
-    assert_equal "#{widget.id}_params_##slug###{page.id}", key
-    key2 = @manager.send(
-      :calculate_key,
-      widget.id,
-      {
-        :scope => page,
-        :policy_context => :test
-      }
-      )
-    assert_equal key, key2
+    assert_equal "#{widget.id}_#{widget.version}_params_##slug###{page.id}_params_c_params_slug@10000", key
+
   end
 
   test 'calculate_key for widget with proc mappings' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
-        :free => ['Page', {:identifier => [lambda{|a| one}, :id]}]
+        :free => [{'Page' => {:id => lambda{|a| one}}}]
       }
     end
     page = pages(:one)
@@ -163,16 +155,8 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
       )
-    assert_equal "#{widget.id}_procs_###{page.id}", key
-    key2 = @manager.send(
-      :calculate_key,
-      widget.id,
-      {
-        :scope => page,
-        :policy_context => :test
-      }
-      )
-    assert_equal key, key2
+    assert_equal "#{widget.id}_#{widget.version}_procs_###{page.id}_params_c_params_", key
+
   end
 
   protected

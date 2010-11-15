@@ -7,15 +7,25 @@ class Widget < ActiveRecord::Base
 
   cattr_accessor :behaviours
 
+  attr_accessor :update_page_denied
+
   validates_presence_of :name, :block
 
   belongs_to :block
 
   attr_protected :options, :options_object
 
+  before_create :set_version
+  
   before_save :update_position
   after_save :update_page
   after_destroy :update_page
+
+  def without_page_expiration
+    self.update_page_denied = true
+    yield
+    self.update_page_denied = false
+  end
 
   def self.behaviour(name, options={}, &block)
     @@behaviours[name] = {:options => options, :proc => block}
@@ -121,7 +131,14 @@ class Widget < ActiveRecord::Base
 
   # When a block is saved, the associated page must change its modified attribute
   def update_page
-    widget_page = self.block.reload.page.reload
-    widget_page.update_modified(true) unless widget_page.is_modified?
+    if self.update_page_denied.blank?
+      widget_page = self.block.reload.page.reload
+      widget_page.update_modified(true) unless widget_page.is_modified?
+    end
+  end
+
+  # Sets initial version number
+  def set_version
+    self.version = 0
   end
 end

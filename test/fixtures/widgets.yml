@@ -6,6 +6,7 @@ one:
   block_id: 11000
   type: Free
   position: 1
+  version: 0
 
 two:
   options: "--- \n:content: content example2\n"
@@ -13,3 +14,4 @@ two:
   block_id: 11001
   type: Free
   position: 2
+  version: 0

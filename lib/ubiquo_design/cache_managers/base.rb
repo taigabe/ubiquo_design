@@ -36,21 +36,27 @@ module UbiquoDesign
         # the key is the id of the widget and the value is the content
         def multi_get(page, options = {})
           widgets_with_key = {}
+          all_widgets = []
           page.blocks.each do |block|
             block.real_block.widgets.each do |widget|
               key = calculate_key(widget, options)
-              if key
-                widgets_with_key[widget.id] = key
-              end
+              all_widgets << [widget, key] if key
             end
           end
 
-          cached_widgets = multi_retrieve widgets_with_key.values
+          valid_widgets = validate_parents(all_widgets, options)
+          valid_widgets.each do |elems|
+            widgets_with_key[elems[0].id] = elems[1]
+          end
+          
+          crypted_table = crypt_all_keys(widgets_with_key.values)
+          
+          cached_widgets = multi_retrieve crypted_table.keys
           widgets = {} 
           cached_widgets.each do |cached_widget|
             if cached_widget.last
-              key = widgets_with_key.index(cached_widget.first)
-              Rails.logger.debug "Widget cache hit for widget with id: #{key} with key #{cached_widget.first}"
+              key = widgets_with_key.index(crypted_table[cached_widget.first])
+              Rails.logger.debug "Widget cache hit for widget with id: #{key} with key #{crypted_table[cached_widget.first]}"
               widgets[key] = cached_widget.last
             end
           end
@@ -63,7 +69,8 @@ module UbiquoDesign
           validate(widget_id, key, options)
           if key
             Rails.logger.debug "Widget cache store request sent for widget: #{widget_id.to_s} with key #{key}"
-            store(key, contents)
+            #check if expires_in is present and set it to store call
+            store(key, contents, get_expiration_time(widget_id, options))
           else
             Rails.logger.debug "Widget cache missing policies for widget: #{widget_id.to_s}"
           end
@@ -71,6 +78,7 @@ module UbiquoDesign
 
         # Expires the applicable content of a widget given its id
         def expire(widget_id, options = {})
+          Rails.logger.debug "-- cache EXPIRATION --"
           model_key = calculate_key(widget_id, options.slice(:scope))
           delete(model_key) if model_key
 
@@ -92,7 +100,7 @@ module UbiquoDesign
         def calculate_key(widget, options = {})
           widget, policies = policies_for_widget(widget, options)
           return unless policies
-          key = widget.id.to_s
+          key = "#{widget.id.to_s}_#{widget.version || 0}"
           options[:widget] = widget
           policies[:models].each do |_key, val|
             if options[:scope].respond_to?(:params) || _key == options[:scope].class.name
@@ -109,7 +117,7 @@ module UbiquoDesign
 
         def process_params policies, options
           params_key = ''
-          unless policies[:params].blank?
+          if policies[:params].present? || policies[:widget_params].present? 
             param_ids = policies[:params].map do |param_id_raw|
               param_id, t_param_id = case param_id_raw
               when Symbol
@@ -128,6 +136,9 @@ module UbiquoDesign
               else
                 "###{param_id}###{options[:scope].send(t_param_id)}"
               end
+            end
+            if policies[:widget_params].present?
+              param_ids << "c_params_" + options[:scope].params.map{|key, val| "#{key}@#{val}" }.join("&")
             end
             params_key = '_params_' + param_ids.join
           end
@@ -183,7 +194,13 @@ module UbiquoDesign
         def not_expired(widget, key, options)
           with_instance_content(widget, options) do |instance_key|
             valid_keys = retrieve(instance_key)
-            return valid_keys[:keys].include? key rescue false
+            begin
+              if valid_keys.blank? || !valid_keys[:keys].include?(key)
+                return false
+              end
+            rescue
+              return false
+            end
           end
           true
         end
@@ -195,9 +212,44 @@ module UbiquoDesign
             valid_keys ||= {}
             (valid_keys[:keys] ||= []) << key
             valid_keys[:keys].uniq
-            store(instance_key, valid_keys)
+            store(instance_key, valid_keys, get_expiration_time(widget, options))
           end
 
+        end
+
+        def validate_parents(all_widgets, options)
+          valid_widgets = []
+          parents = get_parents(all_widgets.map{|lk| lk[0]}, options)
+
+          crypted_table = crypt_all_parents_keys(parents) 
+          cached_parents = multi_retrieve crypted_table.keys
+          crypted_keys = crypted_table.keys
+          all_widgets.each_with_index do |widget, index|
+            current_keys = parents[widget[0].id]
+            valid_widgets << widget if own_parents_valid(cached_parents, current_keys, widget[1])
+          end
+          
+          valid_widgets
+        end
+
+        def own_parents_valid parents, current_keys, own_key
+          current_keys.each do |ck|
+            val = parents[ck]
+            return false if val.blank? || !val[:keys].include?(own_key)
+          end
+          return true
+        end
+        
+        def get_parents all_widgets, options
+          parents = {} #each parent
+          all_widgets.each do |widget|
+            options[:widget] = widget
+            parents[widget.id] = []
+            with_instance_content(widget, options) do |ikey|
+              parents[widget.id] << ikey
+            end
+          end
+          return parents
         end
 
         # Wrapper for getting, if applicable, the instance content id,
@@ -228,7 +280,7 @@ module UbiquoDesign
                 true_identifier = val[:identifier]
               end
 
-              p_i = '_'
+              p_i = key.to_s + '_' 
               p_i += process_params(val, options)
               p_i += process_procs(val, options)
               yield(widget_pre_key + p_i)
@@ -249,6 +301,38 @@ module UbiquoDesign
           [widget, policies]
         end
 
+        def get_expiration_time widget, options
+          widget = widget.is_a?(Widget) ? widget : Widget.find(widget)
+          policies = UbiquoDesign::CachePolicies.get(options[:policy_context])[widget.key]
+          policies[:expires_in]
+        end
+
+        def crypted_key key
+          obj = Digest::SHA2.new << key
+          obj.to_s
+        end
+
+        def crypt_all_keys(values)
+          ret_set = {}
+          values.each do |val|
+            ret_set[crypted_key(val)] = val
+          end
+          ret_set
+        end
+
+        def crypt_all_parents_keys(widget_hash)
+          ret_set = {}
+          widget_hash.each do |key, val|
+            vals = []
+            val.each do |non_crypted|
+              c_key =  crypted_key(non_crypted)
+              vals << c_key
+              ret_set[c_key] = non_crypted 
+            end
+            widget_hash[key] = vals
+          end
+          ret_set
+        end
       end
     end
   end

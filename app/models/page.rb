@@ -83,13 +83,16 @@ class Page < ActiveRecord::Base
   def publish
     begin
       transaction do
+
         self.clear_published_page
         published_page = self.clone
         published_page.attributes = {
           :is_modified => false,
           :published_id => nil
         }
+
         published_page.save!
+
         published_page.blocks.destroy_all
         self.blocks.each do |block|
           new_block = block.clone
@@ -99,7 +102,9 @@ class Page < ActiveRecord::Base
             uhook_publish_widget_asset_relations(widget, new_widget)
           end
         end
+
         published_page.reload.update_attribute(:is_modified, false)
+        
         self.update_attributes(
           :is_modified => false,
           :published_id => published_page.id
@@ -210,5 +215,5 @@ class Page < ActiveRecord::Base
       self.blocks << Block.create(:block_type => block_type.to_s)
     end
   end
-
+  
 end
