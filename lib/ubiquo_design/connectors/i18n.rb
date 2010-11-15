@@ -4,7 +4,6 @@ module UbiquoDesign
 
       def self.load!
         super
-        require 'ruby-debug';debugger
         ::Widget.send(:include, self::Widget)
         ::PagesController.send(:include, UbiquoI18n::Extensions::LocaleChanger)
         ::PagesController.send(:helper, UbiquoI18n::Extensions::Helpers)
@@ -178,8 +177,7 @@ module UbiquoDesign
           include Standard::Migration::ClassMethods
 
           def uhook_create_widgets_table
-require 'ruby-debug';debugger       
-     create_table :widgets, :translatable => true do |t|
+            create_table :widgets, :translatable => true do |t|
               yield t
             end
           end
