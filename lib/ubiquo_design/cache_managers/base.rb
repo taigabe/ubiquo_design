@@ -13,6 +13,9 @@ module UbiquoDesign
   module CacheManagers
     # Base class for widget cache
     class Base
+
+      require "digest/sha2"
+
       class << self
 
         # Gets the cached content of a widget. Returns false if this widget is not
