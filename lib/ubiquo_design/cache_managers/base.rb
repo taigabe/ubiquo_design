@@ -308,7 +308,7 @@ module UbiquoDesign
         end
 
         def crypted_key key
-          obj = Digest::SHA2.new << key
+          obj = Digest::SHA256.new << key
           obj.to_s
         end
 
