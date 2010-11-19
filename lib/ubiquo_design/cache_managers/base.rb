@@ -11,6 +11,10 @@ module UbiquoDesign
   end
 
   module CacheManagers
+    # cache errors
+    class MemcacheNotAvailable < StandardError; end
+    class CacheNotAvailable < StandardError; end
+
     # Base class for widget cache
     class Base
 
@@ -54,7 +58,12 @@ module UbiquoDesign
           
           crypted_table = crypt_all_keys(widgets_with_key.values)
           
-          cached_widgets = multi_retrieve crypted_table.keys
+          cached_widgets = begin
+            multi_retrieve crypted_table.keys
+          rescue CacheNotAvailable
+            return {}
+          end
+
           widgets = {} 
           cached_widgets.each do |cached_widget|
             if cached_widget.last
@@ -82,13 +91,16 @@ module UbiquoDesign
         # Expires the applicable content of a widget given its id
         def expire(widget_id, options = {})
           Rails.logger.debug "-- cache EXPIRATION --"
-          model_key = calculate_key(widget_id, options.slice(:scope))
-          delete(model_key) if model_key
+          begin
+            model_key = calculate_key(widget_id, options.slice(:scope))
+            delete(model_key) if model_key
 
-          with_instance_content(widget_id, options) do |instance_key|
-            keys = retrieve(instance_key)[:keys] rescue []
-            keys.each{|key| delete(key)}
-            delete(instance_key)
+            with_instance_content(widget_id, options) do |instance_key|
+              keys = retrieve(instance_key)[:keys] rescue []
+              keys.each{|key| delete(key)}
+              delete(instance_key)
+            end
+          rescue CacheNotAvailable
           end
         end
 
@@ -211,7 +223,11 @@ module UbiquoDesign
         # Marks the key as valid if necessary
         def validate(widget, key, options)
           with_instance_content(widget, options) do |instance_key|
-            valid_keys = retrieve(instance_key)
+            valid_keys = begin
+              retrieve(instance_key)
+            rescue CacheNotAvailable
+              return {}
+            end
             valid_keys ||= {}
             (valid_keys[:keys] ||= []) << key
             valid_keys[:keys].uniq
@@ -225,11 +241,15 @@ module UbiquoDesign
           parents = get_parents(all_widgets.map{|lk| lk[0]}, options)
 
           crypted_table = crypt_all_parents_keys(parents) 
-          cached_parents = multi_retrieve crypted_table.keys
-          crypted_keys = crypted_table.keys
-          all_widgets.each_with_index do |widget, index|
-            current_keys = parents[widget[0].id]
-            valid_widgets << widget if own_parents_valid(cached_parents, current_keys, widget[1])
+          begin 
+            cached_parents = multi_retrieve crypted_table.keys
+            crypted_keys = crypted_table.keys
+            all_widgets.each_with_index do |widget, index|
+              current_keys = parents[widget[0].id]
+              valid_widgets << widget if own_parents_valid(cached_parents, current_keys, widget[1])
+            end
+          rescue CacheNotAvailable
+            valid_widget = []
           end
           
           valid_widgets

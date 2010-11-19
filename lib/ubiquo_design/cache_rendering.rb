@@ -16,8 +16,12 @@ module UbiquoDesign
       def render_widget_with_cache(widget)
         start = Time.now.to_f
         rendered = render_widget_without_cache widget
-        UbiquoDesign.cache_manager.cache(widget, rendered, :scope => self)
-        Rails.logger.debug "Elapsed time for widget #{widget.key} ##{widget.id}: #{(Time.now.to_f- start)}"
+        begin
+          UbiquoDesign.cache_manager.cache(widget, rendered, :scope => self)
+          Rails.logger.debug "Elapsed time for widget #{widget.key} ##{widget.id}: #{(Time.now.to_f- start)}"
+        rescue
+          Rails.logger.error "Widget cache store request fail for widget: #{widget}"
+        end
         rendered
       end
 

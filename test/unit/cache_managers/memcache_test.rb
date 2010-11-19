@@ -26,4 +26,25 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
     @manager.stubs(:connection).returns(connection)
     @manager.send :delete, 'id'
   end
+
+  test 'connection should raise when the server is not available' do
+    if UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
+      UbiquoDesign::CacheManagers::Memcache.instance_variable_set("@cache","")
+    end
+    assert_raise UbiquoDesign::CacheManagers::MemcacheNotAvailable do
+      Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "")
+      @manager.send(:connection)
+    end
+    assert_raise UbiquoDesign::CacheManagers::MemcacheNotAvailable do
+      Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "1985")
+      @manager.send(:connection)
+     end
+  end
+
+  test 'connection should open only one connection with memcached' do
+    @manager.send(:connection)
+    cache_dup = UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
+    @manager.send(:connection)
+    assert_equal cache_dup, UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
+  end
 end

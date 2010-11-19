@@ -14,7 +14,11 @@ module UbiquoDesign
 
         # retrieves the widget content identified by +content_id+
         def retrieve content_id
-          connection.get crypted_key(content_id)
+          begin
+            connection.get crypted_key(content_id)
+          rescue MemCache::MemCacheError, MemcacheNotAvailable
+            raise CacheNotAvailable.new("Cache is not available impossible to retrieve")
+          end
         end
 
         # retrieves the widgets content bty han array of +content_ids+
@@ -27,27 +31,55 @@ module UbiquoDesign
           else
             crypted_content_ids = content_ids
           end
-          connection.get_multi crypted_content_ids 
+          begin
+            connection.get_multi crypted_content_ids
+          rescue MemCache::MemCacheError, MemcacheNotAvailable
+            raise CacheNotAvailable.new("Cache is not available impossible to  multi_retrieve")
+          end
         end
 
         # Stores a widget content indexing by a +content_id+
         def store content_id, contents, expiration_time
-          exp_time = expiration_time || DATA_TIMEOUT
-          connection.set crypted_key(content_id), contents, exp_time
+          begin
+            exp_time = expiration_time || DATA_TIMEOUT
+            connection.set crypted_key(content_id), contents, exp_time
+          rescue MemCache::MemCacheError, MemcacheNotAvailable
+            raise CacheNotAvailable.new("Cache is not available, memcached can not store the content")
+          end
         end
 
         # removes the widget content from the store
         def delete content_id
           Rails.logger.debug "Widget cache expiration request for key #{content_id}"
-          connection.delete crypted_key(content_id)
+          begin
+            connection.delete crypted_key(content_id)
+          rescue MemCache::MemCacheError, MemcacheNotAvailable
+            raise CacheNotAvailable.new("Cache is not available impossible to  delete cache")
+          end
         end
 
         # Returns or initializes a memcache connection
         def connection
-          @cache = MemCache.new(CONFIG[:server])
+          if @cache.blank?
+            begin
+              @cache = MemCache.new(CONFIG[:server])
+            rescue
+              Rails.logger.warn "Memcache Error: memcached servers are not available"
+              raise MemcacheNotAvailable, "Memcache Error: memcached servers are not available"
+            end
+            if @cache.servers.empty?
+              Rails.logger.warn "Memcache Error: memcached servers are not available"
+              raise MemcacheNotAvailable, "Memcache Error: memcached servers are not available" if @cache.servers.empty?
+            end
+            @cache.servers.each do |s|
+              if s.socket.blank?
+              Rails.logger.error "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
+              raise MemcacheNotAvailable, "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
+              end
+            end
+          end
+          @cache
         end
-
-
       end
 
     end
