@@ -1,22 +1,9 @@
 module Ubiquo::StaticPagesHelper
-  def static_pages_filters_info(params)
+  def static_page_filters
     if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-      string_filter = filter_info(:string, params,
-                                  :field => :filter_text,
-                                  :caption => t('ubiquo.design.name'))
-    else
-      string_filter = nil
-    end
-    build_filter_info(string_filter)
-  end
-
-  def static_pages_filters(url_for_options = {})
-    if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-      render_filter(:string, url_for_options,
-                    :field => :filter_text,
-                    :caption => t('ubiquo.design.name'))
-    else
-      ""
+      filters_for 'Page' do |f|
+        f.text :caption => t('ubiquo.design.name')
+      end
     end
   end
 
