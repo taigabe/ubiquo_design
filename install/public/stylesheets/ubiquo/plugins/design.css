@@ -18,10 +18,10 @@
   width: 23.5%;
 }
 #template .draggable_target {
-  background: #E9E9E9 url(../images/ubiquo/bg_dragdrop.jpg) no-repeat center center;
+  background: #E9E9E9 url(../../../images/ubiquo/bg_dragdrop.jpg) no-repeat center center;
 }
 #template .non_draggable_target {
-  background: #F7F7F7 url(../images/ubiquo/bg_no_dragdrop.jpg) no-repeat center center;
+  background: #F7F7F7 url(../../../images/ubiquo/bg_no_dragdrop.jpg) no-repeat center center;
 }
 .share_block_options {
   font-size: 11px;
@@ -50,10 +50,10 @@ li.widget {
   padding: 4.2em 1em 0 .7em;
   margin: 0 auto;
   font-size: 1em;
-  background: url(../images/ubiquo/widget.jpg) no-repeat;
+  background: url(../../../images/ubiquo/widget.jpg) no-repeat;
 }
 ul.block_type_holder li.error { /* ie6 no accepta li.widget.error */
-  background: url(../images/ubiquo/widget_error.jpg) no-repeat;
+  background: url(../../../images/ubiquo/widget_error.jpg) no-repeat;
 }
 ul.block_type_holder li.inherited {
   opacity: 0.4;
@@ -65,7 +65,7 @@ ul.block_type_holder li.inherited {
   width: 23em;
   height: 4.3em;
   padding: 1.5em 1em 0 .7em;
-  background-image: url(../images/ubiquo/long_widget.jpg);
+  background-image: url(../../../images/ubiquo/long_widget.jpg);
 }
 li.widget a {
   position: absolute;
@@ -76,7 +76,7 @@ li.widget a.delete {
   width: 14px;
   height: 15px;
   text-indent: -5000px;
-  background: url(../images/ubiquo/trash_icon.jpg) no-repeat;
+  background: url(../../../images/ubiquo/trash_icon.jpg) no-repeat;
 }
 #central li.widget a.edit {
   right: 2.4em;
@@ -88,7 +88,7 @@ li.widget a.move {
   width: 17px;
   height: 17px;
   text-indent: -5000px;
-  background: url(../images/ubiquo/cross.gif) no-repeat;
+  background: url(../../../images/ubiquo/cross.gif) no-repeat;
 }
 li.widget form {
   text-align: right;
