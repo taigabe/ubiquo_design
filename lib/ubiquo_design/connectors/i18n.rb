@@ -5,8 +5,9 @@ module UbiquoDesign
       def self.load!
         super
         ::Widget.send(:include, self::Widget)
-        ::PagesController.send(:include, UbiquoI18n::Extensions::LocaleChanger)
-        ::PagesController.send(:helper, UbiquoI18n::Extensions::Helpers)
+        # TODO include i18n goodies in ::PublicController, not ::PagesController
+        #::PagesController.send(:include, UbiquoI18n::Extensions::LocaleChanger)
+        #::PagesController.send(:helper, UbiquoI18n::Extensions::Helpers)
       end
 
       # Validates the ubiquo_i18n-related dependencies
