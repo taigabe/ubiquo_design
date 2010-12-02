@@ -271,6 +271,7 @@ class PageTest < ActiveSupport::TestCase
 
   private
 
+  # creates a (draft) page
   def create_page(options = {})
     Page.create({:name => "Custom page",
       :url_name => "custom_page",
