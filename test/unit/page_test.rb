@@ -46,8 +46,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_should_validate_uniqueness_of_url_name
-    Page.delete_all("url_name IS NULL")
-    Page.delete_all({ :url_name =>  ""})
+    Page.delete_all
     assert_difference "Page.count" do
       page = create_page :url_name => ""
       assert !page.new_record?, "#{page.errors.full_messages.to_sentence}"
@@ -56,6 +55,19 @@ class PageTest < ActiveSupport::TestCase
       page = create_page :url_name => ""
       assert page.new_record?, "#{page.errors.full_messages.to_sentence}"
     end
+  end
+
+  
+  def test_should_require_unique_url_name_on_a_published_page
+    Page.delete_all
+    page_1 = create_page :url_name => ""
+    page_1.publish
+
+    page_2 = create_page :url_name => "test"
+    page_2.publish
+
+    page_2.url_name = ""
+    assert_equal false, page_2.save
   end
 
   def test_should_create_page_with_is_modified_true
@@ -264,6 +276,7 @@ class PageTest < ActiveSupport::TestCase
       :url_name => "custom_page",
       :page_template => "static",
       :published_id => nil,
+      :is_modified => true
     }.merge(options))
   end
 end

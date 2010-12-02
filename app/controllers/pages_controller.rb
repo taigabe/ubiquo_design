@@ -56,5 +56,5 @@ class PagesController < ApplicationController
     @page = uhook_load_page
     render_page @page
   end
-  
+
 end

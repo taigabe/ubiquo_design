@@ -17,10 +17,26 @@ class Page < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :url_name, :if => lambda{|page| page.url_name.nil?}
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
-  validates_uniqueness_of :url_name,
-                          :scope => :published_id,
-                          :if => :is_the_draft?
   validates_presence_of :page_template
+
+  # No other page with the same url_name
+  validate do |page|
+    if page.is_the_draft?
+      exclude_ids = [page.id]
+      if page.published_id.present?
+        exclude_ids << page.published_id
+      end
+      exclude_ids = exclude_ids.compact
+      current_page = if exclude_ids.empty?
+                       Page.find_by_url_name(page.url_name)
+                     else
+                       Page.find_by_url_name(page.url_name, :conditions => ["id NOT IN (?)", exclude_ids])
+                     end
+      if current_page.present?
+        page.errors.add(:url_name, :taken)
+      end
+    end
+  end
 
   named_scope :published,
               :conditions => ["pages.published_id IS NULL AND pages.is_modified = ?", false]
@@ -89,7 +105,7 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => nil
         }
-
+        
         published_page.save!
 
         published_page.blocks.destroy_all

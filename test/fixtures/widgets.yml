@@ -15,3 +15,11 @@ two:
   type: Free
   position: 2
   version: 0
+three:
+  options: "--- \n:content: content example3\n"
+  name: "name"
+  block_id: 11006
+  type: Free
+  position: 1
+  version: 0
+  

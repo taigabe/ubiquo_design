@@ -63,7 +63,7 @@ class WidgetTest < ActiveSupport::TestCase
   end
 
   def test_should_set_is_modified_attribute_for_page_on_widget_update
-    widget = widgets(:one)
+    widget = widgets(:three)
     page = widget.block.page
     assert !page.reload.is_modified?
     assert widget.save
@@ -71,7 +71,7 @@ class WidgetTest < ActiveSupport::TestCase
   end
 
   def test_should_set_is_modified_attribute_for_page_on_widget_delete
-    widget = widgets(:one)
+    widget = widgets(:three)
     page = widget.block.page
     assert !page.reload.is_modified?
     assert widget.destroy
