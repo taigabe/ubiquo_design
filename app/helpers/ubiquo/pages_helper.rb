@@ -1,23 +1,10 @@
 module Ubiquo::PagesHelper
 
-  def pages_filters_info(params)
+  def page_filters
     if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-      string_filter = filter_info(:string, params,
-                                  :field => :filter_text,
-                                  :caption => t('ubiquo.design.name'))
-    else
-      string_filter = nil
-    end
-    build_filter_info(string_filter)
-  end
-
-  def pages_filters(url_for_options = {})
-    if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
-      render_filter(:string, url_for_options,
-                    :field => :filter_text,
-                    :caption => t('ubiquo.design.name'))
-    else
-      ""
+      filters_for 'Page' do |f|
+        f.text :caption => t('ubiquo.design.name')
+      end
     end
   end
 
@@ -26,14 +13,14 @@ module Ubiquo::PagesHelper
       :locals => {
         :name => 'page',
         :headers => [:name, :url_name, :publish_status],
-        :rows => collection.collect do |page| 
+        :rows => collection.collect do |page|
           {
             :id => page.id,
             :columns => [
               (if page.published? && page.published.is_linkable?
                  link_to_page(page.name, page, {}, :popup => true)
                else
-                 page.name    
+                 page.name
                end),
               page.url_name,
               publish_status(page),
@@ -59,5 +46,5 @@ module Ubiquo::PagesHelper
                      :title => t("ubiquo.design.status.#{status}")) + " " +
       t("ubiquo.design.status.#{status}")
   end
-  
+
 end
