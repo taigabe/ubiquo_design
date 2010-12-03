@@ -12,7 +12,6 @@ module UbiquoDesign
 
   module CacheManagers
     # cache errors
-    class MemcacheNotAvailable < StandardError; end
     class CacheNotAvailable < StandardError; end
 
     # Base class for widget cache

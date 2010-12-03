@@ -1,12 +1,15 @@
 require 'memcache'
 
-# Base class for widget cache
 module UbiquoDesign
   module CacheManagers
+    # Memcache implementation for the cache manager
     class Memcache < UbiquoDesign::CacheManagers::Base
 
       CONFIG = Ubiquo::Config.context(:ubiquo_design).get(:memcache)
       DATA_TIMEOUT = CONFIG[:timeout]
+
+      # Exception class raised in situations where memcache is not available
+      class MemcacheNotAvailable < StandardError; end
 
       class << self
 
@@ -17,11 +20,11 @@ module UbiquoDesign
           begin
             connection.get crypted_key(content_id)
           rescue MemCache::MemCacheError, MemcacheNotAvailable
-            raise CacheNotAvailable.new("Cache is not available impossible to retrieve")
+            raise CacheNotAvailable.new("Cache is not available, impossible to retrieve")
           end
         end
 
-        # retrieves the widgets content bty han array of +content_ids+
+        # retrieves the widgets content by an array of +content_ids+
         def multi_retrieve content_ids, crypted = true
           unless crypted
             crypted_content_ids = []
@@ -34,7 +37,7 @@ module UbiquoDesign
           begin
             connection.get_multi crypted_content_ids
           rescue MemCache::MemCacheError, MemcacheNotAvailable
-            raise CacheNotAvailable.new("Cache is not available impossible to  multi_retrieve")
+            raise CacheNotAvailable.new("Cache is not available, impossible to multi_retrieve")
           end
         end
 
@@ -54,7 +57,7 @@ module UbiquoDesign
           begin
             connection.delete crypted_key(content_id)
           rescue MemCache::MemCacheError, MemcacheNotAvailable
-            raise CacheNotAvailable.new("Cache is not available impossible to  delete cache")
+            raise CacheNotAvailable.new("Cache is not available, impossible to delete cache")
           end
         end
 
@@ -73,8 +76,8 @@ module UbiquoDesign
             end
             @cache.servers.each do |s|
               if s.socket.blank?
-              Rails.logger.error "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
-              raise MemcacheNotAvailable, "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
+                Rails.logger.error "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
+                raise MemcacheNotAvailable, "Memcache Error: memcached socket has no connection on #{s.instance_variable_get(:@host)}"
               end
             end
           end

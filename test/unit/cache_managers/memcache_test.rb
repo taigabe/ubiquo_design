@@ -31,11 +31,11 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
     if UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
       UbiquoDesign::CacheManagers::Memcache.instance_variable_set("@cache","")
     end
-    assert_raise UbiquoDesign::CacheManagers::MemcacheNotAvailable do
+    assert_raise UbiquoDesign::CacheManagers::Memcache::MemcacheNotAvailable do
       Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "")
       @manager.send(:connection)
     end
-    assert_raise UbiquoDesign::CacheManagers::MemcacheNotAvailable do
+    assert_raise UbiquoDesign::CacheManagers::Memcache::MemcacheNotAvailable do
       Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "1985")
       @manager.send(:connection)
      end
@@ -47,4 +47,13 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
     @manager.send(:connection)
     assert_equal cache_dup, UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
   end
+
+  test 'multi_retrieve should multi_get from memcache' do
+    connection = mock()
+    content_ids = ['id_one', 'id_two']
+    connection.expects(:get_multi).with(content_ids)
+    @manager.stubs(:connection).returns(connection)
+    @manager.send :multi_retrieve, content_ids
+  end
+
 end
