@@ -4,7 +4,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
   use_ubiquo_fixtures
 
   def setup
-    @manager = UbiquoDesign.cache_manager
+    @manager = UbiquoDesign::CacheManagers::RubyHash
   end
 
   def teardown

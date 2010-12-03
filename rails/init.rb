@@ -24,12 +24,12 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :connector, :standard
 
   config.add :cache_manager_class, lambda{
-#    case Rails.env
-#    when 'development', 'test'
-#      UbiquoDesign::CacheManagers::Filesystem
-#    else
+    case Rails.env
+    when 'test'
+      UbiquoDesign::CacheManagers::RubyHash
+    else
       UbiquoDesign::CacheManagers::Memcache
-#    end
+    end
   }
 
   config.add :memcache, {:server => '127.0.0.1', :timeout => 0}
