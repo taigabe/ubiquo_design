@@ -42,10 +42,9 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
   end
 
   test 'connection should open only one connection with memcached' do
-    @manager.send(:connection)
-    cache_dup = UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
-    @manager.send(:connection)
-    assert_equal cache_dup, UbiquoDesign::CacheManagers::Memcache.instance_variable_get("@cache")
+    @manager.instance_variable_set("@cache", mock())
+    MemCache.expects(:new).never
+    2.times { @manager.send(:connection) }
   end
 
   test 'multi_retrieve should multi_get from memcache' do
