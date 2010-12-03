@@ -9,7 +9,7 @@ class Ubiquo::DesignsController < UbiquoAreaController
   def show
     @page = Page.find(params[:page_id])
     @template_content = render_page_to_string(@page)
-    @component_types = @page.page_template.component_types.sort_by(&:name)
+    @widgets = @page.available_widgets.sort_by(&:to_s)
   end
 
   def preview
@@ -28,8 +28,8 @@ class Ubiquo::DesignsController < UbiquoAreaController
   end
 
   def render_page_to_string(page)
-    template_file = Rails.root.join("app/templates/#{page.page_template.key}/ubiquo.html.erb").to_s
-    template_contents = render_to_string :file => template_file,
+    template_file = Rails.root.join("app/templates/#{page.page_template}/ubiquo.html.erb").to_s
+    template_contents = render_to_string :file => template_file, 
                                          :locals => {:page => page}
     render_to_string :partial => 'template',
                      :locals => {:template_contents => template_contents, :page => page}

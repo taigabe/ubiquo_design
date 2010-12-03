@@ -1,5 +1,0 @@
-<p id="use_default_<%= bt.id %>" class="apply_default">
-	<%= check_box_tag 'use_default', 'true', is_using_default, {:id => "use_default_block_#{bt.id}"} %>
-	<label for="use_default_block_<%= bt.id %>"><%= t('ubiquo.design.use_frontpage_block') %></label>
-</p>
-<%= observe_field "use_default_block_#{bt.id}", :url => ubiquo_page_design_block_type_path(page, bt), :with => "'use_default='+$F('use_default_block_#{bt.id}')+'&_method=put&style_class=#{style_class}'" %>

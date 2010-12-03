@@ -5,6 +5,6 @@ class ActiveSupport::TestCase
 end
 
 
-class TestComponent < Component
+class TestWidget < Widget
   self.allowed_options = :title, :description
 end

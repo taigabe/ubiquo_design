@@ -1,24 +1,17 @@
 es:
   activerecord:
     models:
-      page: Página
-      page_category: "Categoria de página"
-      "menu item": "Elemento de menu"
+      page: "Página"
       banner_flash: "Baner Flash"
     attributes:
       page:
         name: "Nombre"
         url_name: "URL"
         page_template: "plantilla"
-      page_category:
-        name: "Nombre"
-        url_name: "Nombre url"
-      menu_item:
-        caption: "Título"
-        is_linkable: "¿es linkable?"
-        url: "Url"
-        description: "Descripción"
-        is_active: "¿está activo?"
-        menu_generator: "Generador de menú"
+        publish_status: "Estado"
+        parent_id: "Subpágina de"
+        meta_title: "Título"
+        meta_description: "Descripción"
+        meta_keywords: "Palabras clave"
       banner_flash:
         flash_file: "fichero flash"

@@ -1,3 +1,4 @@
+# -*- coding: undecided -*-
 #= Page templates
 #
 #All pages on the design system belong to a page template which  holds the view structure for both the public and the ubiquo page. Page templates are located at <tt>app/templates</tt>.
@@ -38,7 +39,7 @@
 #    key: column1
 #    can_use_default_block: false
 #
-#The attribute _can_use_default_block_ is used to indicate if a given block is susceptible of being used on many pages (then it would use frontpage block components). 
+#The attribute _can_use_default_block_ is used to indicate if a given block is susceptible of being used on many pages (then it would use frontpage block widgets).
 #
 #Now we need to associate these block types with the page template on the join table :
 #
@@ -56,7 +57,7 @@
 #
 #== Public page template
 #
-#The public template should be placed at <tt>app/templates/page_template_key/public.html.erb</tt>. This template receives an instance variable (_@blocks_), a hash containing the output of each component on the block (each key corresponding to the block key name as a symbol):
+#The public template should be placed at <tt>app/templates/page_template_key/public.html.erb</tt>. This template receives an instance variable (_@blocks_), a hash containing the output of each widget on the block (each key corresponding to the block key name as a symbol):
 #
 #  <div id="top">
 #    <%= @blocks[:top] %>
@@ -78,15 +79,15 @@
 module Ubiquo::DesignsHelper
 
   def design_block_4cols(page, type_key, options={})
-    bt = BlockType.find_by(type_key)
-    page = Page.find_by(page)
-    is_using_default = !page.blocks.as_hash.include?(bt.key)
+    block = page.blocks.first(:conditions => { :block_type => type_key })
+    unless block
+      raise ActiveRecord::RecordNotFound.new("Block with block_type '#{type_key}' not found")
+    end
     options.reverse_merge!({:class => "column_4"})
-    s = "<div class='top_options'>"
-    s << render(:partial => "ubiquo/designs/use_default_form", :locals => {:bt => bt, :page => page, :is_using_default => is_using_default, :style_class => options[:class]}) if bt.can_use_default_block? && !(page.url_name.blank? && page.page_category.url_name=="")
-    s << "</div>"
-    s << block_type_holder(page, bt, options)
-    s
+    content_tag(:div, :class => options.delete(:class)) do
+      block_actions(page, block) +
+        block_type_holder(page, type_key, block, options)
+    end
   end
 
   def design_block_1col(page, type_key, options={})
@@ -105,38 +106,50 @@ module Ubiquo::DesignsHelper
   end
 
   def make_blocks_sortables(page)
-    ids = page.page_template.block_types.map(&:id)
+    keys = page.blocks.map(&:block_type).uniq
     page.blocks.collect do |block|
-      sortable_block_type_holder block.block_type.id,  change_order_ubiquo_page_design_components_path(page), ids
+      if block == block.real_block
+        sortable_block_type_holder block.block_type,  change_order_ubiquo_page_design_widgets_path(page), keys
+      end
     end
   end
 
-  def block_type_holder(page, block_type, options = {})
-    block = page.all_blocks_as_hash[block_type.key]
-    options.merge!(:id => "block_#{block_type.id}" )
+  def block_type_holder(page, block_type, block, options = {})
+    options.merge!(:id => "block_#{block_type}" )
     options[:class] ||= ''
-    if page.blocks.as_hash.include?(block_type.key)
+    if !block.shared
       options[:class] << " draggable_target"
     else
       options[:class] << " non_draggable_target"
     end
-    (content_tag :div, options do
-      content_tag :ul, :id =>"block_type_holder_#{block_type.id}", :class => 'block_type_holder' do
-        components_for_block_type_holder(block) unless options[:class].match /non_draggable/
+    result = content_tag :div, options do
+      content_tag :ul, :id =>"block_type_holder_#{block_type}", :class => 'block_type_holder' do
+        widgets_for_block_type_holder(block.real_block)
       end
-    end) +
-    (page.blocks.as_hash.include?(block_type.key) ? drop_receiving_element(
-    options[:id],
-    :url => ubiquo_page_design_components_path(@page),
-    :method => :post,
-    :accept => 'component',
-    :with => "'component_type='+element.id.match(/\\d+/).first()+'&block=#{block.id}'"
-    ) : "")
+    end
+    if block == block.real_block
+      result += drop_receiving_element(
+        options[:id],
+        :url => ubiquo_page_design_widgets_path(@page),
+        :method => :post,
+        :accept => 'widget',
+        :with => "'widget='+element.id.gsub(/^widget_/, '')+'&block=#{block.id}'"
+      )
+    end
+    result
   end
 
-  def components_for_block_type_holder(block)
-    components = uhook_load_components(block)
-    render :partial => "ubiquo/components/component", :collection => components
+  def options_for_shared_blocks_select(block)
+    options = [[t("ubiquo.design.select_available_shared_blocks"), ""]]
+    options += block.available_shared_blocks.map do |block|
+      ["#{block.page.name} - #{block.block_type}", block.id]
+    end
+    options_for_select(options)
+  end
+  
+  def widgets_for_block_type_holder(block)
+    widgets = uhook_load_widgets(block)
+    render :partial => "ubiquo/widgets/widget", :collection => widgets
   end
 
   def sortable_block_type_holder_options(id, url, containments=[])
@@ -149,9 +162,45 @@ module Ubiquo::DesignsHelper
       :with => "Sortable.serialize('block_type_holder_#{id}',{name: 'block[#{id}]'})"}
     ]
   end
+  
   def sortable_block_type_holder(id,url, containments=[])
     id, opts = sortable_block_type_holder_options(id,url, containments)
     sortable_element id, opts
+  end
+
+  def block_actions(page, block)
+    content_tag(:div,
+      :id => "share_options_#{block.id}",
+      :class => 'share_block_options') do
+      if block.is_shared?
+        link_to_remote(t('ubiquo.design.stop_share_block'),
+          :url => ubiquo_page_design_block_path(page, block),
+          :method => :put,
+          :with => "'is_shared=false'")
+      elsif block.shared_id
+        link_to_remote(t('ubiquo.design.stop_use_shared_block', :key => block.shared.block_type),
+          :url => ubiquo_page_design_block_path(page, block),
+          :method => :put,
+          :with => "'shared_id='")
+      else
+        content_tag(:div) do
+          link_to_remote(t('ubiquo.design.share_block'),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :with => "'is_shared=true'") + " #{t('ubiquo.or')} " +
+            link_to_function(t('ubiquo.design.use_shared_block'), "toggleShareActions('share_options_#{block.id}')")
+        end +
+          content_tag(:div, :id => 'select_shared_block', :style => 'display:none') do
+            select_tag("shared_blocks_#{block.id}", options_for_shared_blocks_select(block)) +
+            link_to_remote(t('ubiquo.add'),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :confirm => t('ubiquo.design.replace_block_confirm'),
+            :with => "'shared_id='+$F('shared_blocks_#{block.id}')") +
+            link_to_function(t('ubiquo.cancel'), "toggleShareActions('share_options_#{block.id}')")
+          end
+      end
+    end
   end
 
 end

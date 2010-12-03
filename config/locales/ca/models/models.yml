@@ -1,24 +1,17 @@
 ca:
   activerecord:
     models:
-      page: Pàgina
-      page_category: "Categoria de pàgina"
-      "menu item": "Element de menú"
+      page: "Pàgina"
       banner_flash: "Banner Flash"
     attributes:
       page:
         name: "Nom"
         url_name: "URL"
         page_template: "plantilla"
-      page_category:
-        name: "Nom"
-        url_name: "Nom url"
-      menu_item:
-        caption: "Títol"
-        is_linkable: "¿és linkable?"
-        url: "Url"
-        description: "Descripció"
-        is_active: "¿està actiu?"
-        menu_generator: "Generador de menú"
+        publish_status: "Estat"
+        parent_id: "Subpàgina de"
+        meta_title: "Títol"
+        meta_description: "Descripció"
+        meta_keywords: "Paraules clau"
       banner_flash:
         flash_file: "fitxer flash"

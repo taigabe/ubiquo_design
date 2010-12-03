@@ -1,48 +1,79 @@
 class Page < ActiveRecord::Base
-
-  belongs_to :page_template
+  belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
+  belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
+  has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
+  has_one :draft, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :nullify
   has_many :blocks, :dependent => :destroy do
     def as_hash
-      self.collect{|block|[block.block_type.key, block]}.to_hash
+      self.collect{|block|[block.block_type, block]}.to_hash
     end
   end
 
-  belongs_to :page_type
-  belongs_to :page_category
-
-  after_create :assign_default_blocks
-  before_validation_on_create :assign_default_is_public
-  after_destroy :clear_published_page
-  after_save :update_modified
+  before_save :compose_url_name_with_parent_url
+  before_create :assign_template_blocks
+  before_save :update_modified, :if => :is_the_draft?
+  after_destroy :is_modified_on_destroy_published
 
   validates_presence_of :name
-  validates_presence_of :url_name, :if => lambda{ |page|
-    page.url_name.nil?
-  }
+  validates_presence_of :url_name, :if => lambda{|page| page.url_name.nil?}
   validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
-  validates_uniqueness_of :url_name, :scope => [:page_type_id, :is_public, :page_category_id], :allow_blank => true
   validates_presence_of :page_template
-  #  validates_presence_of :page_type
-  validates_presence_of :page_category
 
-  # Generic find for pages (by ID, url_name or record)
-  def self.find_by(something, options={})
-    case something
-    when Fixnum
-      find_by_id(something, options)
-    when String, Symbol
-      find_by_url_name(something.to_s, options)
-    when Page
-      something
-    else
-      nil
+  # No other page with the same url_name
+  validate do |page|
+    if page.is_the_draft?
+      exclude_ids = [page.id]
+      if page.published_id.present?
+        exclude_ids << page.published_id
+      end
+      exclude_ids = exclude_ids.compact
+      current_page = if exclude_ids.empty?
+                       Page.find_by_url_name(page.url_name)
+                     else
+                       Page.find_by_url_name(page.url_name, :conditions => ["id NOT IN (?)", exclude_ids])
+                     end
+      if current_page.present?
+        page.errors.add(:url_name, :taken)
+      end
     end
   end
-  
-  # filters: 
+
+  named_scope :published,
+              :conditions => ["pages.published_id IS NULL AND pages.is_modified = ?", false]
+  named_scope :drafts,
+              :conditions => ["pages.published_id IS NOT NULL OR pages.is_modified = ?", true]
+  named_scope :statics,
+              :conditions => ["pages.is_static = ?", true]
+
+
+  DEFAULT_LAYOUT = 'main'
+
+  # Returns the most appropiate published page for that url, raises an
+  # Exception if no match is found
+  def self.with_url url
+    url_name = url.is_a?(Array) ? url.join('/') : url
+    page = find_by_url_name(url_name)
+
+    # Try to consider the last portion as the slug
+    url_name = url_name.split('/').tap do |portions|
+      portions.size > 1 ? portions.pop : portions
+    end.join('/') unless page
+
+    (page || find_by_url_name(url_name)).tap do |page|
+      raise ActiveRecord::RecordNotFound.new("Page with url '#{url_name}' not found") unless page
+    end
+  end
+
+  # Initialize pages as drafts
+  def initialize(attrs = {})
+    attrs ||= {}
+    super attrs.reverse_merge!(:is_modified => true)
+  end
+
+  # filters:
   #   :text: String to search in page name
   #
-  # options: find_options  
+  # options: find_options
   def self.filtered_search(filters = {}, options = {})
     scopes = create_scopes(filters) do |filter, value|
       case filter
@@ -50,130 +81,154 @@ class Page < ActiveRecord::Base
           { :conditions => ["upper(pages.name) LIKE upper(?)", "%#{value}%"] }
       end
     end
-    
+
     apply_find_scopes(scopes) do
       find(:all, options)
     end
   end
 
-  # Get public page given a page_type key, page_category url_name and page url_name
-  def self.find_public(page_category_url_name, page_name)
-    page_category = PageCategory.find_by_url_name(page_category_url_name)
-    raise ActiveRecord::RecordNotFound.new("Cannot find page_category '#{page_category_url_name}'") unless page_category
-    page = public_scope do
-      #page_category.pages.find_all_by_url_name(page_name)
-      page_category.pages.find(:first, :conditions => ["url_name = ?", page_name])
-    end
-    raise ActiveRecord::RecordNotFound.new("Cannot find public page with page_name '#{page_name}' and page_category '#{page_category_url_name}'") unless page
-    page
-  end
-
-  # Create a surrouding scope for calls within the block to get only public pages
-  def self.public_scope(p = true)
-    self.with_scope(:find => {:conditions => ["pages.is_public = ?", p]}) do
-      yield
-    end
-  end
-
-  # Returns wheter the page contains components that have required component params
-  def has_required_params?
-    components = self.blocks.map(&:components).flatten
-    component_types = components.map(&:component_type).flatten.uniq
-    requires = component_types.map do |component_type|
-      component_type.component_params.map(&:is_required)
-    end.flatten
-    requires.include?(true)
-  end
-
-  def assign_default_blocks
-    desired_blocks = page_template.block_types.each do |bt|
-      Block.create_for_block_type_and_page(bt, self) if bt.default_block.nil?
-    end
-    true
-  end
-
-  def assign_default_is_public
-    self.is_public = false if(self.is_public.nil?)
-    true
-  end
-
   def clear_published_page
-    published.destroy if self.is_published?
-  end
-
-  def default_blocks
-    page_template.block_types.map(&:default_block).compact
-  end
-
-  def default_block_as_hash
-    default_blocks.collect do |block|
-      [block.block_type.key, block]
-    end.to_hash
-  end
-
-  def all_blocks
-    all_blocks_as_hash.values
+    published.destroy if published?
   end
 
   def all_blocks_as_hash
-    blocks.as_hash.reverse_merge(default_block_as_hash)
-  end
-
-  def is_using_default?(block_type)
-    block_type = BlockType.find_by(block_type)
-    all_blocks_as_hash[block_type.key] == default_block_as_hash[block_type.key]
+    blocks.as_hash
   end
 
   def publish
     begin
       transaction do
-        self.published.destroy unless self.published.nil?
-        public_page = self.clone
-        public_page.is_public = true
-        public_page.save!
-        public_page.blocks.destroy_all
+
+        self.clear_published_page
+        published_page = self.clone
+        published_page.attributes = {
+          :is_modified => false,
+          :published_id => nil
+        }
+        
+        published_page.save!
+
+        published_page.blocks.destroy_all
         self.blocks.each do |block|
           new_block = block.clone
-          new_block.page = public_page
+          new_block.page = published_page
           new_block.save!
-          uhook_publish_block_components(block, new_block) do |component, new_component|
-            uhook_publish_component_asset_relations(component, new_component)
+          uhook_publish_block_widgets(block, new_block) do |widget, new_widget|
+            uhook_publish_widget_asset_relations(widget, new_widget)
           end
         end
-        self.update_modified(false)
-        public_page.reload
+
+        published_page.reload.update_attribute(:is_modified, false)
+        
+        self.update_attributes(
+          :is_modified => false,
+          :published_id => published_page.id
+        )
       end
       return true
-    rescue
+    rescue Exception => e
       return false
     end
   end
-  
-  def wrong_components_ids
-    self.blocks.map(&:components).flatten.reject(&:valid?).map(&:id)
+
+  # Returns true if the page has been published
+  def published?
+    published_id
   end
 
-  def is_published?
-    !published.nil?
-  end
-
-  def published
-    begin
-      Page.find_public(self.page_category.url_name, self.url_name)
-    rescue
-      nil
+  # if you remove published page copy, draft page will be pending publish again
+  def is_modified_on_destroy_published
+    if self.is_the_published? && self.draft
+      self.draft.update_attributes(:is_modified => true)
     end
   end
 
+  def wrong_widgets_ids
+    self.blocks.map(&:widgets).flatten.reject(&:valid?).map(&:id)
+  end
+
+  # Returns true if the page is the draft version
+  def is_the_draft?
+    published_id? || (!published_id? && is_modified?)
+  end
+
+  # Returns true if this page is the published one
+  def is_the_published?
+    !is_the_draft?
+  end
+
+  # Returns true if the page can be accessed directly,
+  # i.e. does not have required params
   def is_linkable?
-    is_published? && !has_required_params?
+    #TODO implement this method
+    is_the_published?
   end
 
-  def update_modified(value=true)
-    if self.changes["is_modified"].nil? && self.is_modified?!=value
-      self.is_modified = value
-      self.save
+  # Returns true if the page can be previewed
+  def is_previewable?
+    #TODO Implement this method
+    false
+  end
+
+  # Returns the layout to use for this page
+  def layout
+    UbiquoDesign::Structure.get(:page_template => page_template.to_sym)[:options][:layout] rescue DEFAULT_LAYOUT
+  end
+
+  def self.templates
+    UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten rescue []
+  end
+
+  def self.blocks(template = nil)
+    if template
+      UbiquoDesign::Structure.get(:page_template => template.to_sym)[:blocks].map(&:keys).flatten rescue []
+    else
+      #TODO Implement this method with UbiquoDesign::structure
+      raise NotImplementedError
     end
   end
 
+  def available_widgets
+    UbiquoDesign::Structure.get(:page_template => page_template)[:widgets].map(&:keys).flatten
+  end
+
+  def update_modified(save = false)
+    write_attribute(:is_modified, true) unless is_modified_change
+    self.save if save
+  end
+
+  def add_widget(block_key, widget)
+    begin
+      transaction do
+        self.save! if self.new_record?
+        block = self.blocks.select { |b| b.block_type == block_key.to_s }.first
+        block ||= Block.create!(:page_id => self.id, :block_type => block_key.to_s)
+        block.widgets << widget
+        widget.save!
+      end
+    rescue Exception => e
+      return false
+    end
+  end
+
+  def static_section_widget
+    block = self.blocks.select { |b| b.block_type == "main" }.first
+    Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
+  end
+
+  private
+
+  def compose_url_name_with_parent_url
+    if self.parent
+      self.url_name = parent.url_name + "/" + url_name.gsub(/^#{parent.url_name}\//, '')
+    end
+  end
+
+  def assign_template_blocks
+    block_types = Page.blocks(self.page_template)
+    block_types.each do |block_type|
+      self.blocks << Block.create(:block_type => block_type.to_s)
+    end
+  end
+  
 end
