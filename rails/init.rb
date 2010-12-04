@@ -4,7 +4,7 @@ config.after_initialize do
   UbiquoDesign::Connectors.load!
 end
 
-ActiveSupport::Dependencies.load_paths << Rails.root.join("app", "models", "widgets")
+ActiveSupport::Dependencies.autoload_paths << Rails.root.join("app", "models", "widgets")
 
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_elements_per_page
@@ -17,7 +17,7 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   }
   config.add :static_pages_permit, lambda{
     permit?("static_pages_management")
-  }  
+  }
   config.add :page_string_filter_enabled, true
   config.add :pages_default_order_field, 'pages.url_name'
   config.add :pages_default_sort_order, 'ASC'
