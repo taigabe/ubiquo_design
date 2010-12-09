@@ -42,7 +42,7 @@ es:
       # Widgets
       widget_translate: "traducir"
       widget_removal: "eliminar"
-      confirm_widget_removal: "Estás seguro de que quieres eliminar este widgete?"
+      confirm_widget_removal: "Estás seguro de que quieres eliminar este widget?"
       widget_move: "mover"
       widget_edit: "editar"
       widget_saving: "Guardando ..."
@@ -61,7 +61,7 @@ es:
       publish: "Publicar"
       move: "mover"
       # Widgets
-      editing_widget: "Editando el widgete %{name}"
+      editing_widget: "Editando el widget %{name}"
       close_widget: "Cerrar"
       save: "Guardar"
       page_published: "Página publicada correctamente"
