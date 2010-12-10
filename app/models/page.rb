@@ -27,11 +27,8 @@ class Page < ActiveRecord::Base
         exclude_ids << page.published_id
       end
       exclude_ids = exclude_ids.compact
-      current_page = if exclude_ids.empty?
-                       Page.find_by_url_name(page.url_name)
-                     else
-                       Page.find_by_url_name(page.url_name, :conditions => ["id NOT IN (?)", exclude_ids])
-                     end
+      conditions = ["id NOT IN (?)", exclude_ids] unless exclude_ids.empty?
+      current_page = Page.find_by_url_name(page.url_name, :conditions => conditions)
       if current_page.present?
         page.errors.add(:url_name, :taken)
       end
