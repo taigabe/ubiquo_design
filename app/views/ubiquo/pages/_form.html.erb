@@ -1,6 +1,7 @@
 <%= error_messages_for 'page' %>
 <div class="form_box">
   <%= uhook_form_top f %>
+  <h3>Informació de la pàgina</h3>
   <p>
     <%= f.label :name, Page.human_attribute_name("name") %> 
     <%= f.text_field :name %>
@@ -34,19 +35,19 @@
       </ul>
     </fieldset>
   <% end %>
-  <fieldset>
-    <legend><%= t('ubiquo.design.metatags') %></legend>
-    <p>
-      <%= f.label :meta_title, Page.human_attribute_name("meta_title") %>
-      <%= f.text_field :meta_title %>
-    </p>
-    <p>
-      <%= f.label :meta_keywords, Page.human_attribute_name("meta_keywords") %>
-      <%= f.text_field :meta_keywords %>
-    </p>
-    <p>
-      <%= f.label :meta_description, Page.human_attribute_name("meta_description") %>
-      <%= f.text_area :meta_description, :rows => 5 %>
-    </p>
-  </fieldset>
+</div>
+<div class="form_box">
+  <h3><%= t('ubiquo.design.metatags') %></h3>
+  <p>
+    <%= f.label :meta_title, Page.human_attribute_name("meta_title") %>
+    <%= f.text_field :meta_title %>
+  </p>
+  <p>
+    <%= f.label :meta_keywords, Page.human_attribute_name("meta_keywords") %>
+    <%= f.text_field :meta_keywords %>
+  </p>
+  <p>
+    <%= f.label :meta_description, Page.human_attribute_name("meta_description") %>
+    <%= f.text_area :meta_description, :rows => 5 %>
+  </p>
 </div>

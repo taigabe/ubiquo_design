@@ -21,6 +21,7 @@ en:
         new: "New static page"
         page_info: "Page info"
         widget_info: "Page content"
+        widget_title: "Static Section"
         save_and_publish: "Save & publish"
         create_and_publish: "Create & publish"
       status:

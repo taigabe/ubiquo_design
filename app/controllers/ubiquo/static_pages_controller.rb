@@ -25,7 +25,7 @@ class Ubiquo::StaticPagesController < UbiquoAreaController
   
   def new
     @static_page = Page.new(:is_static => true)
-    @widget = StaticSection.new
+    @widget = uhook_new_widget
     
     respond_to do |format|
       format.html
@@ -37,7 +37,7 @@ class Ubiquo::StaticPagesController < UbiquoAreaController
     default_page_params = { :is_static => true }
     default_widget_params = { :name => "Static Section" }
     @static_page = Page.new(params[:page].merge!(default_page_params))
-    @widget = StaticSection.new(params[:static_section].reverse_merge!(default_widget_params))
+    @widget = uhook_create_widget
     if params[:publish_page] == "true"
       ok = @static_page.add_widget(:main, @widget) && @static_page.publish
     else
@@ -61,16 +61,21 @@ class Ubiquo::StaticPagesController < UbiquoAreaController
   
   def edit
     @static_page = Page.find(params[:id])
-    @widget = @static_page.static_section_widget
+    @widget = @static_page.uhook_static_section_widget(current_locale) || uhook_new_widget
   end
   
   def update
     @static_page = Page.find(params[:id])
-    @widget = @static_page.static_section_widget
-    if params[:publish_page] == "true"
-      ok = @static_page.update_attributes(params[:page]) && @widget.update_attributes(params[:static_section]) && @static_page.publish
+    @widget = @static_page.uhook_static_section_widget(current_locale) || uhook_create_widget
+    if @widget.new_record?
+      @static_page.add_widget(:main, @widget)
     else
-      ok = @static_page.update_attributes(params[:page]) && @widget.update_attributes(params[:static_section])
+      @widget.update_attributes(params[:static_section])
+    end
+    if params[:publish_page] == "true"
+      ok = @static_page.update_attributes(params[:page]) && @static_page.publish
+    else
+      ok = @static_page.update_attributes(params[:page])
     end
     respond_to do |format|
       if ok

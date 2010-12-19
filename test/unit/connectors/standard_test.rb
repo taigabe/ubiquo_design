@@ -115,6 +115,13 @@ module Connectors
       ActiveRecord::Migration.uhook_create_widgets_table
     end
 
+    test "page returns return_static_section_widget" do
+      page = create_page
+      widget = StaticSection.create(:name => 'Test static', :title => 'Test')
+      page.add_widget(:main, widget)
+      assert_equal widget, page.uhook_static_section_widget
+    end
+
     private
 
     def create_page(options = {})

@@ -22,6 +22,7 @@ ca:
         new: "Nova pàgina"
         page_info: "Informació de la pàgina"
         widget_info: "Contingut de la pàgina"
+        widget_title: "Secció estàtica"
         save_and_publish: "Guardar i publicar"
         create_and_publish: "Crear i publicar"
       status:

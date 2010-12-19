@@ -249,13 +249,6 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  def test_should_return_static_section_widget
-    page = create_page
-    widget = StaticSection.create(:name => 'Test static', :title => 'Test')
-    page.add_widget(:main, widget)
-    assert_equal widget, page.static_section_widget
-  end
-
   def test_should_return_layout_from_template_in_structure
     UbiquoDesign::Structure.define do
       page_template :example, :layout => 'test_layout'

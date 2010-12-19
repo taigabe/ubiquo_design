@@ -34,6 +34,14 @@ module UbiquoDesign
               end
             end
           end
+
+          def uhook_static_section_widget(locale = nil)
+            block = self.blocks.select { |b| b.block_type == "main" }.first
+            if block
+              Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
+            end
+          end
+
         end
       end
       module PagesController
@@ -115,7 +123,9 @@ module UbiquoDesign
 
       module UbiquoStaticPagesController
         def self.included(klass)
+          klass.send(:include, InstanceMethods)          
           klass.send(:helper, Helper)
+          Standard.register_uhooks klass, InstanceMethods
         end
 
         module Helper
@@ -128,6 +138,19 @@ module UbiquoDesign
 
           def uhook_edit_sidebar
             ""
+          end
+        end
+
+        module InstanceMethods
+          def uhook_new_widget
+            ::StaticSection.new
+          end
+
+          def uhook_create_widget
+            default_widget_params = {
+              :name => t('ubiquo.design.static_pages.widget_title'),
+            }
+            ::StaticSection.new(params[:static_section].reverse_merge!(default_widget_params))
           end
         end
       end

@@ -208,11 +208,6 @@ class Page < ActiveRecord::Base
     end
   end
 
-  def static_section_widget
-    block = self.blocks.select { |b| b.block_type == "main" }.first
-    Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
-  end
-
   private
 
   def compose_url_name_with_parent_url

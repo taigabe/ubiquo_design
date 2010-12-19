@@ -22,6 +22,7 @@ es:
         new: "Nueva página"
         page_info: "Información de la página"
         widget_info: "Contenido de la página"
+        widget_title: "Sección estática"
         save_and_publish: "Guardar y publicar"
         create_and_publish: "Crear y publicar"
       status:

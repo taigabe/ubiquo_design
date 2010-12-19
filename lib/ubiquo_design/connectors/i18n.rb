@@ -81,6 +81,15 @@ module UbiquoDesign
               end
             end
           end
+
+          def uhook_static_section_widget(locale)
+            block = self.blocks.select { |b| b.block_type == "main" }.first
+            if block
+              ::Widget.locale(locale).first(:conditions => {
+                :type => "StaticSection", :block_id => block.id
+              })
+            end
+          end
         end
       end
 
@@ -147,6 +156,44 @@ module UbiquoDesign
             end
           end
         end
+      end
+
+      module UbiquoStaticPagesController
+        def self.included(klass)
+          klass.send(:include, InstanceMethods)          
+          klass.send(:helper, Helper)
+          I18n.register_uhooks klass, InstanceMethods          
+        end
+
+        module Helper
+          def uhook_static_page_actions(page)
+            if page.uhook_static_section_widget(current_locale)
+              edit_link = link_to(t('ubiquo.edit'), edit_ubiquo_static_page_path(page))
+            else
+              edit_link = link_to(t('ubiquo.translate'),
+                                  edit_ubiquo_static_page_path(page, :from => page.uhook_static_section_widget(:ALL).try(:content_id)))
+            end
+            [
+              edit_link,
+              (link_to(t('ubiquo.remove'), ubiquo_static_page_path(page), :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
+            ].compact
+          end
+        end
+
+        module InstanceMethods
+          def uhook_new_widget
+            ::StaticSection.translate(params[:from], current_locale, :copy_all => true)
+          end
+
+          def uhook_create_widget
+            default_widget_params = {
+              :name => t('ubiquo.design.static_pages.widget_title'),
+              :locale => current_locale,
+            }            
+            ::StaticSection.new(params[:static_section].reverse_merge!(default_widget_params))
+          end
+        end
+        
       end
 
       module RenderPage
