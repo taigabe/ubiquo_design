@@ -81,6 +81,14 @@ class PagesControllerTest < ActionController::TestCase
     assert_select "title", pages(:one).meta_title
   end
 
+  def test_should_print_default_desc_and_keywords
+    pages(:one).update_attribute :meta_description, 'description'
+    pages(:one).update_attribute :meta_keywords, %{key_on'e,key_tw"o}
+    get :show, :key => pages(:one).key
+    assert_select "meta[name=description][content=description]"
+    assert_select "meta[name=keywords][content=key_on'e,key_tw&quot;o]"
+  end
+
   def test_should_not_get_page_by_inexistent_key
     assert_raise ActiveRecord::RecordNotFound do
       get :show, :key => 'non_existent'
