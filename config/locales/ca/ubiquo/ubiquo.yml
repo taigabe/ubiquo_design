@@ -51,14 +51,16 @@ ca:
       widget_cancel: "Cancel·lar"
       widget_click_to_edit: "Fes click per editar"
       widget_loading: "Carregant ..."
+      widget_error: "El widget necessita ser configurat per poder publicar la pàgina"
+      widget_categories: "Categories de widgets"
       # End widgets
       page_info: "Informació de la pàgina"
       avaliable_widgets: "Widgets disponibles"
-      open: "Obrir"
+      open: "obrir"
       published: "Publicat"
       pending_publish: "Pendent de publicació"
       non_published: "No publicat"
-      preview: "preview"
+      preview: "Previsualitzar"
       publish: "Publicar"
       move: "moure"
       # Widgets

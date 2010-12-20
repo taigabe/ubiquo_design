@@ -1,11 +1,11 @@
-<li id="widget_<%= widget.id %>" class="widget<%= " error" unless widget.valid? %> <%= " inherited" unless @page.blocks.include?(widget.block) %>">
+<li id="widget_<%= widget.id %>" class="widget<%= " error" unless widget.valid? %> <%= " inherited" unless @page.blocks.include?(widget.block) %>" <%= "alt='#{t('ubiquo.design.widget_error')}' title='#{t('ubiquo.design.widget_error')}'" unless widget.valid? %>" >
   <% if @page.blocks.include?(widget.block) %>
     <%= link_to_remote t('ubiquo.design.widget_removal'),
                        :url => ubiquo_page_design_widget_path(@page, widget),
                        :method => :delete, 
                        :confirm => t('ubiquo.design.confirm_widget_removal'),
-                       :html => {:class => "delete"} %>
-    <a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.widget_move') %></a>
+                       :html => {:class => "delete", :alt => t('ubiquo.design.widget_removal'), :title => t('ubiquo.design.widget_removal')} %>
+    <a href="#" class="move" onclick="return false;" alt="<%= t('ubiquo.design.widget_move') %>" title="<%= t('ubiquo.design.widget_move') %>"><%= t('ubiquo.design.widget_move') %></a>
     <% if widget.is_configurable? %>
       <%= uhook_link_to_edit_widget(widget) %>
     <% end %>

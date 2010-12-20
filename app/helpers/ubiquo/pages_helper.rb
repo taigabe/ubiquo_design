@@ -35,13 +35,13 @@ module Ubiquo::PagesHelper
 
   def publish_status(page)
     status,icon_name = if page.published? && !page.is_modified?
-      ['published', 'ok']
+      ['published', 'ico_published']
     elsif page.published? && page.is_modified?
-      ['pending_publish', 'pending']
+      ['pending_publish', 'ico_pending']
     else
-      ['unpublished', 'ko']
+      ['unpublished', 'ico_unpublished']
     end
-    ubiquo_image_tag("#{icon_name}.gif",
+    ubiquo_image_tag("#{icon_name}.png",
                      :alt => t("ubiquo.design.status.#{status}"),
                      :title => t("ubiquo.design.status.#{status}")) + " " +
       t("ubiquo.design.status.#{status}")

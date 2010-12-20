@@ -51,14 +51,16 @@ es:
       widget_cancel: "Cancelar"
       widget_click_to_edit: "Haz click para editar"
       widget_loading: "Cargando ..."
+      widget_error: "El widget necesita ser configurado para poder publicar la página"
+      widget_categories: "Categorías de widgets"
       # End widgets
       page_info: "Información de la página"
       avaliable_widgets: "Widgets disponibles"
-      open: "Abrir"
+      open: "abrir"
       published: "Publicado"
       pending_publish: "Pendiente de publicación"
       non_published: "No publicado"
-      preview: "preview"
+      preview: "Previsualizar"
       publish: "Publicar"
       move: "mover"
       # Widgets

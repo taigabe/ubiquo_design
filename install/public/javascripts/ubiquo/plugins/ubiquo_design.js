@@ -29,8 +29,35 @@ document.observe("dom:loaded", function() {
       }
     )
   }
+
+	//Sidebar scroll
+	var scrolling = false;
+	var last_scroll;
+	
+	last_scroll = document.viewport.getScrollOffsets()[1];
+	
+  setInterval(function(){
+    var current_scroll = document.viewport.getScrollOffsets()[1];
+    if (scrolling){
+      if (current_scroll == last_scroll){
+        scrolling = false;
+        slide_that_div();
+      }
+    } else if(current_scroll != last_scroll){
+      scrolling = true;
+    }
+	last_scroll = current_scroll;
+  }, 300);
 });
 
+
+function slide_that_div(){
+  var scroll_offset = document.viewport.getScrollOffsets()[1];
+	scroll_offset = (scroll_offset > 140) ? scroll_offset-140 : 0;
+	new Effect.Move('slide_wrapper', { y: scroll_offset, mode: 'absolute', duration: '0.5' });
+}
+
+//------------
 function update_url_example() {
   var selected_parent = $('page_parent_id').options[$('page_parent_id').selectedIndex].title;
   var host = $('url_example').textContent.match(/http\:\/\/.*\.[a-z]{2,3}\//).first();
@@ -61,3 +88,9 @@ function toggleShareActions(id) {
     div.toggle();
   });
 }
+
+//ALLOWED BLOCKS FOR EACH WIDGET
+var allowedBlocks = new Array();
+//for each widget specify allowed blocks
+allowedBlocks['static_section'] = ['block_top','block_sidebar']; 
+allowedBlocks['free'] = ['block_main']; 

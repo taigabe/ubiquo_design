@@ -118,9 +118,9 @@ module Ubiquo::DesignsHelper
     options.merge!(:id => "block_#{block_type}" )
     options[:class] ||= ''
     if !block.shared
-      options[:class] << " draggable_target"
+      options[:class] << "block draggable_target"
     else
-      options[:class] << " non_draggable_target"
+      options[:class] << "block non_draggable_target"
     end
     result = content_tag :div, options do
       content_tag :ul, :id =>"block_type_holder_#{block_type}", :class => 'block_type_holder' do
@@ -135,6 +135,19 @@ module Ubiquo::DesignsHelper
         :accept => 'widget',
         :with => "'widget='+element.id.gsub(/^widget_/, '')+'&block=#{block.id}'"
       )
+      drop_functions = "function activate_droppable_" + options[:id] + "() {"
+      drop_functions += drop_receiving_element_js(
+        options[:id],
+        :url => ubiquo_page_design_widgets_path(@page),
+        :method => :post,
+        :accept => 'widget',
+        :with => "'widget='+element.id.gsub(/^widget_/, '')+'&block=#{block.id}'"
+      )
+      drop_functions += "}"
+      drop_functions += "function deactivate_droppable_" + options[:id] + "() {
+                          Droppables.remove('"+options[:id]+"');
+                          }"
+      result += javascript_tag(drop_functions)
     end
     result
   end
@@ -173,15 +186,19 @@ module Ubiquo::DesignsHelper
       :id => "share_options_#{block.id}",
       :class => 'share_block_options') do
       if block.is_shared?
-        link_to_remote(t('ubiquo.design.stop_share_block'),
-          :url => ubiquo_page_design_block_path(page, block),
-          :method => :put,
-          :with => "'is_shared=false'")
+        content_tag(:div) do
+          link_to_remote(t('ubiquo.design.stop_share_block'),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :with => "'is_shared=false'")
+        end
       elsif block.shared_id
-        link_to_remote(t('ubiquo.design.stop_use_shared_block', :key => block.shared.block_type),
-          :url => ubiquo_page_design_block_path(page, block),
-          :method => :put,
-          :with => "'shared_id='")
+        content_tag(:div) do
+          link_to_remote(t('ubiquo.design.stop_use_shared_block', :key => block.shared.block_type),
+            :url => ubiquo_page_design_block_path(page, block),
+            :method => :put,
+            :with => "'shared_id='")
+        end
       else
         content_tag(:div) do
           link_to_remote(t('ubiquo.design.share_block'),

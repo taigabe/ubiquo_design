@@ -1,34 +1,54 @@
 <% page_type ||= 'page' %>
-<h4>
-  <%= page.name %>
-  <% if page.published? && page.published.is_linkable? %>
-    <%= link_to_page("[%s]" % t('ubiquo.design.open'), page, {}, :popup => true) %>
-  <% end %>
-</h4>
+
 <% 
-  is_published, page_status = case 
+  is_published, page_status, id_status = case 
     when page.published? && !page.is_modified?
-      [true, t('ubiquo.design.published')]
+      [true, t('ubiquo.design.published'), 'published']
     when page.published? && page.is_modified?
-      [false, t('ubiquo.design.pending_publish')]
+      [false, t('ubiquo.design.pending_publish'), 'pending']
     else
-      [false, t('ubiquo.design.non_published')]  
+      [false, t('ubiquo.design.non_published'), 'unpublished']  
   end       
 %>
-<p class="<%= is_published ? 'published_page' : 'non_published_page' %>">
-    <%= page_status %>
-    <% if page.is_previewable? %>
-      <%= link_to "[%s]" % t('ubiquo.design.preview'),
-                  preview_ubiquo_page_design_path(page), :popup => true %>
-    <% end %>
-</p>
+<div class="sidebar_title">
+  <h3><%= t('ubiquo.design.page_info') %></h3>
+</div>
+<div id="status">
+  <div class="status_info">
+    <p class="page_name">
+      <% if page.published? && page.published.is_linkable? %>
+        <%= link_to_page(page.name, page, {}, :popup => true) %>
+      <% else %>
+        <%= page.name %>
+      <% end %>  
+    </p>
 
-<% unless is_published %>
-  <% if page_type == "static_page" %>
-    <%= button_to t('ubiquo.design.publish'), 
-                  publish_ubiquo_static_page_path(page), :method => :put %>
-  <% else %>
-    <%= button_to t('ubiquo.design.publish'), 
-                  publish_ubiquo_page_design_path(page), :method => :put %>  
-  <% end %>
-<% end %>
+    <div class="status_indicator <%= id_status %>">
+      <%= page_status %>
+    </div>
+
+    <div class="actions">
+      <ul class="buttons">
+        <% if page.is_previewable? %>
+        <li><%= button_to t('ubiquo.design.preview'),
+                  preview_ubiquo_page_design_path(page), :popup => true, :class => 'preview' %></li>
+        <% end %>
+        
+        <% unless is_published %>
+          <% if page_type == "static_page" %>
+            <li><%= button_to t('ubiquo.design.publish'), 
+                          publish_ubiquo_static_page_path(page), :method => :put, :class => 'publish' %></li>
+          <% else %>
+            <li><%= button_to t('ubiquo.design.publish'), 
+                          publish_ubiquo_page_design_path(page), :method => :put, :class => 'publish' %></li>
+          <% end %>
+        <% end %>
+      </ul>
+</div>
+
+</div>
+
+
+
+
+

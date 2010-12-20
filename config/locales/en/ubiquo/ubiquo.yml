@@ -50,14 +50,16 @@ en:
       widget_cancel: "Cancel"
       widget_click_to_edit: "Click to edit"
       widget_loading: "Loading ..."
+      widget_error: "Widget must be configured in order to publish this page"
+      widget_categories: "Widget categories"
       # End widgets
       page_info: "Page information"
       avaliable_widgets: "Avaliable widgets"
-      open: "Open"
+      open: "open"
       published: "Published"
       pending_publish: "Pending publish"
       non_published: "Not published"
-      preview: "preview"
+      preview: "Preview"
       publish: "Publish"
       move: "move"
       # Widgets
