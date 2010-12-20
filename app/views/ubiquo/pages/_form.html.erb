@@ -1,7 +1,7 @@
 <%= error_messages_for 'page' %>
 <div class="form_box">
   <%= uhook_form_top f %>
-  <h3>Informació de la pàgina</h3>
+  <h3><%= t('ubiquo.design.page_info') %></h3>
   <p>
     <%= f.label :name, Page.human_attribute_name("name") %> 
     <%= f.text_field :name %>
