@@ -205,6 +205,16 @@ class Page < ActiveRecord::Base
     UbiquoDesign::Structure.get(:page_template => page_template)[:widgets].map(&:keys).flatten
   end
 
+  def widget_groups
+    wg = {}
+    UbiquoDesign::Structure.get(:widget_groups).keys.each do |widget_group_key|
+      widget_keys = UbiquoDesign::Structure.get(:widget_groups)[widget_group_key].first[:widgets].map(&:keys).flatten
+      wg[widget_group_key] = widget_keys if widget_keys
+    end
+    
+    wg
+  end
+
   def update_modified(save = false)
     write_attribute(:is_modified, true) unless is_modified_change
     self.save if save

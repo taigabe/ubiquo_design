@@ -13,11 +13,12 @@ class Ubiquo::WidgetsController < UbiquoAreaController
   def create
     @block = Block.find(params[:block])
 
-    @widget = Widget.class_by_key(params[:widget]).new
-    raise "#{params[:widget]} is not a widget" unless @widget.is_a? Widget
+    widget_key = params[:widget] ? params[:widget].split('___').first : nil
+    @widget = Widget.class_by_key(widget_key).new
+    raise "#{widget_key} is not a widget" unless @widget.is_a? Widget
 
     @widget.block = @block
-    @widget.name = Widget.default_name_for params[:widget]
+    @widget.name = Widget.default_name_for widget_key
     @widget = uhook_prepare_widget(@widget)
     @widget.save_without_validation
 

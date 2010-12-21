@@ -19,15 +19,18 @@
       </div>
       <div class="widget_categories">
         <label for="widget_categories_select"><%= t('ubiquo.design.widget_categories') %>:</label>
-        <select id="widget_categories_select" name="widget_categories_select">
-          <option>All</option>
-          <option>Category 1</option>
-          <option>Category 2</option>
-        </select>
+        <%= select_tag "Filtrador per grup", options_for_select([["Tots els widgets" , "without_group" ]] +
+              @widget_groups.keys.map{|key| [t("ubiquo.widget_groups.#{key}"), key.to_s] }), :onchange => "toggleWidgetGroups(this)" %>
       </div>
-      <ul id="available_widgets" class="available_widgets makeScroll">
-            <%= render :partial => "widget_sidebar", :collection => @widgets %>
+      <ul class="available_widgets makeScroll" id="widgets_without_group">
+        <%= render :partial => "widget_sidebar", :collection => @widgets, :locals => {:group_name => "without_group"} %>
       </ul>
+
+      <% @widget_groups.each_pair do |widget_group_key, widget_keys| %>
+        <ul class="available_widgets makeScroll" id="<%= "widgets_#{widget_group_key}" %>" style="display:none">
+          <%= render :partial => "widget_sidebar", :collection => widget_keys, :locals => {:group_name => widget_group_key.to_s}  %>
+        </ul>
+      <% end %>
     </div>
   </div>
 </div>

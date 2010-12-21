@@ -152,3 +152,9 @@ Object.extend(WidgetStructure, {
 //for each widget specify allowed blocks
 //allowedBlocks['static_section'] = ['block_top','block_sidebar'];
 //allowedBlocks['free'] = ['block_main'];
+
+function toggleWidgetGroups(selected_group) {
+  $$('.available_widgets').each(function(aw){aw.hide()});
+  $('widgets_' + selected_group.value).show();
+}
+

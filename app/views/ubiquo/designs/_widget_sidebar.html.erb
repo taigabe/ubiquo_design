@@ -1,4 +1,4 @@
-<li id="widget_<%= widget_sidebar %>" class="widget">
+<li id="widget_<%= widget_sidebar %>___<%= group_name %>" class="widget">
   <div class="wrap">
     <a href="#" class="move" onclick="return false;"><%= t('ubiquo.design.move') %></a>
     <h4><%= Widget.default_name_for widget_sidebar %></h4>
@@ -7,7 +7,7 @@
 <script type="text/javascript">
   document.observe("dom:loaded", function() {
 		explorerScrollPositioner('relative');
-		new Draggable('<%= "widget_#{widget_sidebar}"%>', { 
+		new Draggable('<%= "widget_#{widget_sidebar}___#{group_name}"%>', {
 	    revert: true,
 			ghosting: (isIE7()) ? false : true, 
 			onStart: function() {
@@ -22,4 +22,3 @@
     //WidgetStructure.add('<%= widget_sidebar %>');
 });
 </script>
-
