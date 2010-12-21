@@ -152,7 +152,7 @@ module UbiquoDesign
               end
             end
             if policies[:widget_params].present?
-              param_ids << "c_params_" + options[:scope].params.map{|key, val| "#{key}@#{val}" }.join("&")
+              param_ids << "c_params_" + options[:scope].params.map{|key, val| "#{key}@#{val}" }.sort.join("&")
             end
             params_key = '_params_' + param_ids.join
           end

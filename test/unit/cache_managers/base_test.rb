@@ -61,7 +61,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :policy_context => :test
       }
     )
-    assert_equal "#{widget.id}_#{widget.version}_params_c_params_name@test&id@10", key
+    assert_equal "#{widget.id}_#{widget.version}_params_c_params_id@10&name@test", key
   end
 
   test 'calculate_key for a widget with procs' do
