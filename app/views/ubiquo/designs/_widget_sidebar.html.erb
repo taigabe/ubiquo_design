@@ -19,52 +19,7 @@
 				hideAllowedBlocks('<%= widget_sidebar %>');
 			}
 	  });
+    //WidgetStructure.add('<%= widget_sidebar %>');
 });
-
-function isIE7(){
-  if(Prototype.Browser.IE && parseInt(navigator.userAgent.substring(navigator.userAgent.indexOf("MSIE")+5)) <=7) {
-    return true;
-	}
-	return false;
-}
-
-function explorerScrollPositioner(positionType){
-  // IE<=7 needs to change the position style of dragContainer from static to relative on drag start so that the images can be dragged successfully from an overflowed container.
-  if(isIE7()) {
-    document.getElementById("available_widgets").style.position = positionType;
-	  document.getElementById("scroll-innerBox-1").style.position = positionType;
-	}
-}
-
-function showAllowedBlocks(widgetType){
-  $('shadow').setStyle({height: $('inner-content').getHeight()+"px"});
-  $('shadow').show();
-  
-  $$('.block').each(function(block) {
-    if($(block.id).hasClassName("draggable_target") && (allowedBlocks[widgetType] == null || allowedBlocks[widgetType].include(block.id) ))
-    {
-      $(block.id).getOffsetParent().setStyle({zIndex: '200'});
-    }
-    else{
-      if($(block.id).hasClassName("draggable_target"))
-        eval("deactivate_droppable_"+block.id+"()");
-    }
-  });
-}
-
-function hideAllowedBlocks(widgetType){
-  $('shadow').hide();
-  
-  $$('.block').each(function(block) {
-    if($(block.id).hasClassName("draggable_target") && (allowedBlocks[widgetType] == null || allowedBlocks[widgetType].include(block.id) ))
-    {
-      $(block.id).getOffsetParent().setStyle({zIndex: '1'});
-    }
-    else{
-      if($(block.id).hasClassName("draggable_target"))
-        eval("activate_droppable_"+block.id+"()");
-    }
-  });
-}
 </script>
 

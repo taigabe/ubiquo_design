@@ -89,8 +89,64 @@ function toggleShareActions(id) {
   });
 }
 
+function isIE7(){
+  if(Prototype.Browser.IE && parseInt(navigator.userAgent.substring(navigator.userAgent.indexOf("MSIE")+5)) <=7) {
+    return true;
+	}
+	return false;
+}
+
+function explorerScrollPositioner(positionType){
+  // IE<=7 needs to change the position style of dragContainer from static to relative on drag start so that the images can be dragged successfully from an overflowed container.
+  if(isIE7()) {
+    document.getElementById("available_widgets").style.position = positionType;
+	  document.getElementById("scroll-innerBox-1").style.position = positionType;
+	}
+}
+
+function showAllowedBlocks(widgetType){
+  $('shadow').setStyle({height: $('inner-content').getHeight()+"px"});
+  $('shadow').show();
+
+  $$('.block').each(function(block) {
+    if($(block.id).hasClassName("draggable_target") && (WidgetStructure.widgets[widgetType] == null || WidgetStructure.widgets[widgetType].include(block.id) ))
+    {
+      $(block.id).getOffsetParent().setStyle({zIndex: '200'});
+    }
+    else{
+      if($(block.id).hasClassName("draggable_target"))
+        eval("deactivate_droppable_"+block.id+"()");
+    }
+  });
+}
+
+function hideAllowedBlocks(widgetType){
+  $('shadow').hide();
+
+  $$('.block').each(function(block) {
+    if($(block.id).hasClassName("draggable_target") && (WidgetStructure.widgets[widgetType] == null || WidgetStructure.widgets[widgetType].include(block.id) ))
+    {
+      $(block.id).getOffsetParent().setStyle({zIndex: '1'});
+    }
+    else{
+      if($(block.id).hasClassName("draggable_target"))
+        eval("activate_droppable_"+block.id+"()");
+    }
+  });
+}
+
+// Stores the widget structure and the allowed blocks of each widget
+WidgetStructure = Class.create({});
+Object.extend(WidgetStructure, {
+  widgets: {},
+
+  add: function(widget, allowed_blocks){
+    if(!allowed_blocks) allowed_blocks = []
+    this.widgets[widget] = []
+  }
+});
 //ALLOWED BLOCKS FOR EACH WIDGET
-var allowedBlocks = new Array();
+//var allowedBlocks = new Array();
 //for each widget specify allowed blocks
-allowedBlocks['static_section'] = ['block_top','block_sidebar']; 
-allowedBlocks['free'] = ['block_main']; 
+//allowedBlocks['static_section'] = ['block_top','block_sidebar'];
+//allowedBlocks['free'] = ['block_main'];
