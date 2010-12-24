@@ -21,6 +21,9 @@ class UbiquoWidgetGenerator < Rails::Generator::NamedBase
       m.template('test/unit/widget_test.rb.erb', File.join('test/unit/widgets', "#{@name.singularize}_test.rb"))
       m.template('test/functional/widget_test.rb.erb', File.join('test/functional/widgets', "#{@name}_widget_test.rb"))
       m.template('test/functional/ubiquo/widget_test.rb.erb', File.join('test/functional/widgets/ubiquo', "#{@name}_widget_test.rb"))
+
+      m.update_ubiquo_locales 'locales'
+
       m.ubiquo_widget @name
     end
   end
