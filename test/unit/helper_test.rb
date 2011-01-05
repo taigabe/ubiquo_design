@@ -37,4 +37,19 @@ class UbiquoDesign::Extensions::HelperTest < ActionView::TestCase
     assert url_for_page(page) =~ /with\/slash/
   end
 
+  test 'url_for_page with page param' do
+    page = pages(:one_design)
+    assert_match /#{page.url_name}\/page\/2$/, url_for_page(page, :page => 2)
+  end
+
+  test 'url_for_page with custom params' do
+    page = pages(:one_design)
+    assert_match /#{page.url_name}\?id=2$/, url_for_page(page, :id => 2)
+  end
+
+  test 'url_for_page with url param concatenates to the url' do
+    page = pages(:one_design)
+    assert_match /#{page.url_name}\/my\/params/, url_for_page(page, :url => 'my/params')
+  end
+
 end

@@ -31,13 +31,14 @@ module UbiquoDesign
       end
 
       # Return the url for a page
+      # You can use the :url option to append your own params to the default route
       def url_for_page(page, url_for_options = {})
         page = Page.find_by_key(page.to_s) unless page.is_a?(Page)
         page_url_for_options = {
           :controller => '/pages',
           :action => 'show',
           # FIXME split due to rails bug #5135
-          :url => page.url_name.split('/'),
+          :url => "#{page.url_name}/#{url_for_options.delete(:url)}".split('/'),
           :key => nil # to overwrite current key in params
         }
         url_for(page_url_for_options.merge(url_for_options))
