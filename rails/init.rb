@@ -36,6 +36,8 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   }
 
   config.add :memcache, {:server => '127.0.0.1', :timeout => 0}
+
+  config.add :generic_models, []
 end
 
 groups = Ubiquo::Config.get :model_groups

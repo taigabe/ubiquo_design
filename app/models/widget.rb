@@ -103,6 +103,12 @@ class Widget < ActiveRecord::Base
     end
   end
 
+  # Returns the page this widget is in
+  def page
+    # Not using delegate due to 'block' clash name...
+    block.page
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute

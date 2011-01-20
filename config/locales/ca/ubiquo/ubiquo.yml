@@ -89,6 +89,12 @@ ca:
       free:
         name: "Contingut lliure"
         contents: "Contingut"
+      generic_detail:
+        name: Fitxa genèrica
+      generic_listing:
+        name: Llistat genèric
+      generic_highlighted:
+        name: Destacats genèrics
       static_section:
         name: "Secció estàtica"
         title: "Títol"

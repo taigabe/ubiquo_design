@@ -100,6 +100,11 @@ class WidgetTest < ActiveSupport::TestCase
     assert_equal [:three, :four], Widget.groups[:two]
   end
 
+  def test_delegated_page_method
+    widget = create_widget
+    assert_equal widget.block.page, widget.page
+  end
+
   private
   def create_widget(options = {})
     TestWidget.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))

@@ -89,6 +89,12 @@ es:
       free:
         name: Contenido libre
         contents: "Contenido"
+      generic_detail:
+        name: Ficha genérica
+      generic_listing:
+        name: Listado genérico
+      generic_highlighted:
+        name: Destacados genéricos
       static_section:
         name: "Sección estática"
         title: "Título"

@@ -88,6 +88,12 @@ en:
       free:
         name: Free content
         contents: "Content"
+      generic_detail:
+        name: Generic detail
+      generic_listing:
+        name: Generic list
+      generic_highlighted:
+        name: Generic highlighted
       static_section:
         name: "Static section"
         title: "Title"
