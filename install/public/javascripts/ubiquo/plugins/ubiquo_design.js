@@ -30,24 +30,26 @@ document.observe("dom:loaded", function() {
     )
   }
 
-	//Sidebar scroll
-	var scrolling = false;
-	var last_scroll;
-	
-	last_scroll = document.viewport.getScrollOffsets()[1];
-	
-  setInterval(function(){
-    var current_scroll = document.viewport.getScrollOffsets()[1];
-    if (scrolling){
-      if (current_scroll == last_scroll){
-        scrolling = false;
-        slide_that_div();
+  //Sidebar scroll
+  if ($('slide_wrapper')) {
+    var scrolling = false;
+    var last_scroll;
+    
+    last_scroll = document.viewport.getScrollOffsets()[1];
+    
+    setInterval(function(){
+      var current_scroll = document.viewport.getScrollOffsets()[1];
+      if (scrolling){
+        if (current_scroll == last_scroll){
+          scrolling = false;
+          slide_that_div();
+        }
+      } else if(current_scroll != last_scroll){
+        scrolling = true;
       }
-    } else if(current_scroll != last_scroll){
-      scrolling = true;
-    }
-	last_scroll = current_scroll;
-  }, 300);
+      last_scroll = current_scroll;
+    }, 300);
+  }
 });
 
 
