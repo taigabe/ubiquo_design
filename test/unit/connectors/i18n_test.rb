@@ -8,6 +8,7 @@ module Connectors
       def setup
         save_current_design_connector
         UbiquoDesign::Connectors::I18n.load!
+        Locale.current = 'test'
       end
 
       def teardown
@@ -34,12 +35,14 @@ module Connectors
         widgets = page.blocks.map(&:widgets).flatten
         num_widgets = widgets.size
         assert num_widgets > 1
+        general_locale = Locale.current
         widgets.each_with_index do |widget, i|
           widget.content_id = 1
-          widget.locale = "loc#{i}"
+          Locale.current = widget.locale = "loc#{i}"
           assert widget.save
         end
         assert_difference "Widget.count",num_widgets do # cloned widgets
+          Locale.current = general_locale
           assert page.publish
         end
       end

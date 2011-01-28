@@ -64,6 +64,8 @@ module UbiquoDesign
           include Standard::Page::InstanceMethods
 
           def uhook_publish_block_widgets(block, new_block)
+            # we need to relate the cloned widgets between them,
+            # same as they are in the draft page, using the content_id
             mapped_content_ids = {}
             block.widgets.each do |widget|
               next_content_id = mapped_content_ids[widget.content_id]
@@ -77,7 +79,9 @@ module UbiquoDesign
 
               yield widget, new_widget
               new_widget.without_page_expiration do
-                new_widget.save! # must validate now
+                new_widget.without_current_locale do
+                  new_widget.save! # must validate now
+                end
               end
             end
           end
@@ -171,7 +175,7 @@ module UbiquoDesign
               edit_link = link_to(t('ubiquo.edit'), edit_ubiquo_static_page_path(page))
             else
               edit_link = link_to(t('ubiquo.translate'),
-                                  edit_ubiquo_static_page_path(page, :from => page.uhook_static_section_widget(:ALL).try(:content_id)))
+                                  edit_ubiquo_static_page_path(page, :from => page.uhook_static_section_widget(:all).try(:content_id)))
             end
             [
               edit_link,
