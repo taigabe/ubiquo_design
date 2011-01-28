@@ -18,6 +18,9 @@
 .column_1 {
   width: 23.5%;
 }
+#template {
+  clear: both;
+}
 #template .draggable_target {
   background: #E9E9E9 url(../../../images/ubiquo/bg_dragdrop_en.jpg) no-repeat center center;
   -moz-border-radius:0px 0px 10px 10px;
