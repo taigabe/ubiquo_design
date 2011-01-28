@@ -13,7 +13,8 @@ class Widget < ActiveRecord::Base
 
   belongs_to :block
 
-  attr_protected :options, :options_object
+  serialize :options, Hash
+  attr_protected :options
 
   before_create :set_version
   
@@ -31,51 +32,13 @@ class Widget < ActiveRecord::Base
     @@behaviours[name] = {:options => options, :proc => block}
   end
 
-  def initialize(a = {})
-    define_method_accessors self.class.allowed_options
-    super(a)
-    self.options_object = [self.class.allowed_options].flatten.inject({}){|acc, v| acc[v]=self.send(v); acc}
-  end
-
-  def after_find
-    self.options_object = YAML::load(self.options)
-  end
-
-  def prepare_yaml
-    self.options = options_object.to_yaml
-  end
-
   def update_position
     self.position = (block.widgets.map(&:position).max || 0)+1 if self.position.nil?
   end
 
-  def define_method_accessors(names)
-    [names].flatten.each do |name|
-      eval(%{
-        def self.#{name}
-          options_object[:#{name}]
-        end
-        def self.#{name}=(value)
-          options_object[:#{name}] = value
-          prepare_yaml
-          value
-        end
-      })
-    end
-  end
-
-  def options_object
-    @options_object ||= {}
-  end
-
-  def options_object=(hash)
-    @options_object = hash
-    prepare_yaml
-    options_object.each do |key, value|
-      define_method_accessors key
-      send("#{key}=", value)
-    end
-    hash
+  # +options+ should be an empty hash by default (waiting for rails #1736)
+  def options
+    read_attribute(:options) || write_attribute(:options, {})
   end
 
   def self.allowed_options=(opts)
@@ -84,6 +47,14 @@ class Widget < ActiveRecord::Base
     raise "Inacceptable options: '%s'" % unallowed_options.join(', ') unless unallowed_options.blank?
     self.cattr_accessor :allowed_options_storage
     self.allowed_options_storage = opts
+    opts.each do |option|
+      define_method(option) do
+        self.options[option]
+      end
+      define_method("#{option}=") do |value|
+        self.options[option] = value
+      end
+    end
   end
 
   def self.allowed_options
@@ -118,13 +89,6 @@ class Widget < ActiveRecord::Base
   # Returns a Widget class given a key (inverse of Widget#key)
   def self.class_by_key key
     key.to_s.classify.constantize
-  end
-
-  # Fixes clone method. Also copy 'options' attribute
-  def clone
-    cloned = super
-    cloned.options_object = self.options_object
-    cloned
   end
 
   private
