@@ -31,9 +31,8 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
     assert_not_nil widget
     assert widget.block == pages(:one_design).blocks.first
     assert_equal widget.key, editable_widget
-
     assert_select_rjs :insert_html, "block_type_holder_#{widget.block.block_type}" do
-      assert_select "#widget_name_field_#{widget.id}"
+      assert_select "#widget_#{widget.id}"
     end
     assert_match /myLightWindow\._processLink\(\$\(\'edit_widget_#{widget.id}\'\)\)\;/, @response.body
   end

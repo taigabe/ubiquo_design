@@ -44,7 +44,8 @@ class Page < ActiveRecord::Base
 
 
   DEFAULT_LAYOUT = 'main'
-
+  DEFAULT_BLOCK_COLS = 4
+  
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
@@ -174,6 +175,14 @@ class Page < ActiveRecord::Base
 
   def self.templates
     UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten rescue []
+  end
+
+  def template_structure
+    blocks = UbiquoDesign::Structure.get(:page_template => self.page_template.to_sym)[:blocks]
+    blocks.map do |block|
+      cols = block.values.flatten.first[:options][:cols] rescue DEFAULT_BLOCK_COLS
+      [block.keys.first, cols]
+    end
   end
 
   def self.blocks(template = nil)
