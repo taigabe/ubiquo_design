@@ -27,11 +27,11 @@ module UbiquoDesign
 
     def template_directory
       Rails.env.test? ? File.join(ActiveSupport::TestCase.fixture_path, "templates") :
-        Rails.root.join('app', 'templates').to_s
+        Rails.root.join('app', 'views', 'page_templates').to_s
     end
 
     def render_template_file(key, layout = 'main')
-      template_file = File.join(template_directory, key, "public.html.erb")
+      template_file = File.join(template_directory, "#{key}.html.erb")
       self.view_paths.unshift(File.dirname(template_file))
       render_output = render :file => File.basename(template_file), :layout => layout
       self.view_paths.shift
