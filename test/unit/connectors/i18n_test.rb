@@ -50,7 +50,6 @@ module Connectors
       test "publication must copy widget translations and all their relations" do
         create_free_widget_relations
         page = create_page
-        require 'ruby-debug';debugger
         widget = Free.create(
           :name => "Test Widget",
           :content => "Test widget with relations")

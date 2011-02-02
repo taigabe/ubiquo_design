@@ -22,30 +22,33 @@
         <%= page.name %>
       <% end %>  
     </p>
-
     <div class="status_indicator <%= id_status %>">
       <%= page_status %>
     </div>
-
     <div class="actions">
       <ul class="buttons">
         <% if page.is_previewable? %>
-        <li><%= button_to t('ubiquo.design.preview'),
-                  preview_ubiquo_page_design_path(page), :popup => true, :class => 'preview' %></li>
+        <li>
+          <%= button_to t('ubiquo.design.preview'),
+                        preview_ubiquo_page_design_path(page), :popup => true, :class => 'preview' %>
+        </li>
         <% end %>
-        
         <% unless is_published %>
           <% if page_type == "static_page" %>
-            <li><%= button_to t('ubiquo.design.publish'), 
-                          publish_ubiquo_static_page_path(page), :method => :put, :class => 'publish' %></li>
+            <li>
+              <%= button_to t('ubiquo.design.publish'), 
+                            publish_ubiquo_static_page_path(page), :method => :put, :class => 'publish' %>
+            </li>
           <% else %>
-            <li><%= button_to t('ubiquo.design.publish'), 
-                          publish_ubiquo_page_design_path(page), :method => :put, :class => 'publish' %></li>
+            <li>
+              <%= button_to t('ubiquo.design.publish'), 
+                            publish_ubiquo_page_design_path(page), :method => :put, :class => 'publish' %>
+            </li>
           <% end %>
         <% end %>
       </ul>
-</div>
-
+    </div>
+  </div>
 </div>
 
 
