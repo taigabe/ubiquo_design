@@ -20,7 +20,7 @@ class StaticSectionWidgetTest < ActionController::TestCase
     end
   end
 
-  if Ubiquo::Plugin.registered[:ubiquo_design]
+  if Ubiquo::Plugin.registered[:ubiquo_media]
     test "static_section widget with media attrs should get show" do
       widget, page = create_widget(:static_section, widget_media_attributes)
       get :show, :url => page.url_name
