@@ -15,7 +15,7 @@ module UbiquoDesign
         unless Ubiquo::Plugin.registered[:ubiquo_i18n]
           raise ConnectorRequirementError, "You need the ubiquo_i18n plugin to load #{self}"
         end
-        [::Widget].each do |klass|
+        [::Widget] + ::Widget.send(:subclasses).each do |klass|
           if klass.table_exists?
             klass.reset_column_information
             columns = klass.columns.map(&:name).map(&:to_sym)
@@ -35,8 +35,9 @@ module UbiquoDesign
 
       def self.unload!
         # TODO create generic methods for these cleanups
-        [::Widget].each do |klass|
+        [::Widget] + ::Widget.send(:subclasses).each do |klass|
           klass.instance_variable_set :@translatable, false
+          klass.reset_column_information
         end
         ::Widget.send :alias_method, :block, :block_without_shared_translations
         # Unfortunately there's no neat way to clear the helpers mess

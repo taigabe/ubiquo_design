@@ -47,6 +47,30 @@ module Connectors
         end
       end
 
+      test "publication must copy widget translations and all their relations" do
+        create_free_widget_relations
+        page = create_page
+        require 'ruby-debug';debugger
+        widget = Free.create(
+          :name => "Test Widget",
+          :content => "Test widget with relations")
+        page.blocks.first.widgets << widget
+        # relate with simple has_many
+        3.times do |i|
+          widget.relation_examples.build(:name => "Example #{i}")
+        end
+        # relate with has_many :through
+        widget.pages << [pages(:one), pages(:two)]
+        widget.save
+        assert_difference "Widget.count", 1 do
+          assert_difference "RelationExample.count", widget.relation_examples.size do
+            assert_difference "RelationThroughExample.count", 2 do
+              assert page.publish
+            end
+          end
+        end
+      end
+
       test "widget_controller must set locale on the prepare widget with configurable widget" do
         widget = widgets(:one)
         widget.expects(:is_configurable?).returns(true)
@@ -90,5 +114,39 @@ module Connectors
     def reload_old_design_connector
       @old_connector.load!
     end
+
+    def create_free_widget_relations
+      Free.class_eval do
+        has_many :relation_examples, :foreign_key => 'widget_id'
+        has_many :relation_through_examples, :foreign_key => 'widget_id'
+        has_many :pages, :through => :relation_through_examples
+      end
+
+      %w{ relation_examples relation_through_examples }.each do |table|
+        if ActiveRecord::Base.connection.tables.include?(table)
+          ActiveRecord::Base.connection.drop_table(table)
+        end
+      end
+  
+      ActiveRecord::Base.connection.create_table :relation_examples do |t|
+        t.string  :name
+        t.integer :widget_id
+      end
+  
+      ActiveRecord::Base.connection.create_table :relation_through_examples do |t|
+        t.integer :page_id
+        t.integer :widget_id
+      end
+      
+    end
+
   end
+end
+class RelationExample < ActiveRecord::Base
+  belongs_to :widget, :foreign_key => 'widget_id'
+end
+
+class RelationThroughExample < ActiveRecord::Base
+  belongs_to :widget, :foreign_key => 'widget_id'
+  belongs_to :page
 end

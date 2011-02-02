@@ -23,14 +23,13 @@ module UbiquoDesign
             end
           end
 
-          def uhook_publish_widget_asset_relations(widget, new_widget)
-            [:asset_relations, :category_relations].each do |relation_type|
-              if widget.respond_to?(relation_type)
-                widget.send(relation_type).each do |relation|
-                  new_relation = relation.clone
-                  new_relation.related_object = new_widget
-                  new_relation.save!
+          def uhook_publish_widget_relations(widget, new_widget)
+            widget.class.reflections.each do |key, reflection|
+              if reflection.macro == :has_many && !reflection.options.include?(:through)
+                widget.send(key).each do |relation|
+                  new_widget.send(key) << relation.clone
                 end
+                new_widget.save
               end
             end
           end

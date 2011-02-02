@@ -96,7 +96,6 @@ class Page < ActiveRecord::Base
   def publish
     begin
       transaction do
-
         self.clear_published_page
         published_page = self.clone
         published_page.attributes = {
@@ -112,7 +111,7 @@ class Page < ActiveRecord::Base
           new_block.page = published_page
           new_block.save!
           uhook_publish_block_widgets(block, new_block) do |widget, new_widget|
-            uhook_publish_widget_asset_relations(widget, new_widget)
+            uhook_publish_widget_relations(widget, new_widget)
           end
         end
 
