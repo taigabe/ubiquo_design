@@ -7,7 +7,8 @@ module Ubiquo::WidgetsHelper
       :before => "killeditor()",
       :html => {  
         :method => :put,
-        :name => "widget_edit_form"
+        :name => "widget_edit_form",
+        :id => "widget_form",
       }, &block)
   end
   
