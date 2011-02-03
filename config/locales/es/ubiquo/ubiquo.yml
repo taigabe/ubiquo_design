@@ -55,7 +55,7 @@ es:
       widget_categories: "Categorías de widgets"
       # End widgets
       page_info: "Información de la página"
-      avaliable_widgets: "Widgets disponibles"
+      available_widgets: "Widgets disponibles"
       open: "abrir"
       published: "Publicado"
       pending_publish: "Pendiente de publicación"

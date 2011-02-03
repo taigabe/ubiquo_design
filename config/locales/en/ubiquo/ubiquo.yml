@@ -54,7 +54,7 @@ en:
       widget_categories: "Widget categories"
       # End widgets
       page_info: "Page information"
-      avaliable_widgets: "Avaliable widgets"
+      available_widgets: "Available widgets"
       open: "open"
       published: "Published"
       pending_publish: "Pending publish"

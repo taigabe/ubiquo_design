@@ -55,7 +55,7 @@ ca:
       widget_categories: "Categories de widgets"
       # End widgets
       page_info: "Informació de la pàgina"
-      avaliable_widgets: "Widgets disponibles"
+      available_widgets: "Widgets disponibles"
       open: "obrir"
       published: "Publicat"
       pending_publish: "Pendent de publicació"
