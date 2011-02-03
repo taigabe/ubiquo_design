@@ -290,7 +290,12 @@ li.widget .editor_field {
 .status_info input.preview:hover{
 	background-color: #999;
 }
-
+.status_info input.unpublish {
+background-color: #dd1919;
+}
+.status_info input.unpublish:hover{
+background-color: #f48c8c;
+}
 #shadow {
 	background-image:url(../../../images/ubiquo/shade1x1.png);
 	position:absolute; 

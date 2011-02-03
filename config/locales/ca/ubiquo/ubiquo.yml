@@ -62,6 +62,8 @@ ca:
       non_published: "No publicat"
       preview: "Previsualitzar"
       publish: "Publicar"
+      publish_changes: "Publicar canvis"
+      unpublish: "Despublicar"
       move: "moure"
       # Widgets
       editing_widget: "Editant el widget %{name}"
@@ -69,6 +71,8 @@ ca:
       save: "Guardar"
       page_published: "Pàgina publicada correctament"
       page_publish_error: "Error al publicar la pàgina"
+      page_unpublished: "Pàgina despublicada correctament"
+      page_unpublish_error: "Error al despublicar la pàgina"
       block_error: "No es pot assignar aquest bloc com bloc per defecte degut a que els tipos de bloc no coincideixen"
       stop_share_block: "Deixar de compartir el bloc"
       share_block: "Compartir aquest bloc"

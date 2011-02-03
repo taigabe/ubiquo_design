@@ -62,6 +62,8 @@ es:
       non_published: "No publicado"
       preview: "Previsualizar"
       publish: "Publicar"
+      publish_changes: "Publicar cambios"
+      unpublish: "Despublicar"
       move: "mover"
       # Widgets
       editing_widget: "Editando el widget %{name}"
@@ -69,6 +71,8 @@ es:
       save: "Guardar"
       page_published: "Página publicada correctamente"
       page_publish_error: "Error al publicar la página"
+      page_unpublished: "Página despublicada correctamente"
+      page_unpublish_error: "Error al despublicar la página"
       block_error: "No se puede asignar este bloque como bloque por defecto porque los tipos de bloque no coinciden"
       stop_share_block: "Dejar de compartir el bloque"
       share_block: "Compartir este bloque"

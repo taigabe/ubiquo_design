@@ -26,6 +26,16 @@ class Ubiquo::DesignsController < UbiquoAreaController
     redirect_to :action => "show"
   end
 
+  def unpublish
+    page = Page.find(params[:page_id])
+    if page.unpublish
+      flash[:notice] = t('ubiquo.design.page_unpublished')
+    else
+      flash[:error] = t('ubiquo.design.page_unpublish_error')
+    end
+    redirect_to :action => "show"
+  end
+  
   private
 
   def render_ubiquo_design_template(page)

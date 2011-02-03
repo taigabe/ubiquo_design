@@ -41,10 +41,17 @@
             </li>
           <% else %>
             <li>
-              <%= button_to t('ubiquo.design.publish'), 
-                            publish_ubiquo_page_design_path(page), :method => :put, :class => 'publish' %>
+              <%= button_to page.published? ? t('ubiquo.design.publish_changes') : t('ubiquo.design.publish'), 
+                            publish_ubiquo_page_design_path(page), :method => :put, :class => 'publish',
+                            :style => page.published? ? 'width: 105px' : '' %>
             </li>
           <% end %>
+        <% end %>
+        <% if page.published? %>
+          <li>
+            <%= button_to t('ubiquo.design.unpublish'),
+                          unpublish_ubiquo_page_design_path(page), :method => :put, :class => 'unpublish' %>
+          </li>
         <% end %>
       </ul>
     </div>

@@ -61,6 +61,8 @@ en:
       non_published: "Not published"
       preview: "Preview"
       publish: "Publish"
+      publish_changes: "Publish changes"
+      unpublish: "Unpublish"
       move: "move"
       # Widgets
       editing_widget: "Editing widget {{name}}"
@@ -68,6 +70,8 @@ en:
       save: "Save"
       page_published: "Page published succesfully"
       page_publish_error: "Error publishing the page"
+      page_unpublished: "Page unpublished successfully"
+      page_unpublish_error: "Error unpublishing the page"
       block_error: "Is not possible to assign this bloc as a default block because block types doesn't match"
       stop_share_block: "Stop sharing the block"
       share_block: "Share this block"

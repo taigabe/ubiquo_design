@@ -127,6 +127,26 @@ class PageTest < ActiveSupport::TestCase
     assert_not_nil Page.published.find_by_url_name(page.url_name)
   end
 
+  def test_unpublish_page_on_a_draft_page
+    page = create_page
+    page.publish
+    assert page.published
+    assert_difference 'Page.count', -1 do
+      page.unpublish
+    end
+    assert_nil page.reload.published
+  end
+
+  def test_unpublish_page_on_a_published_page
+    page = create_page
+    page.publish
+    published_page = page.published
+    assert_difference 'Page.count', -1 do
+      published_page.unpublish
+    end
+    assert_nil page.reload.published
+  end
+
   def test_shouldnt_publish_wrong_pages
     page = create_page :page_template => "static"
     page.blocks << pages(:one).blocks

@@ -128,6 +128,14 @@ class Page < ActiveRecord::Base
     end
   end
 
+  def unpublish
+    if self.published
+      self.published.destroy
+    elsif self.draft
+      self.destroy
+    end
+  end
+
   # Returns true if the page has been published
   def published?
     published_id
