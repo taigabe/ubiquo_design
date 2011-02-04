@@ -129,7 +129,7 @@ module Connectors
           ActiveRecord::Base.connection.drop_table(table)
         end
       end
-  
+
       ActiveRecord::Base.connection.create_table :relation_examples do |t|
         t.string  :name
         t.integer :widget_id
@@ -139,7 +139,11 @@ module Connectors
         t.integer :page_id
         t.integer :widget_id
       end
-      
+      if ::ActiveRecord::Base.connection.class.included_modules.include?(Ubiquo::Adapters::Mysql)
+        # "Supporting" DDL transactions for mysql
+        ::ActiveRecord::Base.connection.begin_db_transaction
+        ::ActiveRecord::Base.connection.create_savepoint
+      end      
     end
 
   end
