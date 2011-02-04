@@ -5,7 +5,7 @@ config.after_initialize do
 end
 
 custom_paths = Gem::Version.new(Rails.version) >= Gem::Version.new('2.3.9') ? :autoload_paths : :load_paths
-ActiveSupport::Dependencies.send(custom_paths) << Rails.root.join("app", "models", "widgets")
+ActiveSupport::Dependencies.send(custom_paths) << File.join("app", "models", "widgets")
 
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_elements_per_page

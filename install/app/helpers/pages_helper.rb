@@ -17,7 +17,7 @@ module PagesHelper
   def list_element_title(element, options = {})
     options = {:show_link => true}.merge(options)
     text = try_methods([:title, :name], element)
-    unless options[:show_link]
+    if options[:show_link]
       link = find_detail_page(element)
       link_to_if(link, text, link)
     else
@@ -40,6 +40,6 @@ module PagesHelper
 
   def find_detail_page(element)
     widget = ::GenericDetail.all.select{|gd| gd.model == element.class.name && gd.page.is_the_published?}.first
-    url_for_page(widget.page) if widget
+    url_for_page(widget.page, :url => element.id) if widget
   end
 end
