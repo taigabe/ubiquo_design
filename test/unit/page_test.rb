@@ -57,7 +57,7 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-  
+
   def test_should_require_unique_url_name_on_a_published_page
     Page.delete_all
     page_1 = create_page :url_name => ""
@@ -233,7 +233,7 @@ class PageTest < ActiveSupport::TestCase
     # end
     page = create_page
     page.blocks = []
-    widget = StaticSection.create(:name => 'Test static', :title => 'Test')    
+    widget = StaticSection.create(:name => 'Test static', :title => 'Test')
     assert_difference 'Block.count' do
       page.add_widget(:main, widget)
     end
@@ -259,7 +259,7 @@ class PageTest < ActiveSupport::TestCase
     end
     assert widget.errors.on(:name)
   end
-  
+
   def test_should_use_existing_block_on_add_widget
     page = create_page
     page.blocks.create(:block_type => 'main')
@@ -270,9 +270,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_should_return_layout_from_template_in_structure
-    UbiquoDesign::Structure.define do
-      page_template :example, :layout => 'test_layout'
-    end
+    create_example_structure
     page = create_page(:page_template => 'example')
     assert_equal 'test_layout', page.layout
     assert_equal Page::DEFAULT_LAYOUT, create_page.layout
@@ -280,6 +278,23 @@ class PageTest < ActiveSupport::TestCase
 
   def test_should_get_default_layout
     assert_equal 'main', Page::DEFAULT_LAYOUT
+  end
+
+  def test_should_get_available_widgets
+    create_example_structure
+    page = create_page(:page_template => 'example')
+    prior_widgets = UbiquoDesign::Structure.find(:widgets) - [:global]
+    assert_equal_set [:one, :two, :example, :global], page.available_widgets - prior_widgets
+  end
+
+  def test_should_get_available_widgets_per_block
+    create_example_structure
+    page = create_page(:page_template => 'example')
+    prior_widgets = UbiquoDesign::Structure.find(:widgets) - [:global]
+    %w{one two}.each do |key|
+      expected_widgets = [key.to_sym, :example, :global] | prior_widgets
+      assert_equal_set expected_widgets, page.available_widgets_per_block[key]
+    end
   end
 
   private
@@ -293,4 +308,23 @@ class PageTest < ActiveSupport::TestCase
       :is_modified => true
     }.merge(options))
   end
+
+  def create_example_structure
+    unless @structure_created
+      UbiquoDesign::Structure.define do
+        page_template :example, :layout => 'test_layout' do
+          block :one do
+            widget :one
+          end
+          block :two do
+            widget :two
+          end
+          widget :example
+        end
+        widget :global
+      end
+      @structure_created = true
+    end
+  end
+
 end

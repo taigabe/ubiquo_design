@@ -7,7 +7,7 @@ class Block < ActiveRecord::Base
   belongs_to :page
   after_save :update_page
   after_destroy :update_page
-  
+
   # Given a page and block_type, create and return a block
   def self.create_for_block_type_and_page(block_type, page, options = {})
     options.reverse_merge!({:block_type => block_type, :page_id => page.id})
@@ -36,13 +36,15 @@ class Block < ActiveRecord::Base
     )[:options][:cols]
   end
 
-#  def available_widgets
-#    Ubiquodesign::structure.get(:block => block_type)[:widgets].keys
-#  end
- 
+  # Returns the widgets that can be placed in this block
+  def available_widgets
+    options = {:page_template => page.page_template, :block => block_type}
+    UbiquoDesign::Structure.get(options)[:widgets].map(&:keys).flatten
+  end
+
   private
 
-  # When a block is saved, the associated page must change its modified attribute 
+  # When a block is saved, the associated page must change its modified attribute
   def update_page
     block_page = self.page.reload
     block_page.update_modified(true) unless block_page.is_modified?

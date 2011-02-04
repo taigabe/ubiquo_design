@@ -48,15 +48,15 @@ document.observe("dom:loaded", function() {
         scrolling = true;
       }
       last_scroll = current_scroll;
-    }, 300);
+    }, 200);
   }
 });
 
 
 function slide_that_div(){
   var scroll_offset = document.viewport.getScrollOffsets()[1];
-	scroll_offset = (scroll_offset > 140) ? scroll_offset-140 : 0;
-	new Effect.Move('slide_wrapper', { y: scroll_offset, mode: 'absolute', duration: '0.5' });
+	scroll_offset = (scroll_offset > 340) ? scroll_offset-340 : 0;
+	new Effect.Move('widgets', { y: scroll_offset, mode: 'absolute', duration: '0.5' });
 }
 
 //------------
@@ -101,8 +101,7 @@ function isIE7(){
 function explorerScrollPositioner(positionType){
   // IE<=7 needs to change the position style of dragContainer from static to relative on drag start so that the images can be dragged successfully from an overflowed container.
   if(isIE7()) {
-    document.getElementById("available_widgets").style.position = positionType;
-	  document.getElementById("scroll-innerBox-1").style.position = positionType;
+    $$(".available_widgets, .scroll-innerBox").each(function(el) {el.style.position = positionType;});
 	}
 }
 
@@ -111,7 +110,8 @@ function showAllowedBlocks(widgetType){
   $('shadow').show();
 
   $$('.block').each(function(block) {
-    if($(block.id).hasClassName("draggable_target") && (WidgetStructure.widgets[widgetType] == null || WidgetStructure.widgets[widgetType].include(block.id) ))
+    var block_key = block.id.gsub(/^block_/, '')
+    if($(block.id).hasClassName("draggable_target") && BlockStructure.blocks[block_key].include(widgetType))
     {
       $(block.id).getOffsetParent().setStyle({zIndex: '200'});
     }
@@ -126,7 +126,8 @@ function hideAllowedBlocks(widgetType){
   $('shadow').hide();
 
   $$('.block').each(function(block) {
-    if($(block.id).hasClassName("draggable_target") && (WidgetStructure.widgets[widgetType] == null || WidgetStructure.widgets[widgetType].include(block.id) ))
+    var block_key = block.id.gsub(/^block_/, '')
+    if($(block.id).hasClassName("draggable_target") && BlockStructure.blocks[block_key].include(widgetType))
     {
       $(block.id).getOffsetParent().setStyle({zIndex: '1'});
     }
@@ -138,13 +139,13 @@ function hideAllowedBlocks(widgetType){
 }
 
 // Stores the widget structure and the allowed blocks of each widget
-WidgetStructure = Class.create({});
-Object.extend(WidgetStructure, {
-  widgets: {},
+BlockStructure = Class.create({});
+Object.extend(BlockStructure, {
+  blocks: {},
 
-  add: function(widget, allowed_blocks){
-    if(!allowed_blocks) allowed_blocks = []
-    this.widgets[widget] = []
+  add: function(block, allowed_widgets){
+    if(!allowed_widgets) allowed_widgets = []
+    this.blocks[block] = allowed_widgets
   }
 });
 //ALLOWED BLOCKS FOR EACH WIDGET
@@ -156,5 +157,6 @@ Object.extend(WidgetStructure, {
 function toggleWidgetGroups(selected_group) {
   $$('.available_widgets').each(function(aw){aw.hide()});
   $('widgets_' + selected_group.value).show();
+  Scroller.updateAll();
 }
 

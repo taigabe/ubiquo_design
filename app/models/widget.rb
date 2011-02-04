@@ -91,6 +91,18 @@ class Widget < ActiveRecord::Base
     key.to_s.classify.constantize
   end
 
+  # Returns a hash containing the defined widget_groups in design structure, and
+  # for each group, the identifiers of the widgets that compose it
+  def self.groups
+    {}.tap do |groups|
+      UbiquoDesign::Structure.widget_groups.each do |widget_group|
+        groups[widget_group.keys.first] = widget_group.values.first.select do |h|
+          h.keys.include?(:widgets)
+        end.first[:widgets].map(&:keys).flatten
+      end
+    end
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute

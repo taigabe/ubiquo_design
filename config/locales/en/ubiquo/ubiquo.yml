@@ -55,6 +55,7 @@ en:
       # End widgets
       page_info: "Page information"
       available_widgets: "Available widgets"
+      all_widgets: "All widgets"
       open: "open"
       published: "Published"
       pending_publish: "Pending publish"
@@ -79,6 +80,10 @@ en:
       select_available_shared_blocks: "Select an available block"
       stop_use_shared_block: "Stop using the block '{{key}}'"
       replace_block_confirm: "Are sure to replace the contents of the block?"
+    widget_groups:
+      sidebar: Sidebar block
+      main: Main block
+      top: Top block
     widgets:
       free:
         name: Free content

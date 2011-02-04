@@ -8,8 +8,6 @@ class Ubiquo::DesignsController < UbiquoAreaController
   def show
     @page = Page.find(params[:page_id])
     @template_content = render_ubiquo_design_template(@page)
-    @widgets = @page.available_widgets.sort_by(&:to_s)
-    @widget_groups = @page.widget_groups
   end
 
   def preview

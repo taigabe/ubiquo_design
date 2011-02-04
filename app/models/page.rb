@@ -45,7 +45,7 @@ class Page < ActiveRecord::Base
 
   DEFAULT_LAYOUT = 'main'
   DEFAULT_BLOCK_COLS = 4
-  
+
   # Returns the most appropiate published page for that url, raises an
   # Exception if no match is found
   def self.with_url url
@@ -102,7 +102,7 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => nil
         }
-        
+
         published_page.save!
 
         published_page.blocks.destroy_all
@@ -116,7 +116,7 @@ class Page < ActiveRecord::Base
         end
 
         published_page.reload.update_attribute(:is_modified, false)
-        
+
         self.update_attributes(
           :is_modified => false,
           :published_id => published_page.id
@@ -177,42 +177,41 @@ class Page < ActiveRecord::Base
 
   # Returns the layout to use for this page
   def layout
-    UbiquoDesign::Structure.get(:page_template => page_template.to_sym)[:options][:layout] rescue DEFAULT_LAYOUT
+    UbiquoDesign::Structure.get(:page_template => page_template)[:options][:layout] rescue DEFAULT_LAYOUT
   end
 
   def self.templates
-    UbiquoDesign::Structure.get[:page_templates].map(&:keys).flatten rescue []
+    UbiquoDesign::Structure.find(:page_templates)
   end
 
   def template_structure
-    blocks = UbiquoDesign::Structure.get(:page_template => self.page_template.to_sym)[:blocks]
+    blocks = UbiquoDesign::Structure.get(:page_template => self.page_template)[:blocks]
     blocks.map do |block|
       cols = block.values.flatten.first[:options][:cols] rescue DEFAULT_BLOCK_COLS
       [block.keys.first, cols]
     end
   end
 
-  def self.blocks(template = nil)
-    if template
-      UbiquoDesign::Structure.get(:page_template => template.to_sym)[:blocks].map(&:keys).flatten rescue []
-    else
-      #TODO Implement this method with UbiquoDesign::structure
-      raise NotImplementedError
-    end
+  # Given a page template, returns the blocks that it has, as a list of identifiers
+  def self.blocks(template)
+    UbiquoDesign::Structure.find(:blocks, :page_template => template)
   end
 
+  # Returns the widgets available for at least one block of this page
   def available_widgets
-    UbiquoDesign::Structure.get(:page_template => page_template)[:widgets].map(&:keys).flatten
+    available_widgets_per_block.values.flatten.uniq
   end
 
-  def widget_groups
-    wg = {}
-    UbiquoDesign::Structure.get(:widget_groups).keys.each do |widget_group_key|
-      widget_keys = UbiquoDesign::Structure.get(:widget_groups)[widget_group_key].first[:widgets].map(&:keys).flatten
-      wg[widget_group_key] = widget_keys if widget_keys
+  # Returns a hash containing, for each block, the widgets that can be assigned
+  def available_widgets_per_block
+    {}.tap do |widgets_per_block|
+      blocks.each do |block|
+        widgets_per_block[block.block_type] = UbiquoDesign::Structure.find(
+          :widgets,
+          {:page_template => page_template, :block => block.block_type}
+        )
+      end
     end
-    
-    wg
   end
 
   def update_modified(save = false)
@@ -248,5 +247,5 @@ class Page < ActiveRecord::Base
       self.blocks << Block.create(:block_type => block_type.to_s)
     end
   end
-  
+
 end

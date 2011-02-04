@@ -56,6 +56,7 @@ ca:
       # End widgets
       page_info: "Informació de la pàgina"
       available_widgets: "Widgets disponibles"
+      all_widgets: "Tots els widgets"
       open: "obrir"
       published: "Publicat"
       pending_publish: "Pendent de publicació"
@@ -80,6 +81,10 @@ ca:
       select_available_shared_blocks: "Sel·lecciona un bloc disponible"
       stop_use_shared_block: "Deixar de fer servir el bloc '{{key}}'"
       replace_block_confirm: "Estàs segur de voler remplaçar el contingut del block?"
+    widget_groups:
+      sidebar: Bloc lateral
+      main: Bloc principal
+      top: Capçalera
     widgets:
       free:
         name: "Contingut lliure"

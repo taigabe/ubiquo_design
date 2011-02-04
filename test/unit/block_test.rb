@@ -14,14 +14,14 @@ class BlockTest < ActiveSupport::TestCase
     assert_no_difference "Block.count" do
       block = create_block :block_type => nil
       assert block.errors.on(:block_type)
-    end    
+    end
   end
 
   def test_should_require_page_id
     assert_no_difference "Block.count" do
       block = create_block :page_id => nil
       assert block.errors.on(:page)
-    end    
+    end
   end
 
   def test_should_return_block_uses
@@ -48,7 +48,7 @@ class BlockTest < ActiveSupport::TestCase
     delegated_block = create_block(:shared_id => shared_block.id)
     assert !delegated_block.is_used_by_other_blocks?
   end
-  
+
   def test_create_for_block_type_and_page
     assert_difference "Block.count" do
       block = Block.create_for_block_type_and_page("static", pages(:one))
@@ -93,9 +93,18 @@ class BlockTest < ActiveSupport::TestCase
     assert_equal block_to_share, block_to_share.real_block
     assert_equal block_to_share, using_share_block.real_block
   end
-  
+
+  def test_should_return_available_widgets
+    block = blocks(:one)
+    available_widgets = UbiquoDesign::Structure.get(
+      :page_template => block.page.page_template,
+      :block => block.block_type
+    )[:widgets].map(&:keys).flatten
+    assert_equal available_widgets, block.available_widgets
+  end
+
   private
-  
+
   def create_block(options = {})
     default_options = {
       :block_type => 'sidebar',

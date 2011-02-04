@@ -86,6 +86,20 @@ class WidgetTest < ActiveSupport::TestCase
     assert_equal TestWidget, Widget.class_by_key(:test_widget)
   end
 
+  def test_should_return_widget_groups
+    UbiquoDesign::Structure.define do
+      widget_group :one do
+        widget :one, :two
+      end
+      widget_group :two, :option => 'value' do
+        widget :three, :four
+      end
+      widget :aa
+    end
+    assert_equal [:one, :two], Widget.groups[:one]
+    assert_equal [:three, :four], Widget.groups[:two]
+  end
+
   private
   def create_widget(options = {})
     TestWidget.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))
