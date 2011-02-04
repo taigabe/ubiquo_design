@@ -6,10 +6,12 @@
 
 <% form_for([:ubiquo, @page]) do |f| %>
 	<%= render :partial => 'form', :locals => {:f => f} %>
-	  <p class="form_buttons">
-	    <%= f.submit t('ubiquo.create') %>
-			<input type="button" value="<%= t('ubiquo.back_to_index') %>" onclick="document.location.href='<%= ubiquo_pages_path %>'" />
-	  </p>
+	  <div class="form-item-submit">
+	    <%= f.submit t('ubiquo.create'), :class => "bt-submit" %>
+            <%= button_to_function t('ubiquo.back_to_index'),
+                "document.location.href='#{ubiquo_pages_path}'",
+                :class => "bt-back" %>
+	  </div>
 <% end %>
 
 <% content_for :sidebar do %>

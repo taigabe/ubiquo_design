@@ -1,23 +1,23 @@
 <%= error_messages_for 'page' %>
-<div class="form_box">
+<fieldset>
   <%= uhook_form_top f %>
-  <h3><%= t('ubiquo.design.page_info') %></h3>
-  <p>
-    <%= f.label :name, Page.human_attribute_name("name") %> 
+  <legend><%= t('ubiquo.design.page_info') %></legend>
+  <div class="form-item">
+    <%= f.label :name, Page.human_attribute_name("name") %>
     <%= f.text_field :name %>
-  </p>
+  </div>
   <fieldset>
     <legend><%= t('ubiquo.design.situation') %></legend>
-    <p>
+    <div class="form-item">
       <%= f.label :parent_id, Page.human_attribute_name("parent_id") %>
       <%= f.select :parent_id, parent_pages_for_select(@pages, @page.parent) %>
-    </p>
-    <p>
+    </div>
+    <div class="form-item">
       <%= f.label :url_name, Page.human_attribute_name("url_name") %>
       <%= f.text_field :url_name %>
-      <%= t("ubiquo.design.page_url_example") %>
-      <span id="url_example">http://www.ubiquo.me/<%= @page.url_name %></span>
-    </p>
+
+      <p class="description"><%= t("ubiquo.design.page_url_example") %>http://www.ubiquo.me/<%= @page.url_name %></p>
+    </div>
   </fieldset>
   <% if f.object.new_record? %>
     <fieldset>
@@ -37,19 +37,19 @@
       </ul>
     </fieldset>
   <% end %>
-</div>
-<div class="form_box">
-  <h3><%= t('ubiquo.design.metatags') %></h3>
-  <p>
+  <fieldset>
+  <legend><%= t('ubiquo.design.metatags') %></legend>
+  <div class="form-item">
     <%= f.label :meta_title, Page.human_attribute_name("meta_title") %>
     <%= f.text_field :meta_title %>
-  </p>
-  <p>
+  </div>
+  <div class="form-item">
     <%= f.label :meta_keywords, Page.human_attribute_name("meta_keywords") %>
     <%= f.text_field :meta_keywords %>
-  </p>
-  <p>
+  </div>
+  <div class="form-item">
     <%= f.label :meta_description, Page.human_attribute_name("meta_description") %>
     <%= f.text_area :meta_description, :rows => 5 %>
-  </p>
-</div>
+  </div>
+  </fieldset>
+</fieldset>
