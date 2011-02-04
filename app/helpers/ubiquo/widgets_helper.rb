@@ -19,6 +19,7 @@ module Ubiquo::WidgetsHelper
       </p>
     } % [t('ubiquo.design.save')]
   end
+
   def widget_header(widget)
     %{
       <h3>%s</h3>
@@ -26,4 +27,17 @@ module Ubiquo::WidgetsHelper
       <div id="error_messages"></div>
     } % [(t('ubiquo.design.editing_widget', :name => widget.name)), t('ubiquo.design.close_widget')]
   end
+
+  def li_widget_attributes(widget, page)
+    classes = ["widget"]
+    classes << "error" unless widget.valid?
+    classes << "inherited" unless page.blocks.include?(widget.block)
+    attrs = ["id= 'widget_#{widget.id}'", "class= '#{classes.join(' ')}'"]
+    unless widget.valid?
+      attrs << ["alt='#{t("ubiquo.design.widget_error")}'"]
+      attrs << ["title='#{t("ubiquo.design.widget_error")}'"]
+    end
+    attrs.join(' ')
+  end
+  
 end
