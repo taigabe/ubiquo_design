@@ -18,14 +18,13 @@ class Ubiquo::WidgetsControllerTest < ActionController::TestCase
 
   def test_should_add_editable_widget_through_js
     login_as
-    widgets = pages(:one_design).available_widgets
+    widgets = pages(:one_design).available_widgets - [:global]
     editable_widget = widgets.select do |widget_key|
       Widget.class_by_key(widget_key).is_configurable?
     end.first
     assert_not_nil editable_widget
-
     assert_difference('Widget.count') do
-      xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => editable_widget
+      xhr :post, :create, :page_id => pages(:one_design).id, :block => pages(:one_design).blocks.first, :widget => editable_widget.to_s
     end
     widget = assigns(:widget)
     assert_not_nil widget

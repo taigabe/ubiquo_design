@@ -4,6 +4,8 @@ class Ubiquo::DesignsHelperTest < ActionView::TestCase
   include Ubiquo::Extensions::ConfigCaller
 
   test 'widget_tabs should get groups when mode is auto and there are groups' do
+    @page = pages(:one)
+    Widget.expects(:groups).at_least(1).returns({"subheader"=>[:free, :static_section, :global]})    
     Ubiquo::Config.context(:ubiquo_design).set(:widget_tabs_mode, :auto)
     assert_equal Widget.groups, widget_tabs
   end

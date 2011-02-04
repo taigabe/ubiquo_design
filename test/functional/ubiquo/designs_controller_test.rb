@@ -10,7 +10,6 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     get :show, :page_id => page.id
     assert_response :success
     assert_not_nil page = assigns(:page)
-    assert_not_nil widgets = assigns(:widgets)
     assert page.blocks.size > 0
     page.blocks.map(&:block_type).each do |block_type|
       assert_select "#block_type_holder_#{block_type}"
