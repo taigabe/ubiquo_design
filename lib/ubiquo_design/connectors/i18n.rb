@@ -35,7 +35,7 @@ module UbiquoDesign
 
       def self.unload!
         # TODO create generic methods for these cleanups
-        [::Widget] + ::Widget.send(:subclasses).each do |klass|
+        ([::Widget] + ::Widget.send(:subclasses)).each do |klass|
           klass.instance_variable_set :@translatable, false
           klass.reset_column_information
         end

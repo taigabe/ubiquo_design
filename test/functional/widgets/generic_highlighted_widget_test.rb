@@ -16,14 +16,14 @@ class GenericHighlightedWidgetTest < ActionController::TestCase
   test "generic_highlighted widget view should be as expected" do
     widget, page = create_widget(:generic_highlighted)
     get :show, :url => page.url_name
-    assert_select "div.generic_highlighted.generichighlighted_highlighted" do
+    assert_select "div.generic-highlighted.generichighlighted-highlighted" do
       assert_select 'h3', widget_attributes[:title]
-      assert_select "div#carousel-wrapper" do
-        assert_select 'ul#carousel-content' do
+      assert_select "div.carousel-wrapper" do
+        assert_select 'ul.carousel-content' do
           assert_select "li.slide", GenericHighlighted.count
         end
       end
-      assert_select "ul.controls"
+      assert_select "ul.highlighted-paginator"
     end
   end
 
@@ -31,7 +31,7 @@ class GenericHighlightedWidgetTest < ActionController::TestCase
 
   def widget_attributes
     {
-      :model => 'GenericListing',
+      :model => 'GenericHighlighted',
       :title => 'title',
     }  
   end

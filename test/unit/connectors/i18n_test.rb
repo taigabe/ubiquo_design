@@ -70,7 +70,7 @@ module Connectors
         end
         # cleanup
         Object.send :remove_const, "Free"
-        load(Rails.root + "app/models/widgets/free.rb")
+        load Rails.root.join("app","models","widgets","free.rb").to_s
       end
 
       test "widget_controller must set locale on the prepare widget with configurable widget" do

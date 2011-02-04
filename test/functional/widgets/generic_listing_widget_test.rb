@@ -17,12 +17,12 @@ class GenericListingWidgetTest < ActionController::TestCase
   test "generic_listing widget view should be as expected" do
     widget, page = create_widget(:generic_listing)
     get :show, :url => page.url_name
-    assert_select "div.genericlisting_list.generic_list" do
-      assert_select 'h2', widget_attributes[:title]
+    assert_select "div.genericlisting-list.generic-main-list" do
+      assert_select 'h3', widget_attributes[:title]
       assert_select 'ul' do
         assert_select "li", GenericListing.count do
-          assert_select "h3"
-          assert_select "div.body"
+          assert_select "h4"
+          assert_select "div.content"
         end
       end
     end

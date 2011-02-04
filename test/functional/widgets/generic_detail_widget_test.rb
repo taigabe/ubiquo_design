@@ -14,10 +14,10 @@ class GenericDetailWidgetTest < ActionController::TestCase
 
   test "generic_detail widget view should be as expected" do
     widget, page = create_widget(:generic_detail)
-    get :show, :url => page.url_name, :id => GenericDetail.first.id
-    assert_select "div.genericdetail_detail.generic_detail" do
-      assert_select 'h2', widget_attributes[:title]
-      assert_select 'div.body'
+    get :show, :url => [page.url_name, widget.id]
+    assert_select "div.genericdetail-detail.generic-detail" do
+      assert_select 'h3', widget_attributes[:title]
+      assert_select 'div.content'
     end
   end
 

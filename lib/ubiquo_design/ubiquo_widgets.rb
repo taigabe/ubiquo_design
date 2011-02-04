@@ -101,24 +101,11 @@ module UbiquoDesign
     def render_widget widget
       widget_name = widget.key
       unless available_widgets.include?(widget_name)
-        require "widgets/#{widget_name}_widget"
+        require_dependency "widgets/#{widget_name}_widget"
         raise WidgetNotFound.new("Widget #{widget_name} not found") unless available_widgets.include?(widget_name)
       end
       run_behaviour(widget)
-      template_file = search_template widget_name
-      # Add template directory to view_paths, so as to render uses this directory by default
-      self.view_paths.unshift(File.dirname(template_file))
-      render_output = render_to_string :file => File.basename(template_file)
-      self.view_paths.shift
-      render_output
-    end
-
-    private
-
-    def search_template(widget)
-      Rails.root.join("app", "views", "widgets", widget.to_s, "show.html.erb").tap do |template_path|
-        raise WidgetTemplateNotFound.new("Template file not found: #{widget}") unless File.exists?(template_path)
-      end
+      render_to_string :file => File.join("widgets", widget_name.to_s, "show.html.erb")
     end
 
   end
