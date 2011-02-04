@@ -142,4 +142,35 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
       UbiquoDesign::Structure.get(:test, {:page_template => :pt})
     )
   end
+
+  def test_should_find
+    UbiquoDesign::Structure.define(:test) do
+      page_template :pt do
+        block :block do
+          widget :in
+        end
+        widget :middle
+      end
+      widget :out
+    end
+
+    assert_equal(
+      [:in, :middle, :out],
+      UbiquoDesign::Structure.find(
+        :widgets,
+        {:page_template => :pt, :block => :block},
+        :test
+      )
+    )
+  end
+
+  def test_find_should_return_always_a_list
+    UbiquoDesign::Structure.define(:test) do
+      widget :logo
+    end
+
+    assert_equal [], UbiquoDesign::Structure.find(:widgets,{},:missing)
+    assert_equal [], UbiquoDesign::Structure.find(:missing,{},:test)
+  end
+
 end

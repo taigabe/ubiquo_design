@@ -14,6 +14,16 @@ module UbiquoDesign
         end
       end
 
+      # Returns a list of the applicable identifiers
+      #   key:      what we want to obtain
+      #   filters:  optional filters to scope the values
+      #   context:  possible context for multiple structures
+      def find(key, filters = {}, context = nil)
+        with_scope(context) do
+          get(filters)[key].map(&:keys).flatten rescue []
+        end
+      end
+
       # Returns a hash with the required structure
       #   args: can either be
       #         nil (default): returns the whole structure as stored
