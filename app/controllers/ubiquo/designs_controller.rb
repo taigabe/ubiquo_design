@@ -1,7 +1,7 @@
 class Ubiquo::DesignsController < UbiquoAreaController
 
   include UbiquoDesign::RenderPage
-  
+  helper 'ubiquo/widgets'
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
   uses_tiny_mce(:options => default_tiny_mce_options.merge(:entities => ''))
 
