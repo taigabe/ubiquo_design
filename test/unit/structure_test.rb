@@ -128,6 +128,47 @@ class UbiquoDesign::StructureTest < ActiveSupport::TestCase
     )
   end
 
+  def test_get_should_accept_string_params
+    UbiquoDesign::Structure.define(:test) do
+      page_template :pt do
+        widget :logo
+      end
+    end
+
+    assert_equal(
+      {:widgets => [{:logo => []}]},
+      UbiquoDesign::Structure.get(:test, {:page_template => 'pt'})
+    )
+  end
+
+  def test_get_should_accept_arrays_of_different_options
+    UbiquoDesign::Structure.define(:test) do
+      page_template :pt do
+        widget :logo
+      end
+      page_template :new do
+        widget :detail
+      end
+    end
+
+    assert_equal(
+      {:widgets => [{:logo => []}]},
+      UbiquoDesign::Structure.get(:test, {:page_template => ['pt', :pt]})
+    )
+    assert_equal(
+      {:widgets => [{:logo => []}]},
+      UbiquoDesign::Structure.get(:test, {:page_template => [:no, 'pt']})
+    )
+    assert_equal(
+      {:widgets => [{:detail => []}, {:logo => []}]},
+      UbiquoDesign::Structure.get(:test, {:page_template => [:new, 'pt']})
+    )
+    assert_equal(
+      {},
+      UbiquoDesign::Structure.get(:test, {:page_template => [:no, :thing]})
+    )
+  end
+
   def test_should_store_options
     UbiquoDesign::Structure.define(:test) do
       page_template :pt, :cols => 4 do

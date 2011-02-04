@@ -91,18 +91,21 @@ module UbiquoDesign
           results = []
           base.each do |element|
             element.keys.each do |element_key|
-              # retrieve the filters keys that may limit this element_key
-              applicable_keys = filters.keys.select do |key|
+              # retrieve the filters key that may limit this element_key
+              applicable_key = filters.keys.select do |key|
                 scope_name(key) == element_key
-              end
+              end.first
 
-              # if there are filters to apply, compare its value
-              unless applicable_keys.blank?
-                found = find_in_scope(
-                  element[element_key],
-                  filters[applicable_keys.first]
-                )
-                results.concat(found.values.flatten) if found
+              # if there is a filter to apply, compare its value
+              if applicable_key
+                # the value to compare can be an array of inclusive possibilites
+                Array(filters[applicable_key]).each do |filter_value|
+                  found = find_in_scope(
+                    element[element_key],
+                    filter_value
+                  )
+                  results.concat(found.values.flatten) if found
+                end
               else
                 results << element
               end
@@ -137,7 +140,7 @@ module UbiquoDesign
       # Returns the hash scope +element+ in the +scope+, if exists
       def find_in_scope scope, element
         scope.select do |struct|
-          struct.keys.include?(element)
+          struct.keys.include?(element.to_sym)
         end.first
       end
 
