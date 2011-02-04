@@ -29,6 +29,13 @@ class Block < ActiveRecord::Base
     self.shared_id ? self.shared : self
   end
 
+  def cols
+    UbiquoDesign::Structure.get(
+      :page_template => self.page.page_template.to_sym,
+      :block => self.block_type.to_sym
+    )[:options][:cols]
+  end
+
 #  def available_widgets
 #    Ubiquodesign::structure.get(:block => block_type)[:widgets].keys
 #  end
