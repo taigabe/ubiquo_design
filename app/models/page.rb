@@ -20,17 +20,18 @@ class Page < ActiveRecord::Base
   validates_presence_of :page_template
 
   # No other page with the same url_name
-  validate do |page|
-    if page.is_the_draft?
-      exclude_ids = [page.id]
-      if page.published_id.present?
-        exclude_ids << page.published_id
+  validate :uniqueness_url_name
+  def uniqueness_url_name
+    if self.is_the_draft?
+      exclude_ids = [self.id]
+      if self.published_id.present?
+        exclude_ids << self.published_id
       end
       exclude_ids = exclude_ids.compact
       conditions = ["id NOT IN (?)", exclude_ids] unless exclude_ids.empty?
-      current_page = Page.find_by_url_name(page.url_name, :conditions => conditions)
+      current_page = Page.find_by_url_name(self.url_name, :conditions => conditions)
       if current_page.present?
-        page.errors.add(:url_name, :taken)
+        self.errors.add(:url_name, :taken)
       end
     end
   end
