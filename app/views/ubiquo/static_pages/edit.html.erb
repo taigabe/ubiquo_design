@@ -1,6 +1,6 @@
 <h1><%= render :partial => 'title' %></h1>
 <h2><%= render :partial => "submenu" %></h2>
-<%= render(:partial => "shared/ubiquo/feedback") %>
+<%= error_messages_for 'static_page' %>
 
 <% form_for @static_page,
             :url => ubiquo_static_page_path(@static_page),
