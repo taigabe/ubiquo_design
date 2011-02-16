@@ -16,6 +16,7 @@
       <p class="description" id="url_example"><%= t("ubiquo.design.page_url_example") %>http://www.ubiquo.me/<%= @static_page.url_name %></p>
     </div>
   </fieldset>
+  </fieldset>
   <% if @static_page.new_record? %>
     <fieldset>
       <legend><%= t('ubiquo.design.page_template') %></legend>
@@ -36,7 +37,6 @@
       </ul>
     </fieldset>
   <% end %>
-</fieldset>
 <fieldset>
   <legend><%= t('ubiquo.design.metatags') %></legend>
   <div class="form-item">

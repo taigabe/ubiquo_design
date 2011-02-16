@@ -18,6 +18,7 @@
       <p class="description"><%= t("ubiquo.design.page_url_example") %>http://www.ubiquo.me/<%= @page.url_name %></p>
     </div>
   </fieldset>
+  </fieldset>
   <% if f.object.new_record? %>
     <fieldset>
       <legend><%= t('ubiquo.design.page_template') %></legend>
@@ -51,4 +52,3 @@
     <%= f.text_area :meta_description, :rows => 5 %>
   </div>
   </fieldset>
-</fieldset>
