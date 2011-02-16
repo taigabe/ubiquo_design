@@ -11,15 +11,15 @@ module Ubiquo::StaticPagesHelper
     render(:partial => "shared/ubiquo/lists/standard",
            :locals => {
              :name => 'page',
-             :headers => [:name, :url_name, :publish_status],
-             :rows => collection.collect do |static_page| 
+             :headers => [:name, :url_name, :published_id],
+             :rows => collection.collect do |static_page|
                {
                  :id => static_page.id,
                  :columns => [
                    (if static_page.published? && static_page.published.is_linkable?
                      link_to_page(static_page.name, static_page, {}, :popup => true)
                     else
-                      static_page.name    
+                      static_page.name
                     end),
                    static_page.url_name,
                    publish_status(static_page),

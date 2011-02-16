@@ -12,7 +12,7 @@ module Ubiquo::PagesHelper
     render(:partial => "shared/ubiquo/lists/standard",
       :locals => {
         :name => 'page',
-        :headers => [:name, :url_name, :publish_status],
+        :headers => [:name, :url_name, :published_id],
         :rows => collection.collect do |page|
           {
             :id => page.id,

@@ -9,6 +9,7 @@ es:
         url_name: "URL"
         page_template: "plantilla"
         publish_status: "Estado"
+        published_id: "Estado de publicación"
         parent_id: "Subpágina de"
         meta_title: "Título"
         meta_description: "Descripción"

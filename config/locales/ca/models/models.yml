@@ -9,6 +9,7 @@ ca:
         url_name: "URL"
         page_template: "plantilla"
         publish_status: "Estat"
+        published_id: "Estat de publicació"
         parent_id: "Subpàgina de"
         meta_title: "Títol"
         meta_description: "Descripció"

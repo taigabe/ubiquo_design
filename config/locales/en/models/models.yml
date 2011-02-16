@@ -10,6 +10,7 @@ en:
         name: "Name"
         url_name: "URL"
         page_template: "Template"
+        published_id: "Published status"
       page_category:
         name: "Name"
         url_name: "URL"
