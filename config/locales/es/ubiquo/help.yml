@@ -8,4 +8,4 @@ es:
           index: "Aquí puedes ver, modificar y maquetar las páginas de la aplicación."
         static_page:
           index: "Aquí puedes ver,modificar y borrar las páginas estáticas de la aplicación"
-          new: ""
+          new: "Aquí puedes crear nuevas páginas estáticas."
