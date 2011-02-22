@@ -1,8 +1,3 @@
-require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
-require 'tasks/rails'
-
 module UbiquoDesign
   module Extensions
     module RailsGenerator
