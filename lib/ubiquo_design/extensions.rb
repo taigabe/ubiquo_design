@@ -11,7 +11,10 @@ end
 
 ActionController::Base.helper(UbiquoDesign::Extensions::Helper)
 ActionView::Base.send(:include, UbiquoDesign::Extensions::Helper)
-ActiveSupport::TestCase.send(:include, UbiquoDesign::Extensions::TestHelper)
+
+if Rails.env.test?
+  ActiveSupport::TestCase.send(:include, UbiquoDesign::Extensions::TestHelper)
+end
 
 Rails::Generator::Commands::Create.send(:include, UbiquoDesign::Extensions::RailsGenerator::Create)
 Rails::Generator::Commands::Destroy.send(:include, UbiquoDesign::Extensions::RailsGenerator::Destroy)
