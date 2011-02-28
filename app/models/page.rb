@@ -172,8 +172,8 @@ class Page < ActiveRecord::Base
 
   # Returns true if the page can be previewed
   def is_previewable?
-    #TODO Implement this method
-    false
+    Ubiquo::Config.context(:ubiquo_design).get(:allow_page_preview) &&
+      self.blocks.map(&:widgets).flatten.reject(&:is_previewable?).blank?
   end
 
   # Returns the layout to use for this page

@@ -54,4 +54,50 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
 
     assert_select "#widget_#{widget.id} .editar", false
   end
+
+  def test_should_preview_page_if_its_previewable
+    login_as
+    page = pages(:one_design)
+    GenericListing.create(
+      :name => "Test widget",
+      :block_id => page.blocks.last.id,
+      :title => "Test widget title",
+      :model => "GenericListing")
+    page.save
+    get :preview, :page_id => page.id
+    assert_select "div.genericlisting-list.generic-main-list" do
+      assert_select 'h3', 'Test widget title'
+    end
+  end
+
+  def test_should_preview_page_with_required_params
+    login_as
+    page = pages(:one_design)
+    GenericDetail.create(
+      :name => "Test widget",
+      :block_id => page.blocks.last.id,
+      :model => "GenericDetail")
+    page.save 
+    GenericDetail.any_instance.expects(:element).returns(GenericDetail.first)
+    get :preview, :page_id => page.id
+    assert_select "div.genericdetail-detail.generic-detail" do
+      assert_select 'h3', "Test widget"
+      assert_select 'div.content'
+    end
+  end
+
+  def test_should_preview_unpreviewable_page
+    login_as
+    page = pages(:one_design)
+    Free.send(:write_inheritable_attribute, :previewable, false)
+    Free.create(
+      :name => "Test widget",
+      :block_id => page.blocks.first.id,
+      :content => "test content")
+    page.save
+    assert_raise RuntimeError do
+      get :preview, :page_id => page.id
+    end
+  end
+  
 end

@@ -7,15 +7,15 @@
 
 module Ubiquo::DesignsHelper
 
-  def block_for_design(page, type, num_cols, options = {})
-    block = page.blocks.first(:conditions => { :block_type => type })
+  def block_for_design(page, block_type, num_cols, options = {})
+    block = page.blocks.first(:conditions => { :block_type => block_type })
     unless block
       raise ActiveRecord::RecordNotFound.new("Block with block_type '#{type}' not found")
     end
     options.reverse_merge!({:class => "column_#{num_cols}"})
     content_tag(:div, :class => options.delete(:class)) do
       block_actions(page, block) +
-        block_type_holder(page, type, block, options)
+        block_type_holder(page, block_type, block, options)
     end
   end
   

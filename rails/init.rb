@@ -25,7 +25,7 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_default_order_field, 'pages.url_name'
   config.add :pages_default_sort_order, 'ASC'
   config.add :widget_tabs_mode, :auto
-
+  config.add :allow_page_preview, true
   config.add :connector, :standard
 
   config.add :cache_manager_class, lambda{

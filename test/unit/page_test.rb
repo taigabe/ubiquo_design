@@ -57,7 +57,6 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-
   def test_should_require_unique_url_name_on_a_published_page
     Page.delete_all
     page_1 = create_page :url_name => ""
@@ -295,6 +294,36 @@ class PageTest < ActiveSupport::TestCase
       expected_widgets = [key.to_sym, :example, :global] | prior_widgets
       assert_equal_set expected_widgets, page.available_widgets_per_block[key]
     end
+  end
+
+  def test_should_check_ubiquo_config_in_is_previewable
+    page = create_page
+    assert page.is_previewable?
+    Ubiquo::Config.context(:ubiquo_design).set(:allow_page_preview, false)
+    assert !page.is_previewable?
+    Ubiquo::Config.context(:ubiquo_design).set(:allow_page_preview, true)    
+  end
+
+  def test_should_be_previewable_with_previewable_widgets
+    Free.send(:write_inheritable_attribute, :previewable, true)
+    page = create_page
+    Free.create(
+      :name => "Test widget",
+      :block_id => page.blocks.first.id,
+      :content => "content for test widget")    
+    page.save
+    assert page.is_previewable?    
+  end
+
+  def test_shouldnt_be_previewable_with_no_previewable_widgets
+    Free.send(:write_inheritable_attribute, :previewable, false)
+    page = create_page
+    Free.create(
+      :name => "Test widget",
+      :block_id => page.blocks.first.id,
+      :content => "content for test widget")        
+    page.save
+    assert !page.is_previewable?    
   end
 
   private

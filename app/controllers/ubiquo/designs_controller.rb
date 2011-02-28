@@ -11,8 +11,15 @@ class Ubiquo::DesignsController < UbiquoAreaController
   end
 
   def preview
-    page = Page.find(params[:page_id])
-    render_page(page)
+    @page = Page.find(params[:page_id])
+    unless @page.is_previewable?
+      raise "Unpreviewable page"
+    else
+      @page.blocks.map(&:widgets).flatten.each do |widget|
+        params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
+      end
+      render_page(@page)
+    end
   end
 
   def publish

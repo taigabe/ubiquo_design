@@ -16,7 +16,7 @@ class GenericDetailWidgetTest < ActionController::TestCase
     widget, page = create_widget(:generic_detail)
     get :show, :url => [page.url_name, widget.id]
     assert_select "div.genericdetail-detail.generic-detail" do
-      assert_select 'h3', widget_attributes[:title]
+      assert_select 'h3', widget.name
       assert_select 'div.content'
     end
   end

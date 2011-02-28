@@ -109,6 +109,14 @@ class Widget < ActiveRecord::Base
     block.page
   end
 
+  def is_previewable?
+    self.class.is_previewable?
+  end
+
+  def self.is_previewable?
+    read_inheritable_attribute :previewable
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute
