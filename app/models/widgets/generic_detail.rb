@@ -1,6 +1,5 @@
 class GenericDetail < Widget
   self.allowed_options = [:model]
-  write_inheritable_attribute :previewable, true
   validates_presence_of :model
 
   # Returns the element to be shown

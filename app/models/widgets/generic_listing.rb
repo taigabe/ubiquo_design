@@ -1,6 +1,5 @@
 class GenericListing < Widget
   self.allowed_options = [:model, :title, :per_page, :show_images]
-  write_inheritable_attribute :previewable, true
   validates_presence_of :model
 
   # Returns the scope of elements to be shown.

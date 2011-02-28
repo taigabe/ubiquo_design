@@ -5,6 +5,8 @@ class Widget < ActiveRecord::Base
 
   @@behaviours = {}
 
+  @inheritable_attributes = inheritable_attributes.merge(:previewable => true)
+
   cattr_accessor :behaviours
 
   attr_accessor :update_page_denied
