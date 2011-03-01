@@ -80,7 +80,7 @@ module Connectors
           :session => {:locale => 'es'},
           :params => {}
         )
-        assert_equal nil, widget.locale
+        assert_not_equal 'es', widget.locale
         Ubiquo::WidgetsController.new.uhook_prepare_widget(widget)
         assert_equal 'es', widget.locale
       end
@@ -92,7 +92,7 @@ module Connectors
           :session => {:locale => 'es'},
           :params => {}
         )
-        assert_equal nil, widget.locale
+        assert_not_equal 'es', widget.locale
         Ubiquo::WidgetsController.new.uhook_prepare_widget(widget)
         assert_equal 'any', widget.locale
       end
