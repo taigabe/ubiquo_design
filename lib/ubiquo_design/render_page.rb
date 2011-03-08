@@ -1,5 +1,10 @@
 module UbiquoDesign
   module RenderPage
+
+    def self.included(klass)
+      klass.helper_method :render_block
+    end
+    
     private
     def render_page(page)
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
