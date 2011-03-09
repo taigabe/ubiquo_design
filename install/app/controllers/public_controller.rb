@@ -5,5 +5,5 @@
 class PublicController < ApplicationController
   layout "main"
   include UbiquoDesign::RenderPage
-  include Ubiquo::Extensions::PublicController
+  include Ubiquo::Extensions::PublicController rescue nil
 end
