@@ -1,57 +1,6 @@
-#= Pages design
-#
-#Pages created with the design module have the following attributes:
-#
-#* name: Descriptive name
-#* url_name: String that appears on the route
-#* page_template: Associated page templates (configure them on <tt>db/dev_bootstrap/page_template.yml</tt>).
-#
-#By default, pages are created as drafts. When a page is published, it is cloned (along with its widgets, blocks and asset_relations). In that moment the changes are visible on the public website.
-#
-#== Public routes
-#
-#Create anonymous routes from the _pages_ controller on <tt>config/routes.db</tt>:
-#
-#  ActionController::Routing::Routes.draw do |map|
-#    ...
-#    map.with_options :controller => 'pages' do |pages|
-#      # Frontpage
-#      pages.connect "", :action => 'show', :url_name => ''
-#      
-#      # Common routes      
-#      pages.connect ":url_name", :action => 'show', :defaults => {:url_name => ''}
-#      pages.connect ":url_name/:id", :action => 'show'
-#      pages.connect ":url_name/page/:page", :action => 'show'
-#    end
-#  end
-#
-#The frontpage is a page with a empty string as url_name.
-#
-#== Build links on views from pages  
-#
-#To create a link to public pages:
-#
-#  link_to_page("Public page", page)
-#
-#If you only need the url for a public page:
-#
-#  url_for_page(page)
-#
-#== Build links on views from page names  
-#
-#Sometimes you don't a have a page object, but its name (and of course, the category name). For example, to go to category _news_, page _interior_:
-#
-#  page = Page.find_public("news", "interior")
-#  link_to_page("News interior page", page, :id => news.id)
-#
+class PagesController < PublicController
 
-class PagesController < ApplicationController
-  layout 'main'
-  include UbiquoDesign::RenderPage
-  # Show a designed page usint its template and associated blocks and widgets
-  # 
-  # A page is formed of many blocks, each with containing widgets. Each
-  # widget use a generator to get the final HTML code
+  # Renders a Page using its associated template, displaying its blocks and widgets
   def show
     @page = uhook_load_page
     render_page @page
