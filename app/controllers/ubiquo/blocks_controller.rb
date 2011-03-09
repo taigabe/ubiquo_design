@@ -1,4 +1,4 @@
-class Ubiquo::BlocksController < UbiquoAreaController
+class Ubiquo::BlocksController < UbiquoController
   helper 'ubiquo/designs'
   def update
     @block = Block.find(params[:id])

@@ -1,4 +1,4 @@
-class Ubiquo::WidgetsController < UbiquoAreaController
+class Ubiquo::WidgetsController < UbiquoController
   before_filter :load_page
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
 

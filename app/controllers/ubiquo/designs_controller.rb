@@ -1,4 +1,4 @@
-class Ubiquo::DesignsController < UbiquoAreaController
+class Ubiquo::DesignsController < UbiquoController
 
   include UbiquoDesign::RenderPage
   helper 'ubiquo/widgets'

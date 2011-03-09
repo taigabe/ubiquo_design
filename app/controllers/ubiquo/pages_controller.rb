@@ -1,4 +1,4 @@
-class Ubiquo::PagesController < UbiquoAreaController
+class Ubiquo::PagesController < UbiquoController
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
   before_filter :load_page_templates
   before_filter :load_page, :only => [:edit, :update, :destroy]
