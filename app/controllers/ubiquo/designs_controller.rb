@@ -51,8 +51,8 @@ class Ubiquo::DesignsController < UbiquoController
                                            :locals => { :page => page })
     else
       template_contents = render_to_string(:inline => <<-EOS, :locals => { :page => page })
-        <% page.template_structure.map do |block_key, num_cols| %>
-          <%= send("block_for_design", page, block_key.to_s, num_cols) %>
+        <% page.template_structure.map do |block_key, num_cols, subblocks| %>
+          <%= send("block_for_design", page, block_key.to_s, num_cols, subblocks) %>
         <% end %>
       EOS
     end

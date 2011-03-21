@@ -29,7 +29,9 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
 
   def test_should_get_design_with_permission
     login_with_permission :design_management
-    get :show, :page_id => pages(:one_design).id
+    page = pages(:one_design)
+    template_mock(page)
+    get :show, :page_id => page.id
     assert_response :success
   end
 
@@ -49,7 +51,7 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     end
 
     page = pages(:one_design)
-    template_mock(page)
+    template_mock(page)    
     get :show, :page_id => page.id
 
     assert_select "#widget_#{widget.id} .editar", false
@@ -98,6 +100,27 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
     assert_raise RuntimeError do
       get :preview, :page_id => page.id
     end
+  end
+
+  def test_should_get_design_with_blocks_and_subblocks
+    UbiquoDesign::Structure.define do
+      page_template :with_subblocks do 
+      block :independent, :cols => 2
+      block :group, :cols => 2 do
+        subblock :s1, :cols => 1
+        subblock :s2, :cols => 1
+        end
+      end
+    end
+    page = Page.create(
+      :name => "Test page",
+      :url_name => "test",
+      :page_template => "with_subblocks")
+
+    get :show, :page_id => page.id
+    assert_response :success
+    assert_select "div.column", 2
+    assert_select "div.column div.column", 2 #subblocks
   end
   
 end

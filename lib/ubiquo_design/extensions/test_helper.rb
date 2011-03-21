@@ -12,7 +12,7 @@ module UbiquoDesign
           template_file = File.join(ActiveSupport::TestCase.fixture_path, "templates", "test", "public.html.erb")
           render :file => template_file
         end
-        @controller.class.send(:define_method, :render_ubiquo_design_template) do
+        def @controller.render_ubiquo_design_template(page)
           render_to_string :file => File.join(ActiveSupport::TestCase.fixture_path, "templates", "test", "ubiquo.html.erb"), :locals => {:page => page}
         end
       end

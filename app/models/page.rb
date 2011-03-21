@@ -45,6 +45,7 @@ class Page < ActiveRecord::Base
 
 
   DEFAULT_LAYOUT = 'main'
+  DEFAULT_TEMPLATE_COLS = 4  
   DEFAULT_BLOCK_COLS = 4
 
   # Returns the most appropiate published page for that url, raises an
@@ -181,6 +182,10 @@ class Page < ActiveRecord::Base
     UbiquoDesign::Structure.get(:page_template => page_template)[:options][:layout] rescue DEFAULT_LAYOUT
   end
 
+  def template_cols
+    UbiquoDesign::Structure.get(:page_template => page_template)[:options][:cols] rescue DEFAULT_TEMPLATE_COLS
+  end
+
   def self.templates
     UbiquoDesign::Structure.find(:page_templates)
   end
@@ -189,7 +194,10 @@ class Page < ActiveRecord::Base
     blocks = UbiquoDesign::Structure.get(:page_template => self.page_template)[:blocks]
     blocks.map do |block|
       cols = block.values.flatten.first[:options][:cols] rescue DEFAULT_BLOCK_COLS
-      [block.keys.first, cols]
+      subblocks = (block.values.flatten.last.try(:[], :subblocks) || []).map do |sb|
+        [sb.keys.first, sb.values.flatten.first[:options][:cols]]
+      end
+      [block.keys.first, cols, subblocks]
     end
   end
 
@@ -243,9 +251,18 @@ class Page < ActiveRecord::Base
   end
 
   def assign_template_blocks
-    block_types = Page.blocks(self.page_template)
+    block_keys = []
+    block_types = UbiquoDesign::Structure.get(:page_template => self.page_template)[:blocks] || []
     block_types.each do |block_type|
-      self.blocks << Block.create(:block_type => block_type.to_s)
+      subblocks = (block_type.values.flatten.last[:subblocks] rescue [])
+      if subblocks.present?
+        block_keys += subblocks.map(&:keys).flatten
+      else
+        block_keys << block_type.keys.first
+      end
+    end    
+    block_keys.each do |key|
+      self.blocks << Block.create(:block_type => key.to_s)
     end
   end
 

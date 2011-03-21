@@ -7,15 +7,26 @@
 
 module Ubiquo::DesignsHelper
 
-  def block_for_design(page, block_type, num_cols, options = {})
-    block = page.blocks.first(:conditions => { :block_type => block_type })
-    unless block
-      raise ActiveRecord::RecordNotFound.new("Block with block_type '#{type}' not found")
-    end
-    options.reverse_merge!({:class => "column_#{num_cols}"})
-    content_tag(:div, :class => options.delete(:class)) do
-      block_actions(page, block) +
-        block_type_holder(page, block_type, block, options)
+  def block_for_design(page, type, num_cols, subblocks = [], options = {})
+    default_margin = 1.5
+    col_width = ((100 / page.template_cols) * num_cols) - default_margin
+    options.reverse_merge!(:class => "column", :style => "width: #{col_width}%")    
+    if subblocks.present?
+      content_tag(:div, :class => options.delete(:class), :style => options.delete(:style) + ";margin:0") do      
+        subblocks.map do |subblock, sb_cols|
+          sb_width = (100.to_f * (sb_cols.to_f / num_cols.to_f)) - default_margin
+          block_for_design(page, subblock, sb_cols, [], { :style => "width: #{sb_width}%" })
+        end
+      end
+    else
+      block = page.blocks.first(:conditions => { :block_type => type.to_s })
+      unless block
+        raise ActiveRecord::RecordNotFound.new("Block with block_type '#{type}' not found")
+      end
+      content_tag(:div, :class => options.delete(:class), :style => options.delete(:style)) do
+        block_actions(page, block) +
+          block_type_holder(page, type, block, options)
+      end      
     end
   end
   
