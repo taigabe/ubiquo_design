@@ -1,5 +1,6 @@
 class Ubiquo::BlocksController < UbiquoController
   helper 'ubiquo/designs'
+  helper 'ubiquo/widgets'
   def update
     @block = Block.find(params[:id])
     @page = Page.find(params[:page_id])
