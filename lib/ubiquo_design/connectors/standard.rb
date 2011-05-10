@@ -167,9 +167,9 @@ module UbiquoDesign
         module Helper
           def uhook_page_actions(page)
             [
-              link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page)),
+              link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page), :class => 'btn-edit'),
               link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
-              (link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete) unless page.key?)
+              (link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete, :class => 'btn-delete') unless page.key?)
             ].compact
           end
 
