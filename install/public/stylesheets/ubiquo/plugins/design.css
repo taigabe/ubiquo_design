@@ -1,22 +1,9 @@
 /*--- Maquetació ---*/
-.column_4, .column_3, .column_2, .column_1 {
-  margin: 0 1.5% 1.5% 0;
-	position:relative;
-}
-.column_4 {
-  width: 98.5%;
-}
-.column_3, .column_2, .column_1 {
+.column {
+  margin: 0 1.2% 1.5% 0;
   float: left;
-}
-.column_3 {
-  width: 73.5%;
-}
-.column_2 {
-  width: 48.5%;
-}
-.column_1 {
-  width: 23.5%;
+  position: relative;
+  min-width: 15.5%;
 }
 #template {
   clear: both;
