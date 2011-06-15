@@ -8,6 +8,8 @@ class Block < ActiveRecord::Base
   after_save :update_page
   after_destroy :update_page
 
+  DEFAULT_BLOCK_COLS = 4
+
   # Given a page and block_type, create and return a block
   def self.create_for_block_type_and_page(block_type, page, options = {})
     options.reverse_merge!({:block_type => block_type, :page_id => page.id})

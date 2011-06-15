@@ -272,11 +272,11 @@ class PageTest < ActiveSupport::TestCase
     create_example_structure
     page = create_page(:page_template => 'example')
     assert_equal 'test_layout', page.layout
-    assert_equal Page::DEFAULT_LAYOUT, create_page.layout
+    assert_equal Page::DEFAULT_TEMPLATE_OPTIONS[:layout], create_page.layout
   end
 
   def test_should_get_default_layout
-    assert_equal 'main', Page::DEFAULT_LAYOUT
+    assert_equal 'main', Page::DEFAULT_TEMPLATE_OPTIONS[:layout]
   end
 
   def test_should_get_available_widgets

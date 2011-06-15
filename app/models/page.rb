@@ -43,13 +43,13 @@ class Page < ActiveRecord::Base
   named_scope :statics,
               :conditions => ["pages.is_static = ?", true]
 
-
-  DEFAULT_LAYOUT = 'main'
-  DEFAULT_TEMPLATE_COLS = 4  
-  DEFAULT_BLOCK_COLS = 4
+  DEFAULT_TEMPLATE_OPTIONS = {
+    :layout => 'main',
+    :cols => 4,
+  }
 
   # Returns the most appropiate published page for that url, raises an
-  # Exception if no match is found
+  # Exception if no match is found.
   def self.with_url url
     url_name = url.is_a?(Array) ? url.join('/') : url
     page = find_by_url_name(url_name)
@@ -64,7 +64,7 @@ class Page < ActiveRecord::Base
     end
   end
 
-  # Initialize pages as drafts
+  # Initialize pages as drafts.
   def initialize(attrs = {})
     attrs ||= {}
     super attrs.reverse_merge!(:is_modified => true)
@@ -130,6 +130,7 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # Destroy the published page copy if exists.
   def unpublish
     if self.published
       self.published.destroy
@@ -138,54 +139,67 @@ class Page < ActiveRecord::Base
     end
   end
 
-  # Returns true if the page has been published
+  # Returns true if the page has been published.
   def published?
     published_id
   end
 
-  # if you remove published page copy, draft page will be pending publish again
+  # if you remove published page copy, draft page will be pending publish again.
   def is_modified_on_destroy_published
     if self.is_the_published? && self.draft
       self.draft.update_attributes(:is_modified => true)
     end
   end
 
+  # returns a ids collection of ids of widgets with errors on page.
   def wrong_widgets_ids
     self.blocks.map(&:widgets).flatten.reject(&:valid?).map(&:id)
   end
 
-  # Returns true if the page is the draft version
+  # Returns true if the page is the draft version.
   def is_the_draft?
     published_id? || (!published_id? && is_modified?)
   end
 
-  # Returns true if this page is the published one
+  # Returns true if this page is the published one.
   def is_the_published?
     !is_the_draft?
   end
 
   # Returns true if the page can be accessed directly,
-  # i.e. does not have required params
+  # i.e. does not have required params.
   def is_linkable?
     #TODO implement this method
     is_the_published?
   end
 
-  # Returns true if the page can be previewed
+  # Returns true if the page can be previewed.
   def is_previewable?
     Ubiquo::Config.context(:ubiquo_design).get(:allow_page_preview) &&
       self.blocks.map(&:widgets).flatten.reject(&:is_previewable?).blank?
   end
 
-  # Returns the layout to use for this page
+  # Returns a hash with page template options. Returns default values
+  # merged with specified options in UbiquoDesign::Structure.
+  def template_options
+    DEFAULT_TEMPLATE_OPTIONS.merge(
+      UbiquoDesign::Structure.get(:page_template => page_template)[:options] || {}
+    )
+  end
+  
+  # Returns the layout to use for this page. If layout is not
+  # specified in UbiquoDesign::Structure, returns a default value.
   def layout
-    UbiquoDesign::Structure.get(:page_template => page_template)[:options][:layout] rescue DEFAULT_LAYOUT
+    template_options[:layout]
   end
 
+  # Returns the number of columns for page template. If there aren't
+  # specified in UbiquoDesign::Structure, returns a default value.
   def template_cols
-    UbiquoDesign::Structure.get(:page_template => page_template)[:options][:cols] rescue DEFAULT_TEMPLATE_COLS
+    template_options[:cols]
   end
 
+  # Returns a collection of templates defined in UbiquoDesign::Structure.
   def self.templates
     UbiquoDesign::Structure.find(:page_templates)
   end
@@ -193,7 +207,7 @@ class Page < ActiveRecord::Base
   def template_structure
     blocks = UbiquoDesign::Structure.get(:page_template => self.page_template)[:blocks]
     blocks.map do |block|
-      cols = block.values.flatten.first[:options][:cols] rescue DEFAULT_BLOCK_COLS
+      cols = block.values.flatten.first[:options][:cols] rescue Block::DEFAULT_BLOCK_COLS
       subblocks = (block.values.flatten.last.try(:[], :subblocks) || []).map do |sb|
         [sb.keys.first, sb.values.flatten.first[:options][:cols]]
       end
@@ -223,11 +237,17 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # Changes to true the value of is_modified field.
+  # Is used to differentiate draft pages with changes.
   def update_modified(save = false)
     write_attribute(:is_modified, true) unless is_modified_change
     self.save if save
   end
 
+  # Adds the widget to page, on the block with the given key. If the
+  # block doesn't exist, create it and relates with the page.
+  # Returns false if there are some problem saving page, creating
+  # block or relating widget.
   def add_widget(block_key, widget)
     begin
       transaction do
