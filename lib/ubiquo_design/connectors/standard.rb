@@ -29,10 +29,8 @@ module UbiquoDesign
                 widget.send(key).each do |relation|
                   new_widget.send(key) << relation.clone
                 end
-                new_widget.save
               elsif reflection.macro == :has_one
                 new_widget.send("build_#{key}", widget.send(key).attributes)
-                new_widget.save
               end
             end
           end
