@@ -45,7 +45,7 @@ class Page < ActiveRecord::Base
 
 
   DEFAULT_LAYOUT = 'main'
-  DEFAULT_TEMPLATE_COLS = 4  
+  DEFAULT_TEMPLATE_COLS = 4
   DEFAULT_BLOCK_COLS = 4
 
   # Returns the most appropiate published page for that url, raises an
@@ -123,6 +123,7 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => published_page.id
         )
+        expire_varnish
       end
       return true
     rescue Exception => e
@@ -135,6 +136,31 @@ class Page < ActiveRecord::Base
       self.published.destroy
     elsif self.draft
       self.destroy
+    end
+  end
+
+  def expire_varnish
+    if defined? VARNISH_SERVER
+      ['es','ca'].each do |suffix|
+        base_url = self.url_name + '/' + suffix
+        varnish_request(base_url) # page expiration
+        self.blocks.map(&:widgets).flatten.each do |widget|
+          # widget expiration
+          varnish_request("#{base_url}?widget=#{widget.id}")
+        end
+      end
+    end
+    true
+  end
+
+  def varnish_request(url)
+    Rails.logger.warn "PURGING #{url}"
+    puts "PURGING #{url}"
+    begin
+      http = Net::HTTP.new(VARNISH_SERVER)
+      http.send_request('PURGE', url)
+    rescue
+      ''
     end
   end
 
@@ -260,7 +286,7 @@ class Page < ActiveRecord::Base
       else
         block_keys << block_type.keys.first
       end
-    end    
+    end
     block_keys.each do |key|
       self.blocks << Block.create(:block_type => key.to_s)
     end
