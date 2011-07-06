@@ -23,13 +23,21 @@ module UbiquoDesign
     def render_block(block, cached_widgets = {})
       uhook_collect_widgets(block) do |widget|
         next unless widget.valid?
-        (cached_widgets[widget.id] || render_widget(widget)).tap do |output|
-          # A widget didn't return an string, return inmediately
-          return unless output
+        if esi_widget?(widget)
+          "<esi:include src=#{request.url}?widget=#{widget.id} />"
+        else
+          (cached_widgets[widget.id] || render_widget(widget)).tap do |output|
+            # A widget didn't return an string, return inmediately
+            return unless output
+          end
         end
       end
     end
 
+    def esi_widget?(widget)
+      true
+    end
+      
     def template_directory
       Rails.env.test? ? File.join(ActiveSupport::TestCase.fixture_path, "templates") :
         Rails.root.join('app', 'views', 'page_templates').to_s
