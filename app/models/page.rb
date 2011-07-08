@@ -158,7 +158,7 @@ class Page < ActiveRecord::Base
     puts "PURGING #{url}"
     begin
       http = Net::HTTP.new(VARNISH_SERVER)
-      http.send_request('PURGE', url)
+      http.send_request('BAN', url)
     rescue
       ''
     end
