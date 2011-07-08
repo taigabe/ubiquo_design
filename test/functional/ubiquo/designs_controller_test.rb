@@ -91,13 +91,13 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
   def test_should_preview_unpreviewable_page
     login_as
     page = pages(:one_design)
-    Free.send(:write_inheritable_attribute, :previewable, false)
+    Free.send(:previewable, false)
     Free.create(
       :name => "Test widget",
       :block_id => page.blocks.first.id,
       :content => "test content")
     page.save
-    assert_raise RuntimeError do
+    assert_raise Ubiquo::DesignsController::UnpreviewablePage do
       get :preview, :page_id => page.id
     end
   end

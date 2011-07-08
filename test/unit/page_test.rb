@@ -305,7 +305,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_should_be_previewable_with_previewable_widgets
-    Free.send(:write_inheritable_attribute, :previewable, true)
+    Free.send(:previewable, true)
     page = create_page
     Free.create(
       :name => "Test widget",
@@ -316,7 +316,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_shouldnt_be_previewable_with_no_previewable_widgets
-    Free.send(:write_inheritable_attribute, :previewable, false)
+    Free.send(:previewable, false)
     page = create_page
     Free.create(
       :name => "Test widget",

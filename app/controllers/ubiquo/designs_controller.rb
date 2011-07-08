@@ -1,5 +1,5 @@
 class Ubiquo::DesignsController < UbiquoController
-
+  class UnpreviewablePage < StandardError; end
   include UbiquoDesign::RenderPage
   helper 'ubiquo/widgets'
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
@@ -13,7 +13,7 @@ class Ubiquo::DesignsController < UbiquoController
   def preview
     @page = Page.find(params[:page_id])
     unless @page.is_previewable?
-      raise "Unpreviewable page"
+      raise Ubiquo::DesignsController::UnpreviewablePage.new
     else
       @page.blocks.map(&:widgets).flatten.each do |widget|
         params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
