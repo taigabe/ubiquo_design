@@ -24,7 +24,8 @@ module UbiquoDesign
       uhook_collect_widgets(block) do |widget|
         next unless widget.valid?
         if esi_widget?(widget)
-          "<esi:include src=#{request.url}?widget=#{widget.id} />"
+          new_params = request.query_parameters.merge('widget' => widget.id)
+          "<esi:include src=#{"#{request.url.gsub(request.query_string, new_params.to_query)}".to_json} />"
         else
           (cached_widgets[widget.id] || render_widget(widget)).tap do |output|
             # A widget didn't return an string, return inmediately
