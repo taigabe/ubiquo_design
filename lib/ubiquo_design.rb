@@ -5,6 +5,7 @@ require 'ubiquo_design/version'
 require 'ubiquo_design/cache_managers/base'
 require 'ubiquo_design/cache_expiration'
 require 'ubiquo_design/cache_rendering'
+require 'ubiquo_design/cache_policies'
 
 ActionController::Base.send(:include, UbiquoDesign::UbiquoWidgets)
 

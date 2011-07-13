@@ -123,7 +123,8 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => published_page.id
         )
-        expire_varnish if Rails.env.production?
+
+        UbiquoDesign.cache_manager.expire_page(self) if Rails.env.production?
       end
       return true
     rescue Exception => e
@@ -151,17 +152,6 @@ class Page < ActiveRecord::Base
       end
     end
     true
-  end
-
-  def varnish_request(url)
-    Rails.logger.warn "PURGING #{url}"
-    puts "PURGING #{url}"
-    begin
-      http = Net::HTTP.new(VARNISH_SERVER)
-      http.send_request('BAN', url)
-    rescue
-      ''
-    end
   end
 
   # Returns true if the page has been published

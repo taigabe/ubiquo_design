@@ -286,21 +286,6 @@ module UbiquoDesign
               if options[:current_model].present? && options[:current_model].to_s != key.to_s
                 next
               end
-              if val[:identifier].is_a?(Hash)
-                if options[:scope].respond_to?(:params)
-                  true_identifier = val[:identifier].keys.first
-                else
-                  true_identifier = val[:identifier].values.first
-                end
-              elsif val[:identifier].is_a?(Array)
-                if options[:scope].respond_to?(:params)
-                  true_identifier = val[:identifier].first
-                else
-                  true_identifier = val[:identifier].last
-                end
-              else
-                true_identifier = val[:identifier]
-              end
 
               p_i = key.to_s + '_' 
               p_i += process_params(val, options)
