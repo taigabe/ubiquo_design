@@ -87,9 +87,11 @@ module UbiquoDesign
           Rails.logger.debug "Varnish #{method} request for url #{url}"
           # TODO deal with multiple servers
           begin
-            http = Net::HTTP.new(VARNISH_SERVER, VARNISH_PORT)
-            http.set_debug_output($stderr) # TODO temporal
-            http.send_request(method, url)
+            VarnishServer.alive.each do |server|
+              http = Net::HTTP.new(server.host, server.port)
+              #http.set_debug_output($stderr)
+              http.send_request(method, url)
+            end
           rescue
             Rails.logger.warn "Cache is not available, impossible to delete cache: "+ $!.inspect
           end
