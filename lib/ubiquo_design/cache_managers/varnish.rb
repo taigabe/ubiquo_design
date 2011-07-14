@@ -43,7 +43,7 @@ module UbiquoDesign
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
-          ban_url = Regexp.escape(widget.page.url + "?") + ".*widget=#{widget.id}"
+          ban_url = Regexp.escape(widget.page.url) + "\\\\?.*widget=#{widget.id}"
 
           # And we also ban all the urls that do not contain the widget param
           # (i.e. the "full page", which can have different representations if
@@ -53,7 +53,7 @@ module UbiquoDesign
           # The other cached pages with the "widget" param are in fact
           # other widgets of this page, which have not been modified
           # e.g. /url/of/page?param=4 (this will be expired because !~)
-          ban_negative_url = Regexp.escape(widget.page.url + '?') + ".*widget="
+          ban_negative_url = Regexp.escape(widget.page.url) + "\\\\?.*widget="
 
           # Now do the real job. This is the correct order to avoid recaching old data
           ban(ban_url)
@@ -65,7 +65,7 @@ module UbiquoDesign
           # We cannot simply ban url_page* since url_page could be a segment of
           # another page, so:
           # ban the url_page with params
-          ban(Regexp.escape(page.url + "?"))
+          ban(Regexp.escape(page.url) +  "\\\\?")
           # ban the exact page url, with or without trailing slash
           ban(Regexp.escape(page.url) + "[\/]?$")
         end
