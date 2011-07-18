@@ -124,7 +124,7 @@ class Page < ActiveRecord::Base
           :published_id => published_page.id
         )
 
-        UbiquoDesign.cache_manager.expire_page(self) if Rails.env.production?
+        UbiquoDesign.cache_manager.expire_page(self) if ActionController::Base.perform_caching
       end
       return true
     rescue Exception => e
