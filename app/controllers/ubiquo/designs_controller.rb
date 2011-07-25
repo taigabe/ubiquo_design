@@ -15,10 +15,12 @@ class Ubiquo::DesignsController < UbiquoController
     unless @page.is_previewable?
       raise "Unpreviewable page"
     else
-      @page.blocks.map(&:widgets).flatten.each do |widget|
-        params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
+      unless render_widget_only
+        @page.blocks.map(&:widgets).flatten.each do |widget|
+          params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
+        end
+        render_page(@page)
       end
-      render_page(@page)
     end
   end
 
@@ -41,13 +43,13 @@ class Ubiquo::DesignsController < UbiquoController
     end
     redirect_to :action => "show"
   end
-  
+
   private
 
   def render_ubiquo_design_template(page)
     template_file = Rails.root.join("app/views/page_templates/ubiquo/#{page.page_template}.html.erb")
     if File.exists?(template_file)
-      template_contents = render_to_string(:file => template_file, 
+      template_contents = render_to_string(:file => template_file,
                                            :locals => { :page => page })
     else
       template_contents = render_to_string(:inline => <<-EOS, :locals => { :page => page })
@@ -60,4 +62,16 @@ class Ubiquo::DesignsController < UbiquoController
     render_to_string :partial => 'template',
                      :locals => {:template_contents => template_contents, :page => page}
   end
+
+  # Returns true if we only have to render one widget
+  # Also renders it, so nothing more should be done
+  def render_widget_only
+    if params[:widget]
+      widget = Widget.find(params[:widget])
+      params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
+      render :text => render_widget(widget)
+      true
+    end
+  end
+
 end
