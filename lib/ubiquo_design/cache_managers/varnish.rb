@@ -38,8 +38,9 @@ module UbiquoDesign
         # Expires the applicable content of a widget given its id
         # This means all the urls where the widget is cached
         # +widget+ is a Widget instance
-        def expire(widget)
-          Rails.logger.debug "-- Expiring Varnish --"
+        def expire(widget, options = {})
+
+          Rails.logger.debug "-- Expiring widget ##{widget.id} in Varnish --"
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
@@ -62,6 +63,7 @@ module UbiquoDesign
 
         # Expires a +page+, with all its possibles urls and params
         def expire_page(page)
+          Rails.logger.debug "-- Expiring page ##{page.id} in Varnish --"
           # We cannot simply ban url_page* since url_page could be a segment of
           # another page, so:
           # ban the url_page with params
