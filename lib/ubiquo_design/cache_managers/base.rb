@@ -117,12 +117,15 @@ module UbiquoDesign
           key = "#{widget.id.to_s}_#{widget.version || 0}"
           options[:widget] = widget
           policies[:models].each do |_key, val|
+            # For each model, its own policies must be processed and added to the key
+            # If the scope is a model, only select the policies of the current class
             if options[:scope].respond_to?(:params) || _key == options[:scope].class.name
               key += process_params(policies[:models][_key], options)
               key += process_procs(policies[:models][_key], options)
             end
           end
           if options[:scope].respond_to?(:params)
+            # We are in a controller scope. Process params and procs to create the key
             key += process_params(policies, options)
             key += process_procs(policies, options)
           end
@@ -137,12 +140,14 @@ module UbiquoDesign
               when Symbol
                 [param_id_raw, param_id_raw]
               when Hash
+                # the policy has the syntax {:model_identifier => :controller_identifier}
                 if options[:scope].respond_to?(:params)
-                  [param_id_raw.keys.first(),
-                   param_id_raw.keys.first()]
+                  # we are in the controller
+                  [param_id_raw.keys.first, param_id_raw.keys.first]
                 else
-                  [param_id_raw.keys.first(),
-                   param_id_raw.values.first()]
+                  # in the model, use the value of the hash
+                  # FIXME Maybe this should be the contrary?
+                  [param_id_raw.keys.first, param_id_raw.values.first]
                 end
               end
               if options[:scope].respond_to?(:params)

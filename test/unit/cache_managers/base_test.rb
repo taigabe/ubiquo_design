@@ -133,7 +133,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :scope => OpenStruct.new(:params => {:slug => page.id}, :one => 'one'),
         :policy_context => :test
       }
-      )
+    )
 
     assert_equal "#{widget.id}_#{widget.version}_params_##slug###{page.id}_params_c_params_slug@10000", key
 
@@ -154,7 +154,7 @@ class UbiquoDesign::CacheManagers::BaseTest < ActiveSupport::TestCase
         :scope => OpenStruct.new(:params => {}, :one => page.id),
         :policy_context => :test
       }
-      )
+    )
     assert_equal "#{widget.id}_#{widget.version}_procs_###{page.id}_params_c_params_", key
 
   end
