@@ -36,8 +36,13 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # Returns the sql conditions that determine that a page is the published instance
+  def self.published_conditions
+    ["pages.published_id IS NULL AND pages.is_modified = ?", false]
+  end
+
   named_scope :published,
-              :conditions => ["pages.published_id IS NULL AND pages.is_modified = ?", false]
+              :conditions => Page.published_conditions
   named_scope :drafts,
               :conditions => ["pages.published_id IS NOT NULL OR pages.is_modified = ?", true]
   named_scope :statics,

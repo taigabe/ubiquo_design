@@ -24,6 +24,10 @@ class Widget < ActiveRecord::Base
   after_save :update_page
   after_destroy :update_page
 
+  named_scope :published,
+              :conditions => ::Page.published_conditions,
+              :include => {:block => :page}
+
   def without_page_expiration
     self.update_page_denied = true
     yield
