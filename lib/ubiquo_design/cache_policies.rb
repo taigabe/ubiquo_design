@@ -10,7 +10,7 @@ module UbiquoDesign
       #   context: possible context to create multiple policies
       def define(context = nil, &block)
         with_scope(context) do
-          store_definition(block.call || {})
+          store_definition(block.bind(self).call || {})
         end
       end
 
@@ -52,6 +52,9 @@ module UbiquoDesign
 
       # Stores a hash with widget cache policies
       def store_definition policies
+        # Policies may have been defined by other means. If it's not a hash, stop
+        return unless policies.is_a? Hash
+
         base = current_base
         policies.each_pair do |widget, conditions|
           policy = base[widget] || {
@@ -109,7 +112,7 @@ module UbiquoDesign
             end
           end
         end
-          
+
       end
 
       # Returns the current base hash, given the applied scopes
@@ -121,6 +124,18 @@ module UbiquoDesign
           current = current[scope]
         end
         current
+      end
+
+      def expire_widget widget, models, &block
+        base = current_base
+        base[widget] ||= {}
+        Array(models).each do |model|
+          base[widget][model.to_s.to_sym] = block
+        end
+      end
+
+      def expire_widget_set models, &block
+        expire_widget :custom, models, &block
       end
 
     end
