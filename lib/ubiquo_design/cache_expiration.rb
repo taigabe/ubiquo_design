@@ -54,9 +54,8 @@ module UbiquoDesign
             end
           end
           version_widgets.each do |key|
-            start = Time.zone.now
             key.to_s.classify.constantize.update_all('version = (version +1)')
-            Rails.logger.debug "Version cache #{key}, from #{self.id} - #{self.class.name}, in #{(Time.zone.now - start)/1000}"
+            Rails.logger.debug "Version cache #{key}, from #{self.id} - #{self.class.name}"
           end
           # TODO if the model contains one of: publication_date, published_at, then expire at that time
         end
