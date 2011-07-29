@@ -3,6 +3,10 @@ class Widget < ActiveRecord::Base
 
   INACCEPTABLE_OPTIONS = %w{options widget widget_id block block_id position}
 
+  WIDGET_TTL = {
+    :default => 10.minutes
+  }
+
   @@behaviours = {}
 
   @inheritable_attributes = inheritable_attributes.merge(:previewable => true)
@@ -19,7 +23,7 @@ class Widget < ActiveRecord::Base
   attr_protected :options
 
   before_create :set_version
-  
+
   before_save :update_position
   after_save :update_page
   after_destroy :update_page
