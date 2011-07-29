@@ -39,60 +39,70 @@ module UbiquoDesign
         # This means all the urls where the widget is cached
         # +widget+ is a Widget instance
         def expire(widget, options = {})
+          Rails.logger.debug "Expiring widget ##{widget.id} in Varnish"
 
-          Rails.logger.debug "-- Expiring widget ##{widget.id} in Varnish --"
+          base_url = widget.page.url
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
-          ban_url = Regexp.escape(widget.page.url) + "\\\\?.*widget=#{widget.id}"
+          widget_urls = [base_url, "\\\\?.*widget=#{widget.id}"]
 
           # And we also ban all the urls that do not contain the widget param
           # (i.e. the "full page", which can have different representations if
           # it has different params).
           # This is needed since else the esi fragment would be new,
           # but the page would still be cached.
-          # The other cached pages with the "widget" param are in fact
-          # other widgets of this page, which have not been modified
+          # The other cached pages with this page url and the "widget" param
+          # are in fact other widgets of this page, which have not been modified
           # e.g. /url/of/page?param=4 (this will be expired because !~)
-          ban_negative_url = Regexp.escape(widget.page.url) + "\\\\?.*widget="
+          page_urls = [base_url, "(?!.*[\\\\?|&]widget=)"]
 
           # Now do the real job. This is the correct order to avoid recaching old data
-          ban(ban_url)
-          ban_negative(ban_negative_url)
+          ban(widget_urls)
+          ban(page_urls)
         end
 
         # Expires a +page+, with all its possibles urls and params
         def expire_page(page)
-          Rails.logger.debug "-- Expiring page ##{page.id} in Varnish --"
+          Rails.logger.debug "Expiring page ##{page.id} in Varnish"
           # We cannot simply ban url_page* since url_page could be a segment of
           # another page, so:
           # ban the url_page with params
-          ban(Regexp.escape(page.url) +  "\\\\?")
+          ban([page.url, "\\\\?"])
           # ban the exact page url, with or without trailing slash
-          ban(Regexp.escape(page.url) + "[\/]?$")
+          ban([page.url, "[\/]?$"])
         end
 
         protected
 
-        # Bans all urls that match +url+ (which is interpreted as a regexp)
+        # Bans all urls that match +url+, which is an array with a
+        # regexp-escapable part and an already escaped one that is appended
         def ban(url)
-          varnish_request('BAN', url)
+          # Get the base url from the related page, without the possible
+          # trailing slash. It is appended as optional later (to expire both)
+          base_url = url.first.gsub(/\/$/, '')
+
+          # we have to double-escape in order that Varnish gets it as a correct regexp
+          result_url = Regexp.escape(base_url).gsub('\\'){'\\\\'} + '/?' + url.last
+          varnish_request('BAN', result_url)
         end
 
-        # Bans all urls not matching +url+
-        def ban_negative(url)
-          varnish_request('BAN_NEG', url)
-        end
-
-        # removes the widget content from the store
+        # Sends a request with the required +method+ to the given +url+
         def varnish_request method, url
           Rails.logger.debug "Varnish #{method} request for url #{url}"
-          # TODO deal with multiple servers
+
+          # If the given url is absolute, use the host as the "Host:" header
+          parsed_url = URI.parse(URI.escape(url))
+          if host = parsed_url.host
+            headers = {'Host' => host}
+            url = URI.unescape("#{parsed_url.path}?#{parsed_url.query}")
+          end
+
           begin
             VarnishServer.alive.each do |server|
               http = Net::HTTP.new(server.host, server.port)
               #http.set_debug_output($stderr)
-              http.send_request(method, url)
+              http.send_request(method, url, nil, headers || {})
             end
           rescue
             Rails.logger.warn "Cache is not available, impossible to delete cache: "+ $!.inspect
