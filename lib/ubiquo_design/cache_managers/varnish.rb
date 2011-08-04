@@ -41,7 +41,7 @@ module UbiquoDesign
         def expire(widget, options = {})
           Rails.logger.debug "Expiring widget ##{widget.id} in Varnish"
 
-          base_url = widget.page.url
+          base_url = widget.page.absolute_url(options)
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
@@ -68,9 +68,9 @@ module UbiquoDesign
           # We cannot simply ban url_page* since url_page could be a segment of
           # another page, so:
           # ban the url_page with params
-          ban([page.url, "\\\\?"])
+          ban([page.absolute_url, "\\\\?"])
           # ban the exact page url, with or without trailing slash
-          ban([page.url, "[\/]?$"])
+          ban([page.absolute_url, "[\/]?$"])
         end
 
         protected
