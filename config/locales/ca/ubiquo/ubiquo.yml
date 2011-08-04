@@ -81,6 +81,7 @@ ca:
       select_available_shared_blocks: "Sel·lecciona un bloc disponible"
       stop_use_shared_block: "Deixar de fer servir el bloc '{{key}}'"
       replace_block_confirm: "Estàs segur de voler remplaçar el contingut del block?"
+      stop_share_block_confirm: "Estàs segur de voler deixar de compartir el block?"
     widget_groups:
       sidebar: Bloc lateral
       main: Bloc principal

@@ -80,6 +80,7 @@ en:
       select_available_shared_blocks: "Select an available block"
       stop_use_shared_block: "Stop using the block '{{key}}'"
       replace_block_confirm: "Are sure to replace the contents of the block?"
+      stop_share_block_confirm: "Are sure to stop sharing the block?"
     widget_groups:
       sidebar: Sidebar block
       main: Main block
