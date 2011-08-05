@@ -82,21 +82,25 @@ module UbiquoDesign
           # trailing slash. It is appended as optional later (to expire both)
           base_url = url.first.gsub(/\/$/, '')
 
+          # Parse the url and separate the host and the path+query
+          parsed_url_for_host = URI.parse(url.first)
+          host = parsed_url_for_host.host
+
+          # delete the host from the base_url
+          base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
+
           # we have to double-escape in order that Varnish gets it as a correct regexp
-          result_url = Regexp.escape(base_url).gsub('\\'){'\\\\'} + '/?' + url.last
-          varnish_request('BAN', result_url)
+          result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
+
+          varnish_request('BAN', result_url, host)
         end
 
         # Sends a request with the required +method+ to the given +url+
-        def varnish_request method, url
+        # The +host+ parameter, if supplied, is used as the "Host:" header
+        def varnish_request method, url, host = nil
           Rails.logger.debug "Varnish #{method} request for url #{url}"
 
-          # If the given url is absolute, use the host as the "Host:" header
-          parsed_url = URI.parse(URI.escape(url))
-          if host = parsed_url.host
-            headers = {'Host' => host}
-            url = URI.unescape("#{parsed_url.path}?#{parsed_url.query}")
-          end
+          headers = {'Host' => host} if host
 
           begin
             VarnishServer.alive.each do |server|
