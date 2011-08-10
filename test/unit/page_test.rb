@@ -272,11 +272,11 @@ class PageTest < ActiveSupport::TestCase
     create_example_structure
     page = create_page(:page_template => 'example')
     assert_equal 'test_layout', page.layout
-    assert_equal Page::DEFAULT_LAYOUT, create_page.layout
+    assert_equal Page::DEFAULT_TEMPLATE_OPTIONS[:layout], create_page.layout
   end
 
   def test_should_get_default_layout
-    assert_equal 'main', Page::DEFAULT_LAYOUT
+    assert_equal 'main', Page::DEFAULT_TEMPLATE_OPTIONS[:layout]
   end
 
   def test_should_get_available_widgets
@@ -305,7 +305,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_should_be_previewable_with_previewable_widgets
-    Free.send(:write_inheritable_attribute, :previewable, true)
+    Free.send(:previewable, true)
     page = create_page
     Free.create(
       :name => "Test widget",
@@ -316,7 +316,7 @@ class PageTest < ActiveSupport::TestCase
   end
 
   def test_shouldnt_be_previewable_with_no_previewable_widgets
-    Free.send(:write_inheritable_attribute, :previewable, false)
+    Free.send(:previewable, false)
     page = create_page
     Free.create(
       :name => "Test widget",

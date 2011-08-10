@@ -14,9 +14,10 @@
         explorerScrollPositioner('static');
 				showAllowedBlocks('<%= widget_sidebar %>');
 			},
-			onEnd: function() {
+			onEnd: function(draggable) {
 				explorerScrollPositioner('relative');
 				hideAllowedBlocks('<%= widget_sidebar %>');
+                                draggable.element.style.position="relative";
 			}
 	  });
 });

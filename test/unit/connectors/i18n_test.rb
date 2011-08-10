@@ -98,7 +98,23 @@ module Connectors
       end
     end
 
+    test "show create two widgets for each locale"  do
+      assert_difference "StaticSection.count", 2 do
+        widget, page = create_widget(:static_section, :locale => "es_ES")
+      end
+    end
+
     private
+
+    def widget_attributes
+      {
+        :title => 'About us (test company)',
+      }
+    end
+
+    def create_widget(type, options = {})
+      insert_widget_in_page(type, widget_attributes.merge(options))
+    end
 
     def create_page(options = {})
       Page.create({

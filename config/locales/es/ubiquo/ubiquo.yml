@@ -81,6 +81,7 @@ es:
       select_available_shared_blocks: "Selecciona un bloque disponible"
       stop_use_shared_block: "Dejar de utilizar el bloque '{{key}}'"
       replace_block_confirm: "¿Estas seguro de remplazar el contenido del bloque?"
+      stop_share_block_confirm: "¿Estas seguro de dejar de compartir el bloque?"
     widget_groups:
       sidebar: Bloque lateral
       main: Bloque principal

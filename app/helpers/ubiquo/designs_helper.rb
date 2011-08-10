@@ -115,6 +115,7 @@ module Ubiquo::DesignsHelper
           link_to_remote(t('ubiquo.design.stop_share_block'),
             :url => ubiquo_page_design_block_path(page, block),
             :method => :put,
+            :confirm => t('ubiquo.design.stop_share_block_confirm'),
             :with => "'is_shared=false'")
         end
       elsif block.shared_id
