@@ -286,6 +286,12 @@ class PageTest < ActiveSupport::TestCase
     assert_equal_set [:one, :two, :example, :global], page.available_widgets - prior_widgets
   end
 
+  def test_should_get_available_widgets_sorted
+    create_example_structure
+    page = create_page(:page_template => 'example')
+    assert_equal [:free, :generic_highlighted, :generic_detail, :generic_listing, :static_section, :example, :global, :one, :two], page.available_widgets
+  end
+
   def test_should_get_available_widgets_per_block
     create_example_structure
     page = create_page(:page_template => 'example')

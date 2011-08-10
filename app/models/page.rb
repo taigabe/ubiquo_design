@@ -222,7 +222,7 @@ class Page < ActiveRecord::Base
 
   # Returns the widgets available for at least one block of this page
   def available_widgets
-    available_widgets_per_block.values.flatten.uniq
+    available_widgets_per_block.values.flatten.uniq.sort_by{ |widget| Widget.default_name_for widget }
   end
 
   # Returns a hash containing, for each block, the widgets that can be assigned
@@ -232,7 +232,7 @@ class Page < ActiveRecord::Base
         widgets_per_block[block.block_type] = UbiquoDesign::Structure.find(
           :widgets,
           {:page_template => page_template, :block => block.block_type}
-        )
+        ).sort_by{ |widget| Widget.default_name_for widget }
       end
     end
   end
