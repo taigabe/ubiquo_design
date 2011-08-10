@@ -146,7 +146,6 @@ class Page < ActiveRecord::Base
     end
   end
 
-<<<<<<< HEAD
   def expire_varnish
     if defined? VARNISH_SERVER
       ['es','ca'].each do |suffix|
@@ -161,10 +160,7 @@ class Page < ActiveRecord::Base
     true
   end
 
-  # Returns true if the page has been published
-=======
   # Returns true if the page has been published.
->>>>>>> origin/master
   def published?
     published_id
   end
