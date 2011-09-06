@@ -207,7 +207,7 @@ class Page < ActiveRecord::Base
   def template_structure
     blocks = UbiquoDesign::Structure.get(:page_template => self.page_template)[:blocks]
     blocks.map do |block|
-      cols = block.values.flatten.first[:options][:cols] rescue Block::DEFAULT_BLOCK_COLS
+      cols = block.values.flatten.first[:options][:cols] rescue Block::DEFAULT_BLOCK_OPTIONS[:cols]
       subblocks = (block.values.flatten.last.try(:[], :subblocks) || []).map do |sb|
         [sb.keys.first, sb.values.flatten.first[:options][:cols]]
       end
