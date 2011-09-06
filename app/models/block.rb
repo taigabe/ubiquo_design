@@ -8,7 +8,9 @@ class Block < ActiveRecord::Base
   after_save :update_page
   after_destroy :update_page
 
-  DEFAULT_BLOCK_COLS = 4
+  DEFAULT_BLOCK_OPTIONS = {
+    :cols => 4
+  }
 
   # Given a page and block_type, create and return a block
   def self.create_for_block_type_and_page(block_type, page, options = {})
@@ -31,11 +33,17 @@ class Block < ActiveRecord::Base
     self.shared_id ? self.shared : self
   end
 
+  def options
+    DEFAULT_BLOCK_OPTIONS.merge(
+      UbiquoDesign::Structure.get(
+        :page_template => self.page.page_template.to_sym,
+        :block => self.block_type.to_sym
+      )[:options] || {}
+    )
+  end
+
   def cols
-    UbiquoDesign::Structure.get(
-      :page_template => self.page.page_template.to_sym,
-      :block => self.block_type.to_sym
-    )[:options][:cols]
+    options[:cols]
   end
 
   # Returns the widgets that can be placed in this block
