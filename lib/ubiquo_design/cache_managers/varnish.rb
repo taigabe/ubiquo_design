@@ -89,8 +89,10 @@ module UbiquoDesign
           # delete the host from the base_url
           base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
 
-          # we have to double-escape in order that Varnish gets it as a correct regexp
-          result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
+          # Varnish 2.1 required to double-escape in order to get it as a correct regexp
+          # result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
+          # Varnish 3 needs it only escaped once
+          result_url = Regexp.escape(base_url_without_host) + '/?' + url.last
 
           varnish_request('BAN', result_url, host)
         end
