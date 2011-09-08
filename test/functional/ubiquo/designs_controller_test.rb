@@ -60,11 +60,11 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
   def test_should_preview_page_if_its_previewable
     login_as
     page = pages(:one_design)
-    GenericListing.create(
+    widget = GenericListing.new(
       :name => "Test widget",
-      :block_id => page.blocks.last.id,
       :title => "Test widget title",
       :model => "GenericListing")
+    page.add_widget(:main, widget)
     page.save
     get :preview, :page_id => page.id
     assert_select "div.genericlisting-list.generic-main-list" do
@@ -75,11 +75,11 @@ class Ubiquo::DesignsControllerTest < ActionController::TestCase
   def test_should_preview_page_with_required_params
     login_as
     page = pages(:one_design)
-    GenericDetail.create(
+    widget = GenericDetail.new(
       :name => "Test widget",
-      :block_id => page.blocks.last.id,
       :model => "GenericDetail")
-    page.save 
+    page.add_widget(:main, widget)
+    page.save
     GenericDetail.any_instance.expects(:element).returns(GenericDetail.first)
     get :preview, :page_id => page.id
     assert_select "div.genericdetail-detail.generic-detail" do

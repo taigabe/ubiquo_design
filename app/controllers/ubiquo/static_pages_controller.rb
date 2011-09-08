@@ -66,7 +66,7 @@ class Ubiquo::StaticPagesController < UbiquoController
   
   def update
     @static_page = Page.find(params[:id])
-    @widget = @static_page.uhook_static_section_widget(current_locale) || uhook_create_widget
+    @widget = params[:from].present? ? uhook_new_widget : (@static_page.uhook_static_section_widget(current_locale) || uhook_create_widget)
     if @widget.new_record?
       @static_page.add_widget(:main, @widget)
     else

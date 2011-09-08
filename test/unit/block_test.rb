@@ -77,6 +77,13 @@ class BlockTest < ActiveSupport::TestCase
     assert page.reload.is_modified?
   end
 
+  def test_should_not_break_is_modified_attribute_on_page_delete
+    page = pages(:one_design)
+    block = Block.create_for_block_type_and_page("static", page)
+    page.destroy
+    assert_nothing_raised {block.destroy}
+  end
+
   def test_should_return_available_shared_blocks
     page = pages(:one_design)
     block = Block.create_for_block_type_and_page("sidebar", page, :is_shared => true)
