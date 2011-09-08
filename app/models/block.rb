@@ -56,7 +56,8 @@ class Block < ActiveRecord::Base
 
   # When a block is saved, the associated page must change its modified attribute
   def update_page
-    block_page = self.page.reload
-    block_page.update_modified(true) unless block_page.is_modified?
+    if self.page && self.page.reload
+      self.page.update_modified(true) unless self.page.is_modified?
+    end
   end
 end
