@@ -26,7 +26,7 @@
         <% @page_templates.each do |template_key| %>
           <li>
             <%= f.radio_button(:page_template, template_key) %>
-            <%= f.label "page_template_#{template_key}", template_key %>
+            <%= f.label "page_template_#{template_key}", t("ubiquo.page_templates.#{template_key}") %>
             <%= ubiquo_image_tag("page_templates/#{template_key}.png", {
                  :id => "page_template_#{template_key}",
                  :onclick => "$('page_' + this.id).click(); return false;"
