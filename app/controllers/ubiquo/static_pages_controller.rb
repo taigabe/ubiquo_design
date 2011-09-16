@@ -38,10 +38,11 @@ class Ubiquo::StaticPagesController < UbiquoController
     default_widget_params = { :name => "Static Section" }
     @static_page = Page.new(params[:page].merge!(default_page_params))
     @widget = uhook_create_widget
+    block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
     if params[:publish_page] == "true"
-      ok = @static_page.add_widget(:main, @widget) && @static_page.publish
+      ok = @static_page.add_widget(block_type, @widget) && @static_page.publish
     else
-      ok = @static_page.add_widget(:main, @widget)
+      ok = @static_page.add_widget(block_type, @widget)
     end
     respond_to do |format|
       if ok
@@ -68,7 +69,8 @@ class Ubiquo::StaticPagesController < UbiquoController
     @static_page = Page.find(params[:id])
     @widget = params[:from].present? ? uhook_new_widget : (@static_page.uhook_static_section_widget(current_locale) || uhook_create_widget)
     if @widget.new_record?
-      @static_page.add_widget(:main, @widget)
+      block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+      @static_page.add_widget(block_type, @widget)
     else
       @widget.update_attributes(params[:static_section])
     end
@@ -114,7 +116,17 @@ class Ubiquo::StaticPagesController < UbiquoController
     end
     redirect_to :action => "edit"
   end
-  
+
+  def unpublish
+    static_page = Page.find(params[:id])
+    if static_page.unpublish
+      flash[:notice] = t('ubiquo.design.page_unpublished')
+    else
+      flash[:error] = t('ubiquo.design.page_unpublish_error')
+    end
+    redirect_to :action => "edit"
+  end
+
   private
   
   def load_page_templates

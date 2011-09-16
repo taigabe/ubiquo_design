@@ -38,8 +38,9 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   }
 
   config.add :memcache, {:server => '127.0.0.1', :timeout => 0}
-
   config.add :generic_models, []
+  config.add :block_type_for_static_section_widget
+
 end
 
 groups = Ubiquo::Config.get :model_groups

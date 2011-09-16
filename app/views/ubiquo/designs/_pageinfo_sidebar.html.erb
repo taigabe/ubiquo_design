@@ -49,10 +49,17 @@
           <% end %>
         <% end %>
         <% if page.published? %>
-          <li>
-            <%= button_to t('ubiquo.design.unpublish'),
-                          unpublish_ubiquo_page_design_path(page), :method => :put, :class => 'unpublish' %>
-          </li>
+          <% if page_type == "static_page" %>
+            <li>
+              <%= button_to t('ubiquo.design.unpublish'),
+                            unpublish_ubiquo_static_page_path(page), :method => :put, :class => 'unpublish' %>
+            </li>
+          <% else %>
+            <li>
+              <%= button_to t('ubiquo.design.unpublish'),
+                            unpublish_ubiquo_page_design_path(page), :method => :put, :class => 'unpublish' %>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>
