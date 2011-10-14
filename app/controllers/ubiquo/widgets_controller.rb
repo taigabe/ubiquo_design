@@ -98,7 +98,21 @@ class Ubiquo::WidgetsController < UbiquoController
   def change_name
     @widget = Widget.find(params[:id])
     @widget.update_attributes(:name => params[:value])
-    render :inline => @widget.name
+    respond_to do |format|
+      format.js do
+        js_response = render_to_string :update do |page|
+          self.uhook_extra_rjs_on_update(page, true) do |page|
+            page << 'myLightWindow.deactivate();'
+            page.replace_html("page_info", :partial => 'ubiquo/designs/pageinfo_sidebar',
+                              :locals => { :page => @page.reload })
+            page.call "update_error_on_widgets", @page.wrong_widgets_ids
+            page.replace_html("widget_name_field_#{@widget.id}", @widget.name)
+          end
+        end
+
+        render :inline => "<%= javascript_tag(#{js_response.to_json}) %>", :locals => {:js_response => js_response }
+      end
+    end
   end
 
   def change_order
