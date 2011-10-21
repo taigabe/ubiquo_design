@@ -34,7 +34,7 @@ class Ubiquo::StaticPagesController < UbiquoController
   end
   
   def create
-    default_page_params = { :is_static => true }
+    default_page_params = { :is_static => true, :page_template => "static" }
     default_widget_params = { :name => "Static Section" }
     @static_page = Page.new(params[:page].merge!(default_page_params))
     @widget = uhook_create_widget
