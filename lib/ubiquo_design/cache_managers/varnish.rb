@@ -35,8 +35,9 @@ module UbiquoDesign
 
         # Returns true if the widget is an esi widget
         def esi_widget?(widget)
-          # TODO
-          defined? ESI_ENABLED
+          if defined? ESI_ENABLED
+            !widget.respond_to?(:skip_esi?) || !widget.skip_esi?
+          end
         end
 
         # Expires the applicable content of a widget given its id
