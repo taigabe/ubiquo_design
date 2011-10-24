@@ -16,8 +16,12 @@ module UbiquoDesign
             page.blocks.each do |block|
               block.real_block.widgets.each do |widget|
                 if esi_widget?(widget)
-                  new_params = request.query_parameters.merge('widget' => widget.id)
-                  esi_url = request.url.gsub("?#{request.query_string}", '') + "?#{new_params.to_query}"
+                  esi_url = if widget.has_unique_url?
+                    widget.url
+                  else
+                    new_params = request.query_parameters.merge('widget' => widget.id)
+                    request.url.gsub("?#{request.query_string}", '') + "?#{new_params.to_query}"
+                  end
                   widgets_by_id[widget.id] = "<esi:include src=#{esi_url.to_json} />"
                 end
               end
@@ -29,7 +33,7 @@ module UbiquoDesign
         # Simply return, since the real caching is done by Varnish when the request is finished
         def cache(widget_id, contents, options = {}); end
 
-       # Returns true if the widget is an esi widget
+        # Returns true if the widget is an esi widget
         def esi_widget?(widget)
           # TODO
           defined? ESI_ENABLED
@@ -41,7 +45,11 @@ module UbiquoDesign
         def expire(widget, options = {})
           Rails.logger.debug "Expiring widget ##{widget.id} in Varnish"
 
-          base_url = widget.page.absolute_url(options)
+          base_url = if widget.has_unique_url?
+            widget.url.gsub(/\?.*$/, '')
+          else
+            widget.page.absolute_url(options)
+          end
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42

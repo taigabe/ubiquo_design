@@ -131,6 +131,18 @@ class Widget < ActiveRecord::Base
     write_inheritable_attribute :previewable, (value == true)
   end
 
+  # Returns true if the widget can be retrieved in a unique url independently of
+  # the page it is placed in or any other params
+  def has_unique_url?
+    url.present?
+  end
+
+  # If the widget +has_unique_url?+, returns a string with the url where this widget
+  # can be retrieved. Else returns a +blank?+ value
+  def url
+    false
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute
