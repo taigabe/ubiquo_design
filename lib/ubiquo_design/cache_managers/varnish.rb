@@ -46,15 +46,12 @@ module UbiquoDesign
         def expire(widget, options = {})
           Rails.logger.debug "Expiring widget ##{widget.id} in Varnish"
 
-          base_url = if widget.has_unique_url?
-            widget.url.gsub(/\?.*$/, '')
-          else
-            widget.page.absolute_url(options)
-          end
+          base_url = widget.page.absolute_url(options)
+          widget_url = widget.url.gsub(/\?.*$/, '') if widget.has_unique_url?
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
-          widget_urls = [base_url, "\\\\?.*widget=#{widget.id}"]
+          widget_urls = [widget_url || base_url, "\\\\?.*widget=#{widget.id}"]
 
           # And we also ban all the urls that do not contain the widget param
           # (i.e. the "full page", which can have different representations if
