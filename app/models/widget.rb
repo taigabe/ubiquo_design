@@ -143,6 +143,11 @@ class Widget < ActiveRecord::Base
     false
   end
 
+  # Expires this widget, using the configured cache_manager
+  def expire(options = {})
+    UbiquoDesign.cache_manager.expire(self, options)
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute
