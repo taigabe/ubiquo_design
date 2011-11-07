@@ -64,8 +64,14 @@ module UbiquoDesign
           page_urls = [base_url, "(?!.*[\\\\?|&]widget=)"]
 
           # Now do the real job. This is the correct order to avoid recaching old data
-          ban(widget_urls)
-          ban(page_urls)
+          #
+          # Only expire the widget if is an esi widget (to skip unnecessary bans for skip_esi widgets)
+
+          ban(widget_urls) if esi_widget?(widget)
+
+          # And only expire the page if the widget is not shared (too many potential pages)
+
+          ban(page_urls) unless widget.has_unique_url?
         end
 
         # Expires a +page+, with all its possibles urls and params
