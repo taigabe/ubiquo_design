@@ -22,6 +22,9 @@ class Ubiquo::PagesController < UbiquoController
       format.xml  {
         render :xml => @pages
       }
+      format.js {
+        render :json => @pages.to_json(:only => [:id, :name])
+      }
     end
   end
 
