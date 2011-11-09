@@ -43,15 +43,20 @@ module UbiquoDesign
         # Expires the applicable content of a widget given its id
         # This means all the urls where the widget is cached
         # +widget+ is a Widget instance
+        # +options+ are used in the absolute_url calculation, and includes at minimum
+        #   the :scope of the expiration.
+        #   Use :loose => true is you want the url to match loosely at the right
+        #     (e.g. to expire too /my/url/extended if the page is at /my/url)
         def expire(widget, options = {})
           Rails.logger.debug "Expiring widget ##{widget.id} in Varnish"
 
           base_url = widget.page.absolute_url(options)
           widget_url = widget.url.gsub(/\?.*$/, '') if widget.has_unique_url?
+          loose = "[^\\?]*" if options[:loose]
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
-          widget_urls = [widget_url || base_url, "\\?.*widget=#{widget.id}"]
+          widget_urls = [widget_url || base_url, "#{loose}\\?.*widget=#{widget.id}"]
 
           # And we also ban all the urls that do not contain the widget param
           # (i.e. the "full page", which can have different representations if
@@ -61,7 +66,7 @@ module UbiquoDesign
           # The other cached pages with this page url and the "widget" param
           # are in fact other widgets of this page, which have not been modified
           # e.g. /url/of/page?param=4 will be expired; /url/of/page?param=4&widget=1 won't.
-          page_urls = [base_url, "($|\\?(?!.*(?<=[\\?|&])widget=))"]
+          page_urls = [base_url, "#{loose}($|\\?(?!.*(?<=[\\?|&])widget=))"]
 
           # Now do the real job. This is the correct order to avoid recaching old data
           #
