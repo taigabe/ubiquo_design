@@ -51,7 +51,7 @@ module UbiquoDesign
 
           # We ban all the urls of the related page that also contain the widget id
           # e.g. /url/of/page?param=4&widget=42
-          widget_urls = [widget_url || base_url, "\\\\?.*widget=#{widget.id}"]
+          widget_urls = [widget_url || base_url, "\\?.*widget=#{widget.id}"]
 
           # And we also ban all the urls that do not contain the widget param
           # (i.e. the "full page", which can have different representations if
@@ -60,8 +60,8 @@ module UbiquoDesign
           # but the page would still be cached.
           # The other cached pages with this page url and the "widget" param
           # are in fact other widgets of this page, which have not been modified
-          # e.g. /url/of/page?param=4 (this will be expired because !~)
-          page_urls = [base_url, "(?!.*[\\\\?|&]widget=)"]
+          # e.g. /url/of/page?param=4 will be expired; /url/of/page?param=4&widget=1 won't.
+          page_urls = [base_url, "($|\\?(?!.*(?<=[\\?|&])widget=))"]
 
           # Now do the real job. This is the correct order to avoid recaching old data
           #
@@ -80,7 +80,7 @@ module UbiquoDesign
           # We cannot simply ban url_page* since url_page could be a segment of
           # another page, so:
           # ban the url_page with params
-          ban([page.absolute_url, "\\\\?"])
+          ban([page.absolute_url, "\\?"])
           # ban the exact page url, with or without trailing slash
           ban([page.absolute_url, "[\/]?$"])
         end
@@ -89,6 +89,8 @@ module UbiquoDesign
 
         # Bans all urls that match +url+, which is an array with a
         # regexp-escapable part and an already escaped one that is appended
+        # after the final slash.
+        # Note that +url+ is strictly interpreted, as '^' is prepended
         def ban(url)
           # Get the base url from the related page, without the possible
           # trailing slash. It is appended as optional later (to expire both)
@@ -104,7 +106,7 @@ module UbiquoDesign
           # Varnish 2.1 required to double-escape in order to get it as a correct regexp
           # result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
           # Varnish 3 needs it only escaped once
-          result_url = Regexp.escape(base_url_without_host) + '/?' + url.last
+          result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
 
           varnish_request('BAN', result_url, host)
         end
@@ -112,7 +114,7 @@ module UbiquoDesign
         # Sends a request with the required +method+ to the given +url+
         # The +host+ parameter, if supplied, is used as the "Host:" header
         def varnish_request method, url, host = nil
-          Rails.logger.debug "Varnish #{method} request for url #{url}"
+          Rails.logger.debug "Varnish #{method} request for url #{url} and host #{host}"
 
           headers = {'Host' => host} if host
 
