@@ -37,13 +37,32 @@ module Connectors
         assert num_widgets > 1
         general_locale = Locale.current
         widgets.each_with_index do |widget, i|
-          widget.content_id = 1
+          widget.content_id = Widget.connection.next_val_sequence("#{Widget.table_name}_$_content_id")
           Locale.current = widget.locale = "loc#{i}"
           assert widget.save
         end
         assert_difference "Widget.count",num_widgets do # cloned widgets
           Locale.current = general_locale
           assert page.publish
+        end
+      end
+
+      test "add_widget should not duplicate a widget if Locale.current its not the same of the widget" do
+        begin
+          locale = Locale.current
+          Locale.current = 'en'
+
+          page = create_page
+          static_section = StaticSection.new(:name => "Sección en español",
+            :title => "esto es una sección en español",
+            :locale => "es_ES",
+            :body => "")
+
+          page.add_widget(:main, static_section)
+          created_widgets = page.blocks.map{|i| i.widgets}.flatten
+          assert_equal 1, created_widgets.size
+        ensure
+          Locale.current = locale
         end
       end
 

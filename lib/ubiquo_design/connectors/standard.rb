@@ -11,6 +11,10 @@ module UbiquoDesign
 
         module InstanceMethods
 
+          def uhook_add_widget(widget, &block)
+            yield
+          end
+
           def uhook_publish_block_widgets(block, new_block)
             block.widgets.each do |widget|
               new_widget = widget.clone

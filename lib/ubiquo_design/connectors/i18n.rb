@@ -36,7 +36,7 @@ module UbiquoDesign
       def self.unload!
         # TODO create generic methods for these cleanups
         ([::Widget] + ::Widget.send(:subclasses)).each do |klass|
-          klass.instance_variable_set :@translatable, false
+          klass.instance_variable_set :@translatable, nil
           klass.reset_column_information
         end
         ::Widget.send :alias_method, :block, :block_without_shared_translations
@@ -63,6 +63,12 @@ module UbiquoDesign
 
         module InstanceMethods
           include Standard::Page::InstanceMethods
+
+          def uhook_add_widget(widget, &block)
+            widget.without_current_locale do
+              yield
+            end
+          end
 
           def uhook_publish_block_widgets(block, new_block)
             # we need to relate the cloned widgets between them,
@@ -166,9 +172,9 @@ module UbiquoDesign
 
       module UbiquoStaticPagesController
         def self.included(klass)
-          klass.send(:include, InstanceMethods)          
+          klass.send(:include, InstanceMethods)
           klass.send(:helper, Helper)
-          I18n.register_uhooks klass, InstanceMethods          
+          I18n.register_uhooks klass, InstanceMethods
         end
 
         module Helper
@@ -195,11 +201,11 @@ module UbiquoDesign
             default_widget_params = {
               :name => t('ubiquo.design.static_pages.widget_title'),
               :locale => current_locale,
-            }            
+            }
             ::StaticSection.new(params[:static_section].reverse_merge!(default_widget_params))
           end
         end
-        
+
       end
 
       module RenderPage

@@ -255,7 +255,9 @@ class Page < ActiveRecord::Base
         block = self.blocks.select { |b| b.block_type == block_key.to_s }.first
         block ||= Block.create!(:page_id => self.id, :block_type => block_key.to_s)
         block.widgets << widget
-        widget.save!
+        uhook_add_widget(widget) do
+          widget.save!
+        end
       end
     rescue Exception => e
       return false
