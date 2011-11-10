@@ -38,6 +38,7 @@ module UbiquoDesign
         ([::Widget] + ::Widget.send(:subclasses)).each do |klass|
           klass.instance_variable_set :@translatable, nil
           klass.reset_column_information
+          klass.clear_locale_uniqueness_per_entity_validation if klass.respond_to?(:clear_locale_uniqueness_per_entity_validation)
         end
         ::Widget.send :alias_method, :block, :block_without_shared_translations
         # Unfortunately there's no neat way to clear the helpers mess
