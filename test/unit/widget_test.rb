@@ -105,8 +105,20 @@ class WidgetTest < ActiveSupport::TestCase
     assert_equal widget.block.page, widget.page
   end
 
+  def test_validations_on_options_should_work
+    assert_difference "Widget.count" do
+      widget = create_widget_with_validations(:number => 0)
+      assert !widget.new_record?, "#{widget.errors.full_messages.to_sentence}"
+    end
+    widget = create_widget_with_validations
+    assert widget.errors.on(:number)
+  end
+
   private
   def create_widget(options = {})
     TestWidget.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))
+  end
+  def create_widget_with_validations(options = {})
+    TestWidgetWithValidations.create({:name => "Test Widget", :block_id => blocks(:one).id}.merge!(options))
   end
 end

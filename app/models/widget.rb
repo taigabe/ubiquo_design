@@ -56,6 +56,9 @@ class Widget < ActiveRecord::Base
       define_method("#{option}=") do |value|
         self.options[option] = value
       end
+      define_method("#{option}_before_type_cast") do
+        self.options[option]
+      end
     end
   end
 
