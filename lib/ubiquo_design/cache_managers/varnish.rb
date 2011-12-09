@@ -15,7 +15,7 @@ module UbiquoDesign
             request = options[:scope].request
             page.blocks.each do |block|
               block.real_block.widgets.each do |widget|
-                if esi_widget?(widget)
+                if render_esi_widget?(widget)
                   esi_url = if widget.has_unique_url?
                     widget.url
                   else
@@ -33,11 +33,14 @@ module UbiquoDesign
         # Simply return, since the real caching is done by Varnish when the request is finished
         def cache(widget_id, contents, options = {}); end
 
+        # Returns true if a widget is a esi widget and we are rendering widgets as esi
+        def render_esi_widget?(widget)
+          defined?(ESI_RENDERING_ENABLED) && esi_widget?(widget)
+        end
+
         # Returns true if the widget is an esi widget
         def esi_widget?(widget)
-          if defined? ESI_ENABLED
-            !widget.respond_to?(:skip_esi?) || !widget.skip_esi?
-          end
+          !widget.respond_to?(:skip_esi?) || !widget.skip_esi?
         end
 
         # Expires the applicable content of a widget given its id
