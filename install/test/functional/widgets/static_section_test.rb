@@ -16,7 +16,7 @@ class StaticSectionWidgetTest < ActionController::TestCase
     assert_select "div.static-section" do
       assert_select "h2"
       assert_select "p.summary"
-      assert_select "p.body"      
+      assert_select "p.body"
     end
   end
 
@@ -46,7 +46,7 @@ class StaticSectionWidgetTest < ActionController::TestCase
   else
     puts 'ubiquo_media not found, omitting StaticSection with media attributes tests'
   end
-  
+
   private
 
   def widget_attributes
@@ -57,11 +57,11 @@ class StaticSectionWidgetTest < ActionController::TestCase
 
   def widget_media_attributes
     {
-      :image_ids => [assets(:image).id.to_s],
-      :docs_ids => [assets(:video).id.to_s, assets(:doc).id.to_s],
+      :image => [assets(:image)],
+      :docs => [assets(:video), assets(:doc)],
     }
   end
-  
+
   def create_widget(type, options = {})
     insert_widget_in_page(type, widget_attributes.merge(options))
   end

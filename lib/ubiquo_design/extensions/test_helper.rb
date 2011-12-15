@@ -35,7 +35,7 @@ module UbiquoDesign
       def insert_widget_in_page(type, widget_options)
         widget_options.reverse_merge!(:name => 'TestWidget')
         widget, page = create_test_page(type, widget_options)
-        assert widget.save, "Widget has errors (attributes: #{widget.options.inspect})"
+        assert widget.save, "Widget has errors (#{widget.errors.full_messages.to_sentence})"
         page.reload && page.publish
         [widget, page]
       end
