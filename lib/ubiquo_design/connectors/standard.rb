@@ -29,11 +29,11 @@ module UbiquoDesign
 
           def uhook_publish_widget_relations(widget, new_widget)
             widget.class.reflections.each do |key, reflection|
-              if reflection.macro == :has_many && !reflection.options.include?(:through)
+              if widget.class.is_a_clonable_has_many?(reflection)
                 widget.send(key).each do |relation|
                   new_widget.send(key) << relation.clone
                 end
-              elsif reflection.macro == :has_one
+              elsif widget.class.is_a_clonable_has_one?(reflection)
                 new_widget.send("build_#{key}", widget.send(key).attributes)
               end
             end
@@ -128,7 +128,7 @@ module UbiquoDesign
 
       module UbiquoStaticPagesController
         def self.included(klass)
-          klass.send(:include, InstanceMethods)          
+          klass.send(:include, InstanceMethods)
           klass.send(:helper, Helper)
           Standard.register_uhooks klass, InstanceMethods
         end
