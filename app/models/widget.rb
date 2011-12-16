@@ -151,8 +151,7 @@ class Widget < ActiveRecord::Base
   end
 
   def self.is_relation_clonable?(relation_name)
-    relation_name = relation_name.to_sym
-    !clonation_exceptions.include?(relation_name)
+    !clonation_exceptions.include?(relation_name.to_sym)
   end
 
   private

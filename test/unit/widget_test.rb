@@ -155,7 +155,7 @@ class WidgetTest < ActiveSupport::TestCase
       mocked_value = mock(value.to_s)
       if value.to_s.include?('has_many')
         mocked_value.expects(:macro).once.returns(:has_many)
-        mocked_value.stubs(:to_sym).returns(value)
+        mocked_value.stubs(:name).returns(value)
         if value.to_s.include?('through')
           mocked_value.expects(:options).once.returns([:through])
         else
@@ -163,7 +163,6 @@ class WidgetTest < ActiveSupport::TestCase
         end
       else
         mocked_value.expects(:macro).once.returns("not_important")
-        mocked_value.expects(:to_sym).never
       end
       result[value] = mocked_value
       result
@@ -171,13 +170,13 @@ class WidgetTest < ActiveSupport::TestCase
 
     TestWidget.expects(:reflections).returns(mock).at_least_once
 
-    assert !TestWidget.send(:is_a_clonable_has_many?, :another_relation)
-    assert !TestWidget.send(:is_a_clonable_has_many?, :my_new_relation)
-    assert !TestWidget.send(:is_a_clonable_has_many?, :has_one_reflection)
-    assert !TestWidget.send(:is_a_clonable_has_many?, :has_one_reflection_clonable)
-    assert !TestWidget.send(:is_a_clonable_has_many?, :has_many_medias)
-    assert !TestWidget.send(:is_a_clonable_has_many?, :has_many_medias_through)
-    assert  TestWidget.send(:is_a_clonable_has_many?, :has_many_medias_clonable)
+    assert !TestWidget.is_a_clonable_has_many?(:another_relation)
+    assert !TestWidget.is_a_clonable_has_many?(:my_new_relation)
+    assert !TestWidget.is_a_clonable_has_many?(:has_one_reflection)
+    assert !TestWidget.is_a_clonable_has_many?(:has_one_reflection_clonable)
+    assert !TestWidget.is_a_clonable_has_many?(:has_many_medias)
+    assert !TestWidget.is_a_clonable_has_many?(:has_many_medias_through)
+    assert  TestWidget.is_a_clonable_has_many?(:has_many_medias_clonable)
   end
 
   def test_should_check_if_a_relation_is_a_clonable_has_one
@@ -214,13 +213,13 @@ class WidgetTest < ActiveSupport::TestCase
 
     TestWidget.expects(:reflections).returns(mock).at_least_once
 
-    assert !TestWidget.send(:is_a_clonable_has_one?, :another_relation)
-    assert !TestWidget.send(:is_a_clonable_has_one?, :my_new_relation)
-    assert !TestWidget.send(:is_a_clonable_has_one?, :has_many_medias)
-    assert !TestWidget.send(:is_a_clonable_has_one?, :has_many_medias_through)
-    assert !TestWidget.send(:is_a_clonable_has_one?, :has_many_medias_clonable)
-    assert !TestWidget.send(:is_a_clonable_has_one?, :has_one_reflection)
-    assert  TestWidget.send(:is_a_clonable_has_one?, :has_one_reflection_clonable)
+    assert !TestWidget.is_a_clonable_has_one?(:another_relation)
+    assert !TestWidget.is_a_clonable_has_one?(:my_new_relation)
+    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias)
+    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias_through)
+    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias_clonable)
+    assert !TestWidget.is_a_clonable_has_one?(:has_one_reflection)
+    assert  TestWidget.is_a_clonable_has_one?(:has_one_reflection_clonable)
   end
 
   private
