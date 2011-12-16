@@ -4,6 +4,9 @@ en:
       empty_list_title: "Design"
       empty_list_message: "Here you can see, modify and design the application pages."
       no_parent: "None"
+    page_templates:
+      home: Home page template
+      static: Static page template
     design:
       metatags: "Metatags"
       design: "Design"

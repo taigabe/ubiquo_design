@@ -5,6 +5,9 @@ es:
       empty_list_title: "Maquetación"
       empty_list_message: "Aquí puede ver, modificar y maquetar las páginas de la aplicación."
       no_parent: "Ninguna"
+    page_templates:
+      home: Plantilla de la página de Inicio
+      static: Plantilla de las páginas estáticas
     design:
       metatags: "Metatags"
       design: "Maquetación"
