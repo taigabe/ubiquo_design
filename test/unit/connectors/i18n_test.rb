@@ -96,8 +96,7 @@ module Connectors
         widget = widgets(:one)
         widget.expects(:is_configurable?).returns(true)
         Ubiquo::WidgetsController.any_instance.stubs(
-          :session => {:locale => 'es'},
-          :params => {}
+          :params => {:locale => 'es'}
         )
         assert_not_equal 'es', widget.locale
         Ubiquo::WidgetsController.new.uhook_prepare_widget(widget)
@@ -169,7 +168,7 @@ module Connectors
         t.string  :name
         t.integer :widget_id
       end
-  
+
       ActiveRecord::Base.connection.create_table :relation_through_examples do |t|
         t.integer :page_id
         t.integer :widget_id
@@ -178,7 +177,7 @@ module Connectors
         # "Supporting" DDL transactions for mysql
         ::ActiveRecord::Base.connection.begin_db_transaction
         ::ActiveRecord::Base.connection.create_savepoint
-      end      
+      end
     end
 
   end

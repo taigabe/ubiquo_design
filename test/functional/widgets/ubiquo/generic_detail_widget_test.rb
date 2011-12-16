@@ -2,9 +2,7 @@ require File.dirname(__FILE__) + '/../../../test_helper'
 
 class GenericDetailWidgetUbiquoTest < ActionController::TestCase
 
-  def setup
-    @controller = Ubiquo::WidgetsController.new
-  end
+  tests Ubiquo::WidgetsController
 
   test "edit new form" do
     login_as
