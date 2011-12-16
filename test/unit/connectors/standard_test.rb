@@ -116,7 +116,6 @@ module Connectors
     end
 
     test "page returns return_static_section_widget" do
-      Ubiquo::Config.context(:ubiquo_design).set(:block_type_for_static_section_widget, :main)
       page = create_page
       widget = StaticSection.create(:name => 'Test static', :title => 'Test')
       page.add_widget(:main, widget)
