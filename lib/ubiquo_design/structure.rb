@@ -55,6 +55,8 @@ module UbiquoDesign
 
       # Yields a block with this module binding
       def yield_inside(&block)
+        return
+        # raises "bind argument must be an instance of UbiquoDesign::Structure"
         block.bind(self).call
       end
 
