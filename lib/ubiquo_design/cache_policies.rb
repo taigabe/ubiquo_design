@@ -26,7 +26,7 @@ module UbiquoDesign
         ([widgets = [], version_widgets = []]).tap do
           get(context).each_pair do |widget, policies|
             detected = (policies[:models] || []).to_a.detect{|model| instance.is_a?(model.first.to_s.constantize)}
-            if detected.present?:
+            if detected.present?
               related = detected.last
               if related[:params].blank? && related[:procs].blank?
                 version_widgets << widget
@@ -109,7 +109,7 @@ module UbiquoDesign
             end
           end
         end
-          
+
       end
 
       # Returns the current base hash, given the applied scopes
