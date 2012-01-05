@@ -16,5 +16,9 @@ if Rails.env.test?
   ActiveSupport::TestCase.send(:include, UbiquoDesign::Extensions::TestHelper)
 end
 
-Rails::Generator::Commands::Create.send(:include, UbiquoDesign::Extensions::RailsGenerator::Create)
-Rails::Generator::Commands::Destroy.send(:include, UbiquoDesign::Extensions::RailsGenerator::Destroy)
+begin
+  Rails::Generator::Commands::Create.send(:include, UbiquoDesign::Extensions::RailsGenerator::Create)
+  Rails::Generator::Commands::Destroy.send(:include, UbiquoDesign::Extensions::RailsGenerator::Destroy)
+rescue NameError
+  puts $!
+end
