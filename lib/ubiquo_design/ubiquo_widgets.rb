@@ -95,6 +95,18 @@ module UbiquoDesign
       ::Widget.behaviours[widget.key][:proc].bind(self).call(widget)
     end
 
+    def widget_performed?
+      performed?
+    end
+
+    def widget_redirected?
+      @performed_redirect
+    end
+
+    def widget_rendered?
+      @performed_render
+    end
+
     # Renders the widget as a string
     #
     # The +widget+ is the instance to be rendered
@@ -104,8 +116,20 @@ module UbiquoDesign
         require_dependency "widgets/#{widget_name}_widget"
         raise WidgetNotFound.new("Widget #{widget_name} not found") unless available_widgets.include?(widget_name)
       end
-      run_behaviour(widget)
-      render_to_string :file => File.join("widgets", widget_name.to_s, "show.html.erb")
+
+      output = run_behaviour(widget)
+      if widget_redirected?
+        # Not render any other widget
+        false
+      elsif widget_rendered?
+        # Erase render results: @performed_render and @performed_redirect
+        # This is used in ActionView::Base::render_to_string
+        erase_render_results
+        reset_variables_added_to_assigns
+        output #return the output rendered by the behaviour
+      else
+        render_to_string :file => File.join("widgets", widget_name.to_s, "show.html.erb")
+      end
     end
 
   end
