@@ -6,9 +6,10 @@ module PagesHelper
 
   # Displays the image for a given generic element
   def list_element_image(element)
-    if element.respond_to?(:image) && element.image.try(:first)
-      image_tag(url_for_media_attachment(element.image.first))
-    end
+    images = try_methods([:images, :image], element)
+    image  = images.try(:first)
+
+    image_tag url_for_media_attachment(image) if image.present?
   end
 
   # Displays the title for a given generic element
@@ -36,6 +37,8 @@ module PagesHelper
     methods.each do |method|
       return element.send(method) if element.respond_to? method
     end
+
+    nil
   end
 
   def find_detail_page(element)
