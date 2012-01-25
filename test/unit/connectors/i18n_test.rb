@@ -121,6 +121,18 @@ module Connectors
         widget, page = create_widget(:static_section, :locale => "es_ES")
       end
     end
+    
+    test "page.uhook_static_section_widget" do
+      page = create_page
+      static_section = StaticSection.new(:name => "Sección en español",
+        :title => "esto es una sección en español",
+        :locale => Locale.current,
+        :body => "")
+      page.add_widget(:main, static_section)
+      
+      assert page.uhook_static_section_widget
+      assert_equal nil, page.uhook_static_section_widget("en_US")
+    end
 
     private
 

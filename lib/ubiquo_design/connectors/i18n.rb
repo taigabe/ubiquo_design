@@ -94,7 +94,8 @@ module UbiquoDesign
             end
           end
 
-          def uhook_static_section_widget(locale)
+          def uhook_static_section_widget(locale = nil)
+            locale ||= Locale.current
             block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
             block = self.blocks.select { |b| b.block_type == block_type }.first
             if block
@@ -180,7 +181,7 @@ module UbiquoDesign
 
         module Helper
           def uhook_static_page_actions(page)
-            if page.uhook_static_section_widget(current_locale)
+            if page.uhook_static_section_widget
               edit_link = link_to(t('ubiquo.edit'), edit_ubiquo_static_page_path(page))
             else
               edit_link = link_to(t('ubiquo.translate'),
