@@ -125,7 +125,7 @@ class Page < ActiveRecord::Base
         )
       end
       return true
-    rescue Exception => e
+    rescue StandardError => e
       return false
     end
   end
@@ -259,7 +259,7 @@ class Page < ActiveRecord::Base
           widget.save!
         end
       end
-    rescue Exception => e
+    rescue StandardError => e
       return false
     end
   end
