@@ -140,7 +140,7 @@ class Widget < ActiveRecord::Base
 
   def self.is_a_clonable_has_one?(reflection)
     reflection = self.reflections[reflection.to_sym] unless reflection.is_a?(ActiveRecord::Reflection::AssociationReflection)
-    reflection.macro == :has_one && is_relation_clonable?(reflection)
+    reflection.macro == :has_one && is_relation_clonable?(reflection.name)
   end
 
   def self.is_a_clonable_has_many?(reflection)

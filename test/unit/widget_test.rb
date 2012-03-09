@@ -132,7 +132,7 @@ class WidgetTest < ActiveSupport::TestCase
     assert TestWidget.send(:is_relation_clonable?, :another)
   end
 
-  def test_should_check_if_a_relation_is_a_clonable_has_many
+  def test_should_check_if_a_relation_is_clonable
     TestWidget.expects(:clonation_exceptions).
       returns([:asset_relations,
                 :my_relation,
@@ -161,6 +161,9 @@ class WidgetTest < ActiveSupport::TestCase
         else
           mocked_value.expects(:options).once.returns([])
         end
+      elsif value.to_s.include?('has_one')
+        mocked_value.expects(:macro).once.returns(:has_one)
+        mocked_value.stubs(:name).returns(value)
       else
         mocked_value.expects(:macro).once.returns("not_important")
       end
@@ -172,54 +175,11 @@ class WidgetTest < ActiveSupport::TestCase
 
     assert !TestWidget.is_a_clonable_has_many?(:another_relation)
     assert !TestWidget.is_a_clonable_has_many?(:my_new_relation)
-    assert !TestWidget.is_a_clonable_has_many?(:has_one_reflection)
-    assert !TestWidget.is_a_clonable_has_many?(:has_one_reflection_clonable)
+    assert !TestWidget.is_a_clonable_has_one?(:has_one_reflection)
+    assert TestWidget.is_a_clonable_has_one?(:has_one_reflection_clonable)
     assert !TestWidget.is_a_clonable_has_many?(:has_many_medias)
     assert !TestWidget.is_a_clonable_has_many?(:has_many_medias_through)
     assert  TestWidget.is_a_clonable_has_many?(:has_many_medias_clonable)
-  end
-
-  def test_should_check_if_a_relation_is_a_clonable_has_one
-    TestWidget.expects(:clonation_exceptions).
-      returns([:asset_relations,
-                :my_relation,
-                :has_many_medias,
-                :has_many_medias_throught,
-                :has_one_reflection,
-              ]).at_least_once
-
-    relations_to_test = [
-      :my_new_relation,
-      :another_relation,
-      :has_many_medias,
-      :has_one_reflection,
-      :has_many_medias_through,
-      :has_one_reflection_clonable,
-      :has_many_medias_clonable
-    ]
-
-    mock = relations_to_test.inject({}) do |result, value|
-      mocked_value = mock(value.to_s)
-      if value.to_s.include?('has_one')
-        mocked_value.expects(:macro).once.returns(:has_one)
-        mocked_value.expects(:to_sym).once.returns(value)
-      else
-        mocked_value.expects(:macro).once.returns("not_important")
-        mocked_value.expects(:to_sym).never
-      end
-      result[value] = mocked_value
-      result
-    end
-
-    TestWidget.expects(:reflections).returns(mock).at_least_once
-
-    assert !TestWidget.is_a_clonable_has_one?(:another_relation)
-    assert !TestWidget.is_a_clonable_has_one?(:my_new_relation)
-    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias)
-    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias_through)
-    assert !TestWidget.is_a_clonable_has_one?(:has_many_medias_clonable)
-    assert !TestWidget.is_a_clonable_has_one?(:has_one_reflection)
-    assert  TestWidget.is_a_clonable_has_one?(:has_one_reflection_clonable)
   end
 
   private
