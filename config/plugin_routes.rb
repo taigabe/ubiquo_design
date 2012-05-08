@@ -1,5 +1,5 @@
 map.namespace :ubiquo do |ubiquo|
-  ubiquo.resources :static_pages, :member => { :publish => :put }
+  ubiquo.resources :static_pages, :member => { :publish => :put, :unpublish => :put }
   ubiquo.resources :pages do |pages|
     pages.resource :design, :member => {:preview => :get, :publish => :put, :unpublish => :put} do |design|
       design.resources :widgets, :collection => {:change_order => :any}, :member => {:change_name => :post}

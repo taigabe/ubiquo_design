@@ -1,3 +1,4 @@
+
 require File.dirname(__FILE__) + "/../../test_helper.rb"
 
 class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
@@ -5,6 +6,7 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
 
   def setup
     login_as
+    Ubiquo::Config.context(:ubiquo_design).set(:block_type_for_static_section_widget, :main)
   end
 
   def test_should_get_index_with_only_static_pages
@@ -58,7 +60,6 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
            :page => {
              :name => "Custom page",
              :url_name => "custom_page",
-             :page_template => "static"
            },
            :static_section => {
              :title => "About Ubiquo",
@@ -68,6 +69,7 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
     page = assigns(:static_page)
     assert page
     assert_equal 2, page.blocks.size
+    assert_equal "static", page.page_template
     assert_equal ["top", "main"], page.blocks.map(&:block_type)
     assert_equal StaticSection, page.uhook_static_section_widget.class
     assert_equal page.is_the_published?, false
@@ -94,7 +96,6 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
         :page => {
           :name => "Custom page",
           :url_name => "custom_page",
-          :page_template => "static"
         },
         :static_section => {
           :title => "About Ubiquo updated",

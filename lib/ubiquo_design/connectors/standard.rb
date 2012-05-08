@@ -11,6 +11,10 @@ module UbiquoDesign
 
         module InstanceMethods
 
+          def uhook_add_widget(widget, &block)
+            yield
+          end
+
           def uhook_publish_block_widgets(block, new_block)
             block.widgets.each do |widget|
               new_widget = widget.clone
@@ -25,18 +29,19 @@ module UbiquoDesign
 
           def uhook_publish_widget_relations(widget, new_widget)
             widget.class.reflections.each do |key, reflection|
-              if reflection.macro == :has_many && !reflection.options.include?(:through)
+              if widget.class.is_a_clonable_has_many?(reflection)
                 widget.send(key).each do |relation|
                   new_widget.send(key) << relation.clone
                 end
-              elsif reflection.macro == :has_one
+              elsif widget.class.is_a_clonable_has_one?(reflection)
                 new_widget.send("build_#{key}", widget.send(key).attributes)
               end
             end
           end
 
           def uhook_static_section_widget(locale = nil)
-            block = self.blocks.select { |b| b.block_type == "main" }.first
+            block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+            block = self.blocks.select { |b| b.block_type == block_type.to_s }.first
             if block
               Widget.first(:conditions => { :type => "StaticSection", :block_id => block.id })
             end
@@ -123,7 +128,7 @@ module UbiquoDesign
 
       module UbiquoStaticPagesController
         def self.included(klass)
-          klass.send(:include, InstanceMethods)          
+          klass.send(:include, InstanceMethods)
           klass.send(:helper, Helper)
           Standard.register_uhooks klass, InstanceMethods
         end

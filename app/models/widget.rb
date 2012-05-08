@@ -9,7 +9,10 @@ class Widget < ActiveRecord::Base
 
   @@behaviours = {}
 
-  @inheritable_attributes = inheritable_attributes.merge(:previewable => true)
+  @inheritable_attributes = inheritable_attributes.merge(
+    :previewable => true,
+    :clonation_exceptions => [:asset_relations]
+  )
 
   cattr_accessor :behaviours
 
@@ -63,6 +66,9 @@ class Widget < ActiveRecord::Base
       end
       define_method("#{option}=") do |value|
         self.options[option] = value
+      end
+      define_method("#{option}_before_type_cast") do
+        self.options[option]
       end
     end
   end
@@ -146,6 +152,31 @@ class Widget < ActiveRecord::Base
   # Expires this widget, using the configured cache_manager
   def expire(options = {})
     UbiquoDesign.cache_manager.expire(self, options)
+  end
+  
+  def self.clonation_exception(value)
+    exceptions = clonation_exceptions + [value.to_sym]
+    write_inheritable_attribute :clonation_exceptions, exceptions.uniq
+  end
+
+  def self.clonation_exceptions
+    Array(read_inheritable_attribute(:clonation_exceptions))
+  end
+
+  def self.is_a_clonable_has_one?(reflection)
+    reflection = self.reflections[reflection.to_sym] unless reflection.is_a?(ActiveRecord::Reflection::AssociationReflection)
+    reflection.macro == :has_one && is_relation_clonable?(reflection.name)
+  end
+
+  def self.is_a_clonable_has_many?(reflection)
+    reflection = self.reflections[reflection.to_sym] unless reflection.is_a?(ActiveRecord::Reflection::AssociationReflection)
+    reflection.macro == :has_many &&
+      !reflection.options.include?(:through) &&
+      is_relation_clonable?(reflection.name)
+  end
+
+  def self.is_relation_clonable?(relation_name)
+    !clonation_exceptions.include?(relation_name.to_sym)
   end
 
   private

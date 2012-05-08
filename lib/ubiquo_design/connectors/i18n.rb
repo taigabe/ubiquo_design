@@ -36,8 +36,9 @@ module UbiquoDesign
       def self.unload!
         # TODO create generic methods for these cleanups
         ([::Widget] + ::Widget.send(:subclasses)).each do |klass|
-          klass.instance_variable_set :@translatable, false
+          klass.instance_variable_set :@translatable, nil
           klass.reset_column_information
+          klass.clear_locale_uniqueness_per_entity_validation if klass.respond_to?(:clear_locale_uniqueness_per_entity_validation)
         end
         ::Widget.send :alias_method, :block, :block_without_shared_translations
         # Unfortunately there's no neat way to clear the helpers mess
@@ -64,6 +65,12 @@ module UbiquoDesign
         module InstanceMethods
           include Standard::Page::InstanceMethods
 
+          def uhook_add_widget(widget, &block)
+            widget.without_current_locale do
+              yield
+            end
+          end
+
           def uhook_publish_block_widgets(block, new_block)
             # we need to relate the cloned widgets between them,
             # same as they are in the draft page, using the content_id
@@ -87,8 +94,10 @@ module UbiquoDesign
             end
           end
 
-          def uhook_static_section_widget(locale)
-            block = self.blocks.select { |b| b.block_type == "main" }.first
+          def uhook_static_section_widget(locale = nil)
+            locale ||= Locale.current
+            block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+            block = self.blocks.select { |b| b.block_type == block_type }.first
             if block
               ::Widget.locale(locale).first(:conditions => {
                 :type => "StaticSection", :block_id => block.id
@@ -165,14 +174,14 @@ module UbiquoDesign
 
       module UbiquoStaticPagesController
         def self.included(klass)
-          klass.send(:include, InstanceMethods)          
+          klass.send(:include, InstanceMethods)
           klass.send(:helper, Helper)
-          I18n.register_uhooks klass, InstanceMethods          
+          I18n.register_uhooks klass, InstanceMethods
         end
 
         module Helper
           def uhook_static_page_actions(page)
-            if page.uhook_static_section_widget(current_locale)
+            if page.uhook_static_section_widget
               edit_link = link_to(t('ubiquo.edit'), edit_ubiquo_static_page_path(page))
             else
               edit_link = link_to(t('ubiquo.translate'),
@@ -194,11 +203,11 @@ module UbiquoDesign
             default_widget_params = {
               :name => t('ubiquo.design.static_pages.widget_title'),
               :locale => current_locale,
-            }            
+            }
             ::StaticSection.new(params[:static_section].reverse_merge!(default_widget_params))
           end
         end
-        
+
       end
 
       module RenderPage
