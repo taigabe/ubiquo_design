@@ -6,6 +6,12 @@ module UbiquoDesign
     end
     
     private
+
+    # Check if the current request if a widget request
+    def widget_request?
+      params[:widget]
+    end
+
     def render_page(page)
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
 

@@ -95,4 +95,17 @@ class PagesControllerTest < ActionController::TestCase
     end
   end
 
+  def test_should_check_if_is_a_widget_request
+    @controller.expects(:widget_request?).at_least_once
+    get :show, :key => pages(:one).key, :widget => 1
+  end
+
+  def test_should_determine_if_is_a_widget_request_using_widget_param
+    @controller.expects(:params).returns({:widget => 1})
+    assert @controller.send(:widget_request?)
+
+    @controller.expects(:params).returns({:widget => nil})
+    assert !@controller.send(:widget_request?)
+  end
+
 end
