@@ -141,7 +141,9 @@ module UbiquoDesign
         protected
 
         def delayed_expiration?
-          Ubiquo::Settings.get(:async_varnish_expiration)
+          key = :async_varnish_expiration
+          context = Ubiquo::Settings[:ubiquo_design]
+          context.option_exists?(key) && context[key]
         end
 
         # Given the defined policies, returns which widget types have to be expired
