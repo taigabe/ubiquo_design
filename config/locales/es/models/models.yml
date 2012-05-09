@@ -14,5 +14,8 @@ es:
         meta_title: "Título"
         meta_description: "Descripción"
         meta_keywords: "Palabras clave"
+        client_expiration: "Expiración cliente (segundos)"
+        server_expiration: "Expiración servidor (segundos)"
+        expiration: "Expiración"
       banner_flash:
         flash_file: "fichero flash"

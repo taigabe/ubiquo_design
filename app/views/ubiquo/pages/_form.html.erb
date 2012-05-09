@@ -52,3 +52,17 @@
     <%= f.text_area :meta_description, :rows => 5 %>
   </div>
   </fieldset>
+  <fieldset>
+    <legend><%= Page.human_attribute_name("expiration") %>
+    </legend>
+    <div id="page_expiration_settings" style="display: none;">
+      <div class="form-item">
+        <%= f.label :client_expiration %>
+        <%= f.text_field :client_expiration %>
+      </div>
+      <div class="form-item">
+        <%= f.label :server_expiration %>
+        <%= f.text_field :server_expiration %>
+      </div>
+    </div>
+  </fieldset>

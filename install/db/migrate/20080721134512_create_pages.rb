@@ -12,6 +12,7 @@ class CreatePages < ActiveRecord::Migration
       t.string :meta_title
       t.text :meta_keywords
       t.text :meta_description
+      t.text :expiration
       
       t.timestamps
     end

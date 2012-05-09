@@ -14,5 +14,8 @@ ca:
         meta_title: "Títol"
         meta_description: "Descripció"
         meta_keywords: "Paraules clau"
+        client_expiration: "Expiració client (segons)"
+        server_expiration: "Expiració servidor (segons)"
+        expiration: "Expiració"
       banner_flash:
         flash_file: "fitxer flash"

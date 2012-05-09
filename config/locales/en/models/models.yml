@@ -11,6 +11,9 @@ en:
         url_name: "URL"
         page_template: "Template"
         published_id: "Published status"
+        client_expiration: "Client expiration (seconds)"
+        server_expiration: "Server expiration (seconds)"
+        expiration: "Expiration"
       page_category:
         name: "Name"
         url_name: "URL"

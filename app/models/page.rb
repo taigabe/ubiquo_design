@@ -1,4 +1,7 @@
 class Page < ActiveRecord::Base
+
+  serialize :expiration, Hash
+
   belongs_to :published, :class_name => 'Page', :foreign_key => 'published_id', :dependent => :destroy
   belongs_to :parent, :class_name => 'Page', :foreign_key => 'parent_id'
   has_many :children, :class_name => 'Page', :foreign_key => 'parent_id'
@@ -274,6 +277,21 @@ class Page < ActiveRecord::Base
       end
     rescue StandardError => e
       return false
+    end
+  end
+
+  %w{client server}.each do |expiration_type|
+    define_method "#{expiration_type}_expiration" do
+      setting = Ubiquo::Settings[:ubiquo_design][:page_ttl]
+      default_time = setting[expiration_type.to_sym][:default] if setting[expiration_type.to_sym]
+      (expiration && expiration[expiration_type]) || default_time
+    end
+
+    define_method "#{expiration_type}_expiration=" do |val|
+      self.expiration ||= {}
+      setting = Ubiquo::Settings[:ubiquo_design][:page_ttl]
+      minimum_time = settings[expiration_type.to_sym][:minimum] if setting[expiration_type.to_sym]
+      self.expiration[expiration_type] = [val.to_i, minimum_time].max
     end
   end
 
