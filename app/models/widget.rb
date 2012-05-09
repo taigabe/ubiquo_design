@@ -4,7 +4,7 @@ class Widget < ActiveRecord::Base
   INACCEPTABLE_OPTIONS = %w{options widget widget_id block block_id position}
 
   WIDGET_TTL = {
-    :default => 10.minutes
+    :default => Ubiquo::Settings[:ubiquo_design][:widget_ttl]
   }
 
   @@behaviours = {}
