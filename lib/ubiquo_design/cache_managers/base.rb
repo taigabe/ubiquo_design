@@ -88,13 +88,13 @@ module UbiquoDesign
         end
 
         # Expires the applicable content of a widget given its id
-        def expire(widget_id, options = {})
+        def expire(widget, options = {})
           Rails.logger.debug "-- cache EXPIRATION --"
           begin
-            model_key = calculate_key(widget_id, options.slice(:scope))
+            model_key = calculate_key(widget, options.slice(:scope, :policy_context))
             delete(model_key) if model_key
 
-            with_instance_content(widget_id, options) do |instance_key|
+            with_instance_content(widget, options) do |instance_key|
               keys = retrieve(instance_key)[:keys] rescue []
               keys.each{|key| delete(key)}
               delete(instance_key)
@@ -113,7 +113,25 @@ module UbiquoDesign
           end
         end
 
-        def uhook_run_behaviour(context)
+        def expire_by_model(instance, cache_policy_context = nil)
+          return if instance.cache_expiration_denied.present?
+          expirable_widgets, version_widgets = UbiquoDesign::CachePolicies.get_by_model(instance, cache_policy_context)
+          expirable_widgets.each do |key|
+            Widget.class_by_key(key).all.each do |widget|
+              UbiquoDesign.cache_manager.expire(widget,
+                :scope => instance,
+                :policy_context => cache_policy_context,
+                :current_model => instance.class.name)
+            end
+          end
+          version_widgets.each do |key|
+            key.to_s.classify.constantize.update_all('version = (version +1)')
+            Rails.logger.debug "Version cache #{key}, from #{instance.id} - #{instance.class.name}"
+          end
+          # TODO if the model contains one of: publication_date, published_at, then expire at that time
+        end
+
+        def uhook_run_behaviour(instance)
         end
 
         protected

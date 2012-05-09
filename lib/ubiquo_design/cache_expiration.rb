@@ -46,25 +46,9 @@ module UbiquoDesign
         protected
 
         def expire_by_model
-          return if self.cache_expiration_denied.present?
-          expirable_widgets, version_widgets = UbiquoDesign::CachePolicies.get_by_model(self, @cache_policy_context)
-          expirable_widgets.each do |key|
-            Widget.class_by_key(key).all.each do |widget|
-              UbiquoDesign.cache_manager.expire(widget,
-                :scope => self,
-                :policy_context => @cache_policy_context,
-                :current_model => self.class.name)
-            end
-          end
-          version_widgets.each do |key|
-            key.to_s.classify.constantize.update_all('version = (version +1)')
-            Rails.logger.debug "Version cache #{key}, from #{self.id} - #{self.class.name}"
-          end
-          # TODO if the model contains one of: publication_date, published_at, then expire at that time
+          UbiquoDesign::cache_manager.expire_by_model(self, @cache_policy_context)
         end
-
       end
     end
-
   end
 end

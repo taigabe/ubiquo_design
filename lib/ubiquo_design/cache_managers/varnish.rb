@@ -98,11 +98,68 @@ module UbiquoDesign
           ban([url, "[\/]?$"])
         end
 
+        # Overwrites the traditional model expiration to make use of the new storage of policies
+        def expire_by_model(instance, cache_policy_context = nil)
+          return if instance.cache_expiration_denied.present?
+
+          affected_widgets = self.expirable_widgets
+          if affected_widgets.present?
+            # Note that if we don't check if there are expirable widgets,
+            # a lot of unnecessary jobs would be created
+            if delayed_expiration?
+              ExpirationJob.launch(instance)
+            else
+              varnish_expire_by_model(affected_widgets)
+                widgets_to_expire = []
+                widgets_and_policies = affected_widgets || expirable_widgets
+                widgets_and_policies.each_pair do |key, policy|
+                  # the special :custom group gives the user the power to return which widgets wants to expire
+                  if key == :custom
+                    widgets_to_expire += policy.call(self)
+                  else
+                    # find all the widgets from type +key+ which are in published pages
+                    Widget.class_by_key(key).published.each do |widget|
+                      # skip the widgets when they have a defined block and it does not return true
+                      unless policy && !policy.call(widget, self)
+                        widgets_to_expire << [widget, {:scope => self}]
+                      end
+                    end
+                  end
+                end
+
+                widgets_to_expire.uniq.each do |widget, options|
+                  widget.expire(options || {})
+                end
+            end
+          end
+        end
+
         def uhook_run_behaviour(controller)
           controller.varnish_expires_in ::Widget::WIDGET_TTL[:default] if controller.widget_request?
         end
 
         protected
+
+        def delayed_expiration?
+          Ubiquo::Settings.get(:async_varnish_expiration)
+        end
+
+        # Given the defined policies, returns which widget types have to be expired
+        # by the change in this instance (self).
+        # The returned value is a hash of {:widget_key => policy_proc_or_nil}
+        def expirable_widgets
+          expirable_widgets = {}
+          policies = UbiquoDesign::CachePolicies.get(:varnish)
+          # Policies defined with +expire_widget+
+          policies.each_pair do |widget_key, model_hash|
+            model_hash.keys.each do |affected_model|
+              if self.is_a?(affected_model.to_s.constantize)
+                expirable_widgets[widget_key] = policies[widget_key][affected_model]
+              end
+            end
+          end
+          expirable_widgets
+        end
 
         # Bans all urls that match +url+, which is an array with a
         # regexp-escapable part and an already escaped one that is appended
