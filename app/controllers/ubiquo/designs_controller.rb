@@ -63,15 +63,4 @@ class Ubiquo::DesignsController < UbiquoController
                      :locals => {:template_contents => template_contents, :page => page}
   end
 
-  # Returns true if we only have to render one widget
-  # Also renders it, so nothing more should be done
-  def render_widget_only
-    if params[:widget]
-      widget = Widget.find(params[:widget])
-      params.merge!(widget.respond_to?(:preview_params) ? widget.preview_params : {})
-      render :text => render_widget(widget)
-      true
-    end
-  end
-
 end

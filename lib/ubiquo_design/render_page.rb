@@ -12,6 +12,18 @@ module UbiquoDesign
       params[:widget]
     end
 
+    # Returns true if we only have to render one widget
+    # Also renders it, so nothing more should be done
+    def render_widget_only
+      return unless widget_request?
+      widget = Widget.find(params[:widget])
+      output = render_widget(widget)
+      unless performed?
+        render :text => output
+      end
+      true
+    end
+
     def render_page(page)
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
 
