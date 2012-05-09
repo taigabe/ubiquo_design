@@ -111,14 +111,16 @@ module UbiquoDesign
     # Renders the widget as a string
     #
     # The +widget+ is the instance to be rendered
-    def render_widget widget
+    def render_widget(widget, options = {})
       widget_name = widget.key
       unless available_widgets.include?(widget_name)
         require_dependency "widgets/#{widget_name}_widget"
         raise WidgetNotFound.new("Widget #{widget_name} not found") unless available_widgets.include?(widget_name)
       end
 
+      prepend_view_path Rails.root.join("app/views/widgets/#{widget_name.to_s}").to_s
       output = run_behaviour(widget)
+      
       if widget_redirected?
         # Not render any other widget
         false
