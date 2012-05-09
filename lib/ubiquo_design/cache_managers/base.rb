@@ -37,7 +37,7 @@ module UbiquoDesign
             end
           end
         end
-        
+
         # Gets all of the cached widgets content of a web. Return a hash where
         # the key is the id of the widget and the value is the content
         def multi_get(page, options = {})
@@ -54,16 +54,16 @@ module UbiquoDesign
           valid_widgets.each do |elems|
             widgets_with_key[elems[0].id] = elems[1]
           end
-          
+
           crypted_table = crypt_all_keys(widgets_with_key.values)
-          
+
           cached_widgets = begin
             multi_retrieve crypted_table.keys
           rescue CacheNotAvailable
             return {}
           end
 
-          widgets = {} 
+          widgets = {}
           cached_widgets.each do |cached_widget|
             if cached_widget.last
               key = widgets_with_key.index(crypted_table[cached_widget.first])
@@ -103,6 +103,19 @@ module UbiquoDesign
           end
         end
 
+        def expire_page(page)
+          Rails.logger.warn "-- page cache EXPIRATION  --"
+          begin
+            page.widgets.each do |widget|
+              expire(widget.id)
+            end
+          rescue CacheNotAvailable
+          end
+        end
+
+        def uhook_run_behaviour(context)
+        end
+
         protected
 
         # Calculates a string content identifier depending on the widget
@@ -134,7 +147,7 @@ module UbiquoDesign
 
         def process_params policies, options
           params_key = ''
-          if policies[:params].present? || policies[:widget_params].present? 
+          if policies[:params].present? || policies[:widget_params].present?
             param_ids = policies[:params].map do |param_id_raw|
               param_id, t_param_id = case param_id_raw
               when Symbol
@@ -244,8 +257,8 @@ module UbiquoDesign
           valid_widgets = []
           parents = get_parents(all_widgets.map{|lk| lk[0]}, options)
 
-          crypted_table = crypt_all_parents_keys(parents) 
-          begin 
+          crypted_table = crypt_all_parents_keys(parents)
+          begin
             cached_parents = multi_retrieve crypted_table.keys
             crypted_keys = crypted_table.keys
             all_widgets.each_with_index do |widget, index|
@@ -255,7 +268,7 @@ module UbiquoDesign
           rescue CacheNotAvailable
             valid_widget = []
           end
-          
+
           valid_widgets
         end
 
@@ -266,7 +279,7 @@ module UbiquoDesign
           end
           return true
         end
-        
+
         def get_parents all_widgets, options
           parents = {} #each parent
           all_widgets.each do |widget|
@@ -292,7 +305,7 @@ module UbiquoDesign
                 next
               end
 
-              p_i = key.to_s + '_' 
+              p_i = key.to_s + '_'
               p_i += process_params(val, options)
               p_i += process_procs(val, options)
               yield(widget_pre_key + p_i)
@@ -339,7 +352,7 @@ module UbiquoDesign
             val.each do |non_crypted|
               c_key =  crypted_key(non_crypted)
               vals << c_key
-              ret_set[c_key] = non_crypted 
+              ret_set[c_key] = non_crypted
             end
             widget_hash[key] = vals
           end

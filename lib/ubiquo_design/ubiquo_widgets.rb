@@ -92,7 +92,7 @@ module UbiquoDesign
 
     # Run a widget behaviour, given a +widget+ instance
     def run_behaviour widget
-      varnish_expires_in ::Widget::WIDGET_TTL[:default] if widget_request?
+      UbiquoDesign.cache_manager.uhook_run_behaviour(self)
       ::Widget.behaviours[widget.key][:proc].bind(self).call(widget)
     end
 

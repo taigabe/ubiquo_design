@@ -3,8 +3,6 @@ module UbiquoDesign
     # Varnish implementation for the cache manager
     class Varnish < UbiquoDesign::CacheManagers::Base
 
-#      CONFIG = Ubiquo::Config.context(:ubiquo_design).get(:varnish)
-
       class << self
 
         # This method is called when rendering +page+ and returns a hash where
@@ -98,6 +96,10 @@ module UbiquoDesign
           ban([url, "\\?"])
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"])
+        end
+
+        def uhook_run_behaviour(controller)
+          controller.varnish_expires_in ::Widget::WIDGET_TTL[:default] if controller.widget_request?
         end
 
         protected
