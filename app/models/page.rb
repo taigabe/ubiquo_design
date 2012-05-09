@@ -8,10 +8,13 @@ class Page < ActiveRecord::Base
       self.collect{|block|[block.block_type, block]}.to_hash
     end
   end
+  has_many :widgets, :through => :blocks
 
   before_save :compose_url_name_with_parent_url
   before_create :assign_template_blocks
   before_save :update_modified, :if => :is_the_draft?
+  before_save :expire, :if => :is_the_draft?
+  before_destroy :expire, :if => :is_the_draft?
   after_destroy :is_modified_on_destroy_published
 
   validates_presence_of :name
@@ -128,8 +131,6 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => published_page.id
         )
-
-        UbiquoDesign.cache_manager.expire_page(self) if ActionController::Base.perform_caching
       end
       return true
     rescue StandardError => e
@@ -146,18 +147,9 @@ class Page < ActiveRecord::Base
     end
   end
 
-  def expire_varnish
-    if defined? VARNISH_SERVER
-      ['es','ca'].each do |suffix|
-        base_url = self.url_name + '/' + suffix
-        varnish_request(base_url) # page expiration
-        self.blocks.map(&:widgets).flatten.each do |widget|
-          # widget expiration
-          varnish_request("#{base_url}?widget=#{widget.id}")
-        end
-      end
-    end
-    true
+  def expire
+    ActionController::Base.perform_caching ?  
+      UbiquoDesign.cache_manager.expire_page(self) : true
   end
 
   # Returns true if the page has been published.

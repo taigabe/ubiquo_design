@@ -347,6 +347,25 @@ class PageTest < ActiveSupport::TestCase
       page.publish
     end
   end
+
+   def test_should_expire_page_on_destroy
+     page = create_page
+     ActionController::Base.expects(:perform_caching).returns(true)
+     UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
+     page.destroy
+   end
+
+   def test_should_expire_page_on_save
+     page = create_page
+     ActionController::Base.expects(:perform_caching).returns(true)
+     UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
+     page.save
+   end
+
+   def test_should_have_many_widgets
+     page = pages(:one)
+     assert_equal_set page.blocks.map(&:widgets).flatten, page.widgets
+   end
   
   private
 

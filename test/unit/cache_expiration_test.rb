@@ -10,7 +10,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
   unless ActiveRecord::Base.included_modules.include? UbiquoDesign::CacheExpiration::ActiveRecord
     ActiveRecord::Base.send(:include, UbiquoDesign::CacheExpiration::ActiveRecord)
   end
-  
+
   def setup
     @manager = UbiquoDesign.cache_manager
   end
@@ -84,20 +84,20 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
 
     @manager.cache(widget, 'content', caching_options(page.id))
     @manager.cache(widget, 'content', caching_options('other'))
-    
+
     assert @manager.get(widget, caching_options(page.id))
     assert @manager.get(widget, caching_options('other'))
     page.save
     assert !@manager.get(widget, caching_options(page.id))
     assert @manager.get(widget, caching_options('other'))
-    
+
     @manager.cache(widget, 'content', caching_options(page.id))
     assert @manager.get(widget, caching_options(page.id))
 
     free_widget.save
     widget.reload
     assert !@manager.get(widget, caching_options(page.id))
-    assert !@manager.get(widget, caching_options('other'))  
+    assert !@manager.get(widget, caching_options('other'))
   end
 
   test 'should_be_expired_when_parent_key_is_not_present' do
@@ -121,7 +121,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
     @manager.send('delete', parents.first)
     assert !@manager.get(widget, caching_options(page.id))
   end
-  
+
   test 'should_expire_correct_widgets_on_different_model_instance_updates_with_proc_mapping' do
     UbiquoDesign::CachePolicies.define(:test) do
       {
@@ -136,7 +136,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
 
     @manager.cache(widget, 'content', caching_options('aa', page.id))
     @manager.cache(widget, 'content', caching_options('aa', 'other'))
-    
+
     assert @manager.get(widget, caching_options('aa', page.id))
     assert @manager.get(widget, caching_options('aa', 'other'))
     page.save
@@ -149,7 +149,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
     free_widget.save
     widget.reload
     assert !@manager.get(widget, caching_options('aa', page.id))
-    assert !@manager.get(widget, caching_options('aa', 'other'))  
+    assert !@manager.get(widget, caching_options('aa', 'other'))
   end
 
   test 'should_expire_correct_widgets_on_different_model_instance_destroys' do
@@ -159,7 +159,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
       }
     end
     widget = widgets(:one)
-    page = pages(:one)
+    page = pages(:two)
     page.instance_variable_set(:@cache_policy_context, :test)
     widget.instance_variable_set(:@cache_policy_context, :test)
     @manager.cache(widget, 'content', caching_options(page.id))
@@ -169,7 +169,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
 
     page.destroy
     assert !@manager.get(widget, caching_options(page.id))
-    assert @manager.get(widget, caching_options('other'))  
+    assert @manager.get(widget, caching_options('other'))
   end
 
   test 'should_expire_by_time' do
@@ -185,7 +185,7 @@ class UbiquoDesign::CacheExpirationTest < ActiveSupport::TestCase
 
     assert_equal @manager.send('get_expiration_time',widget, caching_options(page.id)), 3
   end
-  
+
   protected
 
   def create_widget
