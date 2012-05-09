@@ -46,11 +46,12 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
       :minimum => 0.minutes,
       :default => 0.minutes
     },
-    :varnish => {
+    :server => {
       :minimum => 1.minute,
       :default => 10.minutes
     }
   }
+  config.add(:async_varnish_expiration, false)
 end
 
 groups = Ubiquo::Config.get :model_groups

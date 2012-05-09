@@ -290,7 +290,7 @@ class Page < ActiveRecord::Base
     define_method "#{expiration_type}_expiration=" do |val|
       self.expiration ||= {}
       setting = Ubiquo::Settings[:ubiquo_design][:page_ttl]
-      minimum_time = settings[expiration_type.to_sym][:minimum] if setting[expiration_type.to_sym]
+      minimum_time = setting[expiration_type.to_sym][:minimum] if setting[expiration_type.to_sym]
       self.expiration[expiration_type] = [val.to_i, minimum_time].max
     end
   end

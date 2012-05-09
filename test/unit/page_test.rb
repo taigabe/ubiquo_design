@@ -348,24 +348,47 @@ class PageTest < ActiveSupport::TestCase
     end
   end
 
-   def test_should_expire_page_on_destroy
-     page = create_page
-     ActionController::Base.expects(:perform_caching).returns(true)
-     UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
-     page.destroy
-   end
+  def test_should_expire_page_on_destroy
+    page = create_page
+    ActionController::Base.expects(:perform_caching).returns(true)
+    UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
+    page.destroy
+  end
 
-   def test_should_expire_page_on_save
-     page = create_page
-     ActionController::Base.expects(:perform_caching).returns(true)
-     UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
-     page.save
-   end
+  def test_should_expire_page_on_save
+    page = create_page
+    ActionController::Base.expects(:perform_caching).returns(true)
+    UbiquoDesign.cache_manager.expects(:expire_page).with(page).returns(true)
+    page.save
+  end
 
-   def test_should_have_many_widgets
-     page = pages(:one)
-     assert_equal_set page.blocks.map(&:widgets).flatten, page.widgets
-   end
+  def test_should_have_many_widgets
+    page = pages(:one)
+    assert_equal_set page.blocks.map(&:widgets).flatten, page.widgets
+  end
+
+  [:client, :server].map do |type|
+    expiration_type = "#{type}_expiration"
+
+    test "should_set_#{expiration_type}" do
+      page = create_page(expiration_type => 10.hours)
+      assert_equal 10.hours, page.send(expiration_type)
+    end
+
+    test "should_set_default_#{expiration_type}_if_none" do
+      page = create_page
+      assert_equal Ubiquo::Settings[:ubiquo_design][:page_ttl][type][:default], page.send(expiration_type)
+    end
+
+    test "should_set_minimum_#{expiration_type}_if_too_low" do
+      setting = Ubiquo::Settings[:ubiquo_design][:page_ttl]
+      old_min = setting[type][:minimum]
+      setting[type][:minimum] = 2.seconds
+      page = create_page(expiration_type => 1.second)
+      assert_equal setting[type][:minimum], page.send(expiration_type)
+      setting[type][:minimum] = old_min
+    end
+  end
   
   private
 
