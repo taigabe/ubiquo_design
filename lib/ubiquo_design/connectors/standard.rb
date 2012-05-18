@@ -170,6 +170,9 @@ module UbiquoDesign
         module Helper
           def uhook_page_actions(page)
             [
+              (if page.can_be_expired_by?(current_ubiquo_user) && page.published?
+                link_to(t('ubiquo.page.expire'), expire_ubiquo_page_path(:id => page.id), :method => :put)
+              end),
               link_to(t('ubiquo.edit'), edit_ubiquo_page_path(page), :class => 'btn-edit'),
               link_to(t('ubiquo.design.design'), ubiquo_page_design_path(page)),
               (link_to(t('ubiquo.remove'), [:ubiquo, page], :confirm => t('ubiquo.design.confirm_page_removal'), :method => :delete, :class => 'btn-delete') unless page.key?)

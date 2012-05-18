@@ -5,6 +5,19 @@ ca:
       empty_list_title: "Maquetació"
       empty_list_message: "Aquí pots veure, modificar i maquetar les pàgines de l'aplicació."
       no_parent: "Cap"
+      pages: Pàgines
+      expire_pages_info: "Introduïu la url que voleu expirar o executeu la opció de \"Expirar totes les planes\""
+      any_page_expired: "No s'ha expirat cap pàgina"
+      pages_all_expired: "S'han expirat totes les pàgines"
+      pages_expired: "S'han expirat %{num_pages} pàgines: %{page_names}"
+      expire: Expirar
+      expire_pages_title: Expirar pàgines
+      expire_all_pages: Expirar totes les pàgines
+      expire_url:  Expirar la URL
+      expire_pages_url_title: URL a expirar
+      expire_pages_url_info: "Especifiqueu una URL en format absolut (per exemple 'http://www.elmeuweb.cat/articles/detall/titol-de-la-noticia') per a expirar la pàgina que es mostra a aquesta adreça de la part pública actualment."
+      copy_to_locale: "Copiar a l'idioma actual"
+      confirm_page_copy: "Esteu segur que voleu fer una còpia traduïda d'aquesta pàgina?"
     page_templates:
       home: Plantilla de la pàgina d'inici
       static: Plantilla de la pàgina estàtica

@@ -3,7 +3,7 @@ class Ubiquo::PagesController < UbiquoController
   before_filter :load_page_templates
   before_filter :load_page, :only => [:edit, :update, :destroy]
   before_filter :load_parent_pages, :only => [:new, :edit]
-  
+
   # GET /pages
   # GET /pages.xml
   def index
@@ -16,7 +16,7 @@ class Ubiquo::PagesController < UbiquoController
     @pages_pages, @pages = Page.paginate(:page => params[:page], :per_page => per_page) do
       uhook_find_private_pages(filters, order_by, sort_order)
     end
-    
+
     respond_to do |format|
       format.html {} # index.html.erb
       format.xml  {
@@ -91,18 +91,83 @@ class Ubiquo::PagesController < UbiquoController
     end
   end
 
+  # GET /pages/expirations
+  def expirations
+    respond_to do |format|
+      format.html do
+        if ubiquo_config_call :expiration_permit, {:context => :ubiquo_design}
+          render :action => 'expirations'
+        else
+          redirect_to :action => 'index'
+        end
+      end
+    end
+  end
+
+  def expire_pages
+    if params[:expire_all]
+      if current_ubiquo_user.is_superadmin?
+        Page.expire_all
+        flash[:notice] = t("ubiquo.page.pages_all_expired")
+      else
+        flash[:error] = t("ubiquo.page.any_page_expired")
+      end
+    elsif params[:expire_selected]
+      # selected pages
+      ids = params[:selector][:pages] if params[:selector]
+      ids ||= Array.new
+      # url
+      url = params[:url]
+
+      # expiration of selected pages
+      expired_pages = Page.expire(ids)
+      page_names = expired_pages.map do |p|
+        @template.render(:partial => 'expired_page_name', :locals => { :name => p.name })
+      end
+
+      # expiration of url
+      if url.present?
+        Page.expire_url(url)
+        page_names << @template.render(:partial => 'expired_page_name',
+                                       :locals  => { :name => url })
+      end
+
+      if page_names.present?
+        flash[:notice] = t("ubiquo.page.pages_expired",
+                           :num_pages  => page_names.length,
+                           :page_names => page_names)
+      else
+        flash[:error] = t("ubiquo.page.any_page_expired")
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to(:action => :expirations) }
+    end
+  end
+
+  def expire
+    page = Page.find(params[:id])
+    if page.expire
+      flash[:notice] = t("ubiquo.page.pages_expired", :num_pages => 1, :page_names => page.name)
+    else
+      flash[:error] = t("ubiquo.page.any_page_expired")
+    end
+    redirect_to :action => :index
+  end
+
   private
-  
+
   def load_page_templates
     @page_templates = Page.templates
   end
 
   def load_page
-    @page = Page.find(params[:id])    
+    @page = Page.find(params[:id])
   end
-  
+
   def load_parent_pages
     @pages = Page.drafts.all(:conditions => ["url_name != ''"]) - [@page]
   end
-  
+
 end

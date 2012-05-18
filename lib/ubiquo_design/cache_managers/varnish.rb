@@ -110,26 +110,6 @@ module UbiquoDesign
               ExpirationJob.launch(instance)
             else
               varnish_expire_by_model(affected_widgets)
-                widgets_to_expire = []
-                widgets_and_policies = affected_widgets || expirable_widgets
-                widgets_and_policies.each_pair do |key, policy|
-                  # the special :custom group gives the user the power to return which widgets wants to expire
-                  if key == :custom
-                    widgets_to_expire += policy.call(self)
-                  else
-                    # find all the widgets from type +key+ which are in published pages
-                    Widget.class_by_key(key).published.each do |widget|
-                      # skip the widgets when they have a defined block and it does not return true
-                      unless policy && !policy.call(widget, self)
-                        widgets_to_expire << [widget, {:scope => self}]
-                      end
-                    end
-                  end
-                end
-
-                widgets_to_expire.uniq.each do |widget, options|
-                  widget.expire(options || {})
-                end
             end
           end
         end
@@ -161,6 +141,34 @@ module UbiquoDesign
             end
           end
           expirable_widgets
+        end
+
+
+        # Custom expiration using varnish policies
+        # +affected_widgets+ is an already loaded result of +expirable_widgets+ to avoid a double call
+        def varnish_expire_by_model(affected_widgets = nil)
+
+          # now expire those widgets affected by a +expire_widget+ policy
+          widgets_to_expire = []
+          widgets_and_policies = affected_widgets || expirable_widgets
+          widgets_and_policies.each_pair do |key, policy|
+            # the special :custom group gives the user the power to return which widgets wants to expire
+            if key == :custom
+              widgets_to_expire += policy.call(self)
+            else
+              # find all the widgets from type +key+ which are in published pages
+              Widget.class_by_key(key).published.each do |widget|
+                # skip the widgets when they have a defined block and it does not return true
+                unless policy && !policy.call(widget, self)
+                  widgets_to_expire << [widget, {:scope => self}]
+                end
+              end
+            end
+          end
+
+          widgets_to_expire.uniq.each do |widget, options|
+            widget.expire(options || {})
+          end
         end
 
         # Bans all urls that match +url+, which is an array with a
@@ -205,7 +213,7 @@ module UbiquoDesign
           end
         end
 
-       end
+      end
 
     end
   end

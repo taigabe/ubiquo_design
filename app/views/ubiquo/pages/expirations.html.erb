@@ -1,0 +1,22 @@
+<h1><%= t("ubiquo.page.expire_pages_title") %></h1>
+<h2><%= render :partial => 'submenu' %></h2>
+
+<%= render(:partial => "shared/ubiquo/feedback") %>
+<% form_tag expire_pages_ubiquo_pages_path, :method => :put, :id => 'data-expirations-form' do %>
+  <div class="form-item">
+    <span class="linkable_info"><%= t('ubiquo.page.expire_pages_info') %></span>
+  </div>
+  <div class="form-item">
+    <fieldset class="custom-page-fieldset">
+      <legend><%= t('ubiquo.page.expire_pages_url_title') %></legend>
+      <%= text_field_tag :url, nil %>
+      <p class="description"><%= t('ubiquo.page.expire_pages_url_info') %></p>
+    </fieldset>
+  </div>
+  <div class="form-item-submit">
+    <%= submit_tag t("ubiquo.page.expire_url"), :name => 'expire_selected', :class => 'expire_selected' %>
+    <% if current_ubiquo_user.is_superadmin? -%>
+      <%= submit_tag t("ubiquo.page.expire_all_pages"), :name => 'expire_all', :class => 'expire_all' %>
+    <% end -%>
+  </div>
+<% end %>

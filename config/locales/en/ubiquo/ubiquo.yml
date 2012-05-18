@@ -4,6 +4,19 @@ en:
       empty_list_title: "Design"
       empty_list_message: "Here you can see, modify and design the application pages."
       no_parent: "None"
+      pages: Pages
+      expire_pages_info: "Enter an url to expire or press on \"Expire all\""
+      any_page_expired: "No page was expired"
+      pages_all_expired: "All pages have been expired"
+      pages_expired: "Expired %{num_pages} pages: %{page_names}"
+      expire: Expire
+      expire_pages_title: Page expiration
+      expire_all_pages: Expire all
+      expire_url:  Expire URL
+      expire_pages_url_title: URL to expire
+      expire_pages_url_info: "Enter an absolute URL (e.g. 'http://www.myweb.com/articles/detail/news-item-title') to expire the page that is shown currently at this address."
+      copy_to_locale: "Copy to current language"
+      confirm_page_copy: "Are you sure you want to create a translated copy of this page?"
     page_templates:
       home: Home page template
       static: Static page template

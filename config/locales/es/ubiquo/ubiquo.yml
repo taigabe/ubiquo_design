@@ -5,6 +5,19 @@ es:
       empty_list_title: "Maquetación"
       empty_list_message: "Aquí puede ver, modificar y maquetar las páginas de la aplicación."
       no_parent: "Ninguna"
+      pages: Páginas
+      expire_pages_info: "Introduzca la URL que desea expirar o ejecute la opción \"Expirar todas las páginas\""
+      any_page_expired: "No se expiró ninguna página"
+      pages_all_expired: "Se han expirado todas las páginas"
+      pages_expired: "Se han expirado %{num_pages} páginas: %{page_names}"
+      expire: Expirar
+      expire_pages_title: Expirar páginas
+      expire_all_pages: Expirar todas las páginas
+      expire_url:  Expirar la URL
+      expire_pages_url_title: URL a expirar
+      expire_pages_url_info: "Especifica una URL en formato absoluto (por ejemplo 'http://www.miweb.com/articulos/detalle/titulo-de-la-noticia') para expirar la pàgina que se muestra en esta dirección actualmente."
+      copy_to_locale: "Copiar al idioma actual"
+      confirm_page_copy: "¿Está seguro que quiere hacer una copia traducida de esta página?"
     page_templates:
       home: Plantilla de la página de Inicio
       static: Plantilla de las páginas estáticas
