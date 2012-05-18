@@ -4,7 +4,7 @@ module UbiquoDesign
     def self.included(klass)
       klass.helper_method :render_block
     end
-    
+
     private
 
     # Check if the current request if a widget request
@@ -47,7 +47,7 @@ module UbiquoDesign
         end
       end
     end
-      
+
     def template_directory
       Rails.env.test? ? File.join(ActiveSupport::TestCase.fixture_path, "templates") :
         Rails.root.join('app', 'views', 'page_templates').to_s
@@ -60,5 +60,44 @@ module UbiquoDesign
       self.view_paths.shift
       render_output
     end
+
+    def varnish_expires_in time
+      response.headers['X-RUN-ESI'] = 'true' unless widget_request?
+      response.headers['X-VARNISH-TTL'] = time.to_s
+    end
+
+    def include_expiration_headers
+      format = request.format.to_sym
+
+      if format == :rss
+        client_cache 0
+        server_cache 10.minutes
+      else
+        if @page
+          client_cache @page.client_expiration
+          server_cache @page.server_expiration
+        end
+      end
+    end
+
+    def client_cache(time = 5.minutes)
+      if time > 0
+        expires_in time, :public => true
+      else
+        response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, public"
+        response.headers["Pragma"]        = "no-cache"
+        response.headers["Etag"]          = Time.now.to_i.to_s
+        response.headers["Expires"]       = "Fri, 01 Jan 1990 00:00:00 GMT"
+      end
+    end
+
+    def server_cache(time = 30.minutes)
+      varnish_expires_in time if varnish_enabled?
+    end
+
+    def varnish_enabled?
+      UbiquoDesign.cache_manager == UbiquoDesign::CacheManagers::Varnish
+    end
+
   end
 end
