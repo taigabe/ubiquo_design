@@ -15,7 +15,7 @@ es:
       expire_all_pages: Expirar todas las páginas
       expire_url:  Expirar la URL
       expire_pages_url_title: URL a expirar
-      expire_pages_url_info: "Especifica una URL en formato absoluto (por ejemplo 'http://www.miweb.com/articulos/detalle/titulo-de-la-noticia') para expirar la pàgina que se muestra en esta dirección actualmente."
+      expire_pages_url_info: "Especifica una URL en formato absoluto (por ejemplo: http://www.miweb.com/articulos/detalle/titulo-de-la-noticia) para expirar la pàgina que se muestra en esta dirección actualmente."
       copy_to_locale: "Copiar al idioma actual"
       confirm_page_copy: "¿Está seguro que quiere hacer una copia traducida de esta página?"
     page_templates:

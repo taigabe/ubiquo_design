@@ -14,7 +14,7 @@ en:
       expire_all_pages: Expire all
       expire_url:  Expire URL
       expire_pages_url_title: URL to expire
-      expire_pages_url_info: "Enter an absolute URL (e.g. 'http://www.myweb.com/articles/detail/news-item-title') to expire the page that is shown currently at this address."
+      expire_pages_url_info: "Enter an absolute URL (e.g. http://www.myweb.com/articles/detail/news-item-title) to expire the page that is shown currently at this address."
       copy_to_locale: "Copy to current language"
       confirm_page_copy: "Are you sure you want to create a translated copy of this page?"
     page_templates:

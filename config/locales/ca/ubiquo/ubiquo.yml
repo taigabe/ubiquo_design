@@ -15,7 +15,7 @@ ca:
       expire_all_pages: Expirar totes les pàgines
       expire_url:  Expirar la URL
       expire_pages_url_title: URL a expirar
-      expire_pages_url_info: "Especifiqueu una URL en format absolut (per exemple 'http://www.elmeuweb.cat/articles/detall/titol-de-la-noticia') per a expirar la pàgina que es mostra a aquesta adreça de la part pública actualment."
+      expire_pages_url_info: "Especifiqueu una URL en format absolut (per exemple: http://www.elmeuweb.cat/articles/detall/titol-de-la-noticia) per a expirar la pàgina que es mostra a aquesta adreça de la part pública actualment."
       copy_to_locale: "Copiar a l'idioma actual"
       confirm_page_copy: "Esteu segur que voleu fer una còpia traduïda d'aquesta pàgina?"
     page_templates:
