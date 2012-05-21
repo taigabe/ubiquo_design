@@ -142,7 +142,7 @@ class Ubiquo::PagesController < UbiquoController
     end
 
     respond_to do |format|
-      format.html { redirect_to(:action => :expirations) }
+      format.html { redirect_to expirations_ubiquo_pages_path }
     end
   end
 
