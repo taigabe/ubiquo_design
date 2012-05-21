@@ -5,8 +5,6 @@ module UbiquoDesign
       klass.helper_method :render_block
     end
 
-    private
-
     # Check if the current request if a widget request
     def widget_request?
       params[:widget]
