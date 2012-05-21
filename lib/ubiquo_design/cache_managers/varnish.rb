@@ -203,7 +203,7 @@ module UbiquoDesign
           headers = {'Host' => host} if host
 
           begin
-            VarnishServer.alive.each do |server|
+            ProxyServer.alive.each do |server|
               http = Net::HTTP.new(server.host, server.port)
               #http.set_debug_output($stderr)
               http.send_request(method, url, nil, headers || {})
