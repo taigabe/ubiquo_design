@@ -11,6 +11,8 @@ map.namespace :ubiquo do |ubiquo|
   end
 end
 
+map.discovery "/discovery/:type", :controller => "discovery", :action => "create", :format => "xml", :conditions => { :method => :post }
+
 # Proposal for public routes.
 
 map.with_options :controller => 'pages' do |pages|

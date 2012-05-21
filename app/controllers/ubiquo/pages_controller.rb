@@ -98,7 +98,7 @@ class Ubiquo::PagesController < UbiquoController
         if ubiquo_config_call :expiration_permit, {:context => :ubiquo_design}
           render :action => 'expirations'
         else
-          redirect_to :action => 'index'
+          redirect_to ubiquo_pages_path
         end
       end
     end
@@ -153,7 +153,7 @@ class Ubiquo::PagesController < UbiquoController
     else
       flash[:error] = t("ubiquo.page.any_page_expired")
     end
-    redirect_to :action => :index
+    redirect_to ubiquo_pages_path
   end
 
   private

@@ -4,6 +4,9 @@ config.after_initialize do
   UbiquoDesign::Connectors.load!
 end
 
+# Use the following in your application to enable the ServerStatus middleware
+#config.middleware.use 'UbiquoDesign::ServerStatus'
+
 custom_paths = Gem::Version.new(Rails.version) >= Gem::Version.new('2.3.9') ? :autoload_paths : :load_paths
 ActiveSupport::Dependencies.send(custom_paths) << Rails.root.join("app", "models", "widgets")
 ActiveSupport::Dependencies.send(custom_paths) << File.join(File.dirname(__FILE__),  "..", "app", "models", "widgets")
