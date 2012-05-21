@@ -42,6 +42,8 @@ class Page < ActiveRecord::Base
     end
   end
 
+  include ActionController::UrlWriter
+
   # Returns the sql conditions that determine that a page is the published instance
   def self.published_conditions
     ["pages.published_id IS NULL AND pages.is_modified = ?", false]
@@ -104,6 +106,51 @@ class Page < ActiveRecord::Base
 
   def all_blocks_as_hash
     blocks.as_hash
+  end
+
+
+  # Returns the full url where this page is available
+  def url(options = {})
+    File.join(url_prefix(options), url_name)
+  end
+
+  # Returns the full url
+  # Possible options:
+  #   :scope => scope where this page is being generated. It's not related to Scope!
+  def absolute_url(options = {})
+    custom_url(options) || "http://#{File.join(host || "", url)}"
+  end
+
+  # Returns the appropiate host for this page.
+  # To overwrite the page's locale use the +locale+`parameter
+  def host(options = {})
+    Ubiquo::Settings[:ubiquo_design][:public_host].call(options)
+  end
+
+  # Returns any possible applicable prefix for the url, to be placed before url_name
+  def url_prefix(options = {})
+    ''
+  end
+
+  # Returns a string only if a page has its own rules to build its url
+  def custom_url(options = {})
+    url_for(options_for_url(options))
+  end
+
+  # Returns a hash with options to use in a url_for method to generate the url of self
+  def options_for_url(url_for_options = {})
+    # there are custom routes for actions other than :show
+    unless url_for_options[:action] && url_for_options[:action].to_s != 'show'
+      # url must be an array of components to avoid a rails escaping bug
+      url = "#{self.url(url_for_options)}/#{url_for_options.delete(:url)}".split('/').delete_if(&:blank?)
+    end
+    {
+      :controller => '/pages',
+      :action => 'show',
+      :url => url,
+      :key => nil, # to overwrite current key in params
+      :host => host
+    }.merge(url_for_options)
   end
 
   def publish

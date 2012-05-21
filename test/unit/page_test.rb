@@ -367,6 +367,28 @@ class PageTest < ActiveSupport::TestCase
     assert_equal_set page.blocks.map(&:widgets).flatten, page.widgets
   end
 
+
+  def test_url_method_is_the_url_and_its_prefix
+    page = create_page
+    page.expects(:url_prefix).returns('/prefix/')
+    page.expects(:url_name).returns('/name')
+    assert_equal '/prefix/name', page.url
+  end
+
+  def test_url_returns_custom_url_if_set
+    custom_url = '/my/url'
+    page = Page.new
+    page.expects(:custom_url).returns(custom_url)
+    assert_equal custom_url, page.absolute_url
+  end
+
+  def test_absolute_url_is_the_url_and_the_host_with_protocol
+    page = create_page
+    page.expects(:host).returns('google.com')
+    page.expects(:url).returns('/my/name')
+    assert_equal 'http://google.com/my/name', page.absolute_url
+  end
+
   [:client, :server].map do |type|
     expiration_type = "#{type}_expiration"
 
