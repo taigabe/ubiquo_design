@@ -25,8 +25,8 @@ class Ubiquo::DesignsController < UbiquoController
   end
 
   def publish
-    page = Page.find(params[:page_id])
-    if page.publish
+    @page = Page.find(params[:page_id])
+    if @page.publish
       flash[:notice] = t('ubiquo.design.page_published')
     else
       flash[:error] = t('ubiquo.design.page_publish_error')
@@ -35,8 +35,8 @@ class Ubiquo::DesignsController < UbiquoController
   end
 
   def unpublish
-    page = Page.find(params[:page_id])
-    if page.unpublish
+    @page = Page.find(params[:page_id])
+    if @page.unpublish
       flash[:notice] = t('ubiquo.design.page_unpublished')
     else
       flash[:error] = t('ubiquo.design.page_unpublish_error')
