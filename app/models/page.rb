@@ -102,6 +102,12 @@ class Page < ActiveRecord::Base
     published.destroy if published?
   end
 
+  def clear_published_page!
+    ret = clear_published_page
+    raise ActiveRecord::RecordNotDestroyed, ret.errors.full_messages.join("\n") unless ret
+    ret
+  end
+
   def all_blocks_as_hash
     blocks.as_hash
   end
@@ -154,7 +160,7 @@ class Page < ActiveRecord::Base
   def publish
     begin
       transaction do
-        self.clear_published_page
+        self.clear_published_page!
         published_page = self.clone
         published_page.attributes = {
           :is_modified => false,
@@ -163,7 +169,8 @@ class Page < ActiveRecord::Base
 
         published_page.save!
 
-        published_page.blocks.destroy_all
+        raise ActiveRecord::RecordNotDestroyed, "Cannot delete assigned blocks" unless published_page.blocks.destroy_all.all?
+
         self.blocks.each do |block|
           new_block = block.clone
           new_block.page = published_page
@@ -173,9 +180,9 @@ class Page < ActiveRecord::Base
           end
         end
 
-        published_page.reload.update_attribute(:is_modified, false)
+        published_page.reload.update_attributes!(:is_modified => false)
 
-        self.update_attributes(
+        self.update_attributes!(
           :is_modified => false,
           :published_id => published_page.id
         )

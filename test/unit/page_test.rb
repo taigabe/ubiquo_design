@@ -389,6 +389,44 @@ class PageTest < ActiveSupport::TestCase
     assert_equal 'http://google.com/my/name', page.absolute_url
   end
 
+  def test_shouldnt_publish_page_if_cannot_destroy_published_page
+    page = create_page
+    assert page.publish
+    published_page = page.reload.published
+    page.stubs(:clear_published_page).returns(false)
+    assert !page.publish
+  end
+
+  def test_shouldnt_publish_a_page_if_published_clone_page_is_not_valid
+    page = create_page
+    dup_page = page.dup
+    page.stubs(:dup).returns(dup_page)
+    dup_page.stubs(:save!).raises(ActiveRecord::RecordNotSaved)
+    assert !page.publish
+  end
+
+  def test_shouldnt_publish_a_page_if_cannot_destroy_all_blocks_on_published_page
+    page = create_page
+    dup_page = page.dup
+    page.stubs(:dup).returns(dup_page)
+    dup_page.blocks.stubs(:destroy_all).returns([true, false])
+    assert !page.publish
+  end
+
+  def test_shouldnt_publish_a_page_if_cannot_update_attributes_on_published_page
+    page = create_page
+    dup_page = page.dup
+    page.stubs(:dup).returns(dup_page)
+    dup_page.stubs(:update_attributes!).raises(ActiveRecord::RecordNotSaved)
+    assert !page.publish
+  end
+
+  def test_shouldnt_publish_a_page_if_cannot_update_attributes_on_published_page
+    page = create_page
+    page.stubs(:update_attributes!).raises(ActiveRecord::RecordNotSaved)
+    assert !page.publish
+  end
+
   [:client, :server].map do |type|
     expiration_type = "#{type}_expiration"
 
