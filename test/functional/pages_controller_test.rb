@@ -134,4 +134,16 @@ class PagesControllerTest < ActionController::TestCase
     assert_equal "Fri, 01 Jan 1990 00:00:00 GMT", @response.headers["Expires"]
   end
 
+  test "should detect enabled varnish cache manager subclasses to attach its expiration headers" do
+    UbiquoDesign.expects(:cache_manager).returns(UbiquoDesign::CacheManagers::Varnish)
+    assert @controller.send(:varnish_enabled?)
+
+    UbiquoDesign.expects(:cache_manager).returns(Class.new(UbiquoDesign::CacheManagers::Varnish))
+    assert @controller.send(:varnish_enabled?)
+
+    UbiquoDesign.expects(:cache_manager).returns(UbiquoDesign::CacheManagers::Memcache)
+    assert !@controller.send(:varnish_enabled?)
+  end
+
+
 end

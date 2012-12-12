@@ -94,7 +94,7 @@ module UbiquoDesign
     end
 
     def varnish_enabled?
-      UbiquoDesign.cache_manager == UbiquoDesign::CacheManagers::Varnish
+      UbiquoDesign.cache_manager <= UbiquoDesign::CacheManagers::Varnish
     end
 
   end
