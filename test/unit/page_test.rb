@@ -399,26 +399,23 @@ class PageTest < ActiveSupport::TestCase
 
   def test_shouldnt_publish_a_page_if_published_clone_page_is_not_valid
     page = create_page
-    dup_page = page.dup
-    page.stubs(:dup).returns(dup_page)
-    dup_page.stubs(:save!).raises(ActiveRecord::RecordNotSaved)
+    published = stub_published_page(page)
+    published.stubs(:save!).raises(ActiveRecord::RecordNotSaved)
     assert !page.publish
   end
 
   def test_shouldnt_publish_a_page_if_cannot_destroy_all_blocks_on_published_page
     page = create_page
-    dup_page = page.dup
-    page.stubs(:dup).returns(dup_page)
-    dup_page.blocks.stubs(:destroy_all).returns([true, false])
+    published = stub_published_page(page)
+    published.blocks.stubs(:destroy_all).returns([true, false])
     assert !page.publish
   end
 
   def test_shouldnt_publish_a_page_if_cannot_update_attributes_on_published_page
     page = create_page
-    dup_page = page.dup
-    page.stubs(:dup).returns(dup_page)
-    dup_page.stubs(:update_attributes!).raises(ActiveRecord::RecordNotSaved)
-    assert !page.publish
+    published = stub_published_page(page)
+    published.stubs(:update_attributes!).raises(ActiveRecord::RecordNotSaved)
+    assert !page.publith
   end
 
   def test_shouldnt_publish_a_page_if_cannot_update_attributes_on_published_page
@@ -530,6 +527,13 @@ class PageTest < ActiveSupport::TestCase
 
   def caching_on
     ActionController::Base.expects(:perform_caching).at_least_once.returns(true)
+  end
+
+  def stub_published_page(page)
+    page.dup.tap do |published|
+      page.stubs(:published?).returns(true)
+      page.stubs(:published).returns(published)
+    end
   end
 
 end
