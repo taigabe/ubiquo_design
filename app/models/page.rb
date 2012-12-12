@@ -104,7 +104,7 @@ class Page < ActiveRecord::Base
 
   def clear_published_page!
     ret = clear_published_page
-    raise ActiveRecord::RecordNotDestroyed, ret.errors.full_messages.join("\n") unless ret
+    raise ActiveRecord::ActiveRecordError, ret.errors.full_messages.join("\n") if published? && !ret
     ret
   end
 
@@ -169,7 +169,7 @@ class Page < ActiveRecord::Base
 
         published_page.save!
 
-        raise ActiveRecord::RecordNotDestroyed, "Cannot delete assigned blocks" unless published_page.blocks.destroy_all.all?
+        raise ActiveRecord::ActiveRecordError, "Cannot delete assigned blocks" unless published_page.blocks.destroy_all.all?
 
         self.blocks.each do |block|
           new_block = block.clone
