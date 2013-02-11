@@ -82,7 +82,7 @@ en:
       unpublish: "Unpublish"
       move: "move"
       # Widgets
-      editing_widget: "Editing widget {{name}}"
+      editing_widget: "Editing widget %{name}"
       close_widget: "Close"
       save: "Save"
       page_published: "Page published succesfully"
