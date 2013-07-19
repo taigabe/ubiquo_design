@@ -60,7 +60,7 @@ module UbiquoDesign
     end
 
     def varnish_expires_in time
-      response.headers['X-RUN-ESI'] = 'true' unless widget_request?
+      response.headers['X-RUN-ESI'] = 'true' unless widget_request? || !defined?(ESI_RENDERING_ENABLED)
       response.headers['X-VARNISH-TTL'] ||= time.to_s
       response.headers['X-VARNISH-TTL'] = time.to_s if time.to_s < response.headers['X-VARNISH-TTL']
     end
