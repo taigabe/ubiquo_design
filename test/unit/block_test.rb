@@ -49,6 +49,15 @@ class BlockTest < ActiveSupport::TestCase
     assert !delegated_block.is_used_by_other_blocks?
   end
 
+  def test_should_nullify_shared_foreign_key_when_block_is_delete
+    shared_block = blocks(:one)
+    delegated_block = create_block(:shared_id => shared_block.id)
+    delegated_block2 = create_block(:shared_id => shared_block.id)
+    assert shared_block.destroy
+    assert !delegated_block.reload.shared_id
+    assert !delegated_block2.reload.shared_id
+  end
+
   def test_create_for_block_type_and_page
     assert_difference "Block.count" do
       block = Block.create_for_block_type_and_page("static", pages(:one))

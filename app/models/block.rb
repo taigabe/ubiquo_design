@@ -1,7 +1,7 @@
 class Block < ActiveRecord::Base
   validates_presence_of :block_type, :page
 
-  has_many :block_uses, :class_name => 'Block', :foreign_key => 'shared_id'
+  has_many :block_uses, :class_name => 'Block', :foreign_key => 'shared_id', :dependent => :nullify
   belongs_to :shared, :class_name => 'Block', :foreign_key => 'shared_id'
   has_many :widgets, :dependent => :destroy, :order => 'widgets.position ASC'
   belongs_to :page
