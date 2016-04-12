@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Page < ActiveRecord::Base
 
   serialize :expiration, Hash
@@ -20,7 +21,7 @@ class Page < ActiveRecord::Base
 
   validates_presence_of :name
   validates_presence_of :url_name, :if => lambda{|page| page.url_name.nil?}
-  validates_format_of :url_name, :with => /\A[a-z0-9\/\_\-]*\Z/
+  validates_format_of :url_name, :with => /\A[a-zñ0-9\/\_\-]*\Z/
   validates_presence_of :page_template
 
   # No other page with the same url_name
