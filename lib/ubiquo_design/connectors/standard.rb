@@ -162,8 +162,8 @@ module UbiquoDesign
 
       module UbiquoPagesController
         def self.included(klass)
-          klass.send(:include, InstanceMethods)
-          Standard.register_uhooks klass, InstanceMethods
+          #klass.send(:include, InstanceMethods)
+          #Standard.register_uhooks klass, InstanceMethods
           klass.send(:helper, Helper)
         end
 
@@ -192,31 +192,31 @@ module UbiquoDesign
         module InstanceMethods
 
           # Returns all private pages
-          def uhook_find_private_pages(filters, order_by, sort_order)
-            ::Page.drafts.filtered_search(filters, :order => order_by + " " + sort_order)
-          end
+          # def uhook_find_private_pages(filters, order_by, sort_order)
+          #   ::Page.drafts.filtered_search(filters, :order => order_by + " " + sort_order)
+          # end
 
-          # initializes a new instance of page.
-          def uhook_new_page
-            ::Page.new
-          end
+          # # initializes a new instance of page.
+          # def uhook_new_page
+          #   ::Page.new
+          # end
 
-          # create a new instance of page.
-          def uhook_create_page
-            p = ::Page.new(params[:page])
-            p.save
-            p
-          end
+          # # create a new instance of page.
+          # def uhook_create_page
+          #   p = ::Page.new(params[:page])
+          #   p.save
+          #   p
+          # end
 
-          #updates a page instance. returns a boolean that means if update was done.
-          def uhook_update_page(page)
-            page.update_attributes(params[:page])
-          end
+          # #updates a page instance. returns a boolean that means if update was done.
+          # def uhook_update_page(page)
+          #   page.update_attributes(params[:page])
+          # end
 
-          #destroys a page isntance. returns a boolean that means if the destroy was done.
-          def uhook_destroy_page(page)
-            page.destroy
-          end
+          # #destroys a page isntance. returns a boolean that means if the destroy was done.
+          # def uhook_destroy_page(page)
+          #   page.destroy
+          # end
         end
       end
 

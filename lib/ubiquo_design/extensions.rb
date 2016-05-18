@@ -9,8 +9,8 @@ module UbiquoDesign
   end
 end
 
-ActionController::Base.helper(UbiquoDesign::Extensions::Helper)
-ActionView::Base.send(:include, UbiquoDesign::Extensions::Helper)
+# ActionController::Base.helper(UbiquoDesign::Extensions::Helper)
+#ActionView::Base.send(:include, UbiquoDesign::Extensions::Helper)
 
 if Rails.env.test?
   ActiveSupport::TestCase.send(:include, UbiquoDesign::Extensions::TestHelper)

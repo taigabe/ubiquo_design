@@ -1,3 +1,4 @@
+require "active_support/concern.rb"
 require 'ubiquo_design/extensions'
 require 'ubiquo_design/ubiquo_widgets'
 require 'ubiquo_design/render_page'
