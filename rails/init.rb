@@ -64,8 +64,8 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add(:public_host, lambda{|options| 'replaceme.com'})
 end
 
-groups = Ubiquo::Config.get :model_groups
-Ubiquo::Config.set :model_groups, groups.merge(
+groups = Ubiquo::Settings.get :model_groups
+Ubiquo::Settings.set :model_groups, groups.merge(
   :ubiquo_design => %w{blocks widgets pages}
 )
 

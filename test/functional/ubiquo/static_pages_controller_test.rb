@@ -6,7 +6,7 @@ class Ubiquo::StaticPagesControllerTest < ActionController::TestCase
 
   def setup
     login_as
-    Ubiquo::Config.context(:ubiquo_design).set(:block_type_for_static_section_widget, :main)
+    Ubiquo::Settings.context(:ubiquo_design).set(:block_type_for_static_section_widget, :main)
   end
 
   def test_should_get_index_with_only_static_pages

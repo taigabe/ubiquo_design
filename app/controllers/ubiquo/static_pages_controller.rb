@@ -8,11 +8,11 @@ class Ubiquo::StaticPagesController < UbiquoController
   helper 'ubiquo/pages'
   
   def index
-    order_by = params[:order_by] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_order_field)
-    sort_order = params[:sort_order] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_sort_order)
+    order_by = params[:order_by] || Ubiquo::Settings.context(:ubiquo_design).get(:pages_default_order_field)
+    sort_order = params[:sort_order] || Ubiquo::Settings.context(:ubiquo_design).get(:pages_default_sort_order)
     
     filters = { :text => params[:filter_text] }
-    per_page = Ubiquo::Config.context(:ubiquo_design).get(:pages_elements_per_page)
+    per_page = Ubiquo::Settings.context(:ubiquo_design).get(:pages_elements_per_page)
     @static_pages_pages, @static_pages = Page.paginate(:page => params[:page], :per_page => per_page) do 
       Page.drafts.statics.filtered_search(filters, :order => order_by + " " + sort_order)
     end
@@ -38,7 +38,7 @@ class Ubiquo::StaticPagesController < UbiquoController
     default_widget_params = { :name => "Static Section" }
     @static_page = Page.new(params[:page].reverse_merge!(default_page_params))
     @widget = uhook_create_widget
-    block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+    block_type = Ubiquo::Settings.context(:ubiquo_design).get(:block_type_for_static_section_widget)
     if params[:publish_page] == "true"
       ok = @static_page.add_widget(block_type, @widget) && @static_page.publish
     else
@@ -69,7 +69,7 @@ class Ubiquo::StaticPagesController < UbiquoController
     @static_page = Page.find(params[:id])
     @widget = params[:from].present? ? uhook_new_widget : (@static_page.uhook_static_section_widget || uhook_create_widget)
     if @widget.new_record?
-      block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+      block_type = Ubiquo::Settings.context(:ubiquo_design).get(:block_type_for_static_section_widget)
       @static_page.add_widget(block_type, @widget)
     else
       @widget.update_attributes(params[:static_section])

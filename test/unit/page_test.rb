@@ -305,9 +305,9 @@ class PageTest < ActiveSupport::TestCase
   def test_should_check_ubiquo_config_in_is_previewable
     page = create_page
     assert page.is_previewable?
-    Ubiquo::Config.context(:ubiquo_design).set(:allow_page_preview, false)
+    Ubiquo::Settings.context(:ubiquo_design).set(:allow_page_preview, false)
     assert !page.is_previewable?
-    Ubiquo::Config.context(:ubiquo_design).set(:allow_page_preview, true)
+    Ubiquo::Settings.context(:ubiquo_design).set(:allow_page_preview, true)
   end
 
   def test_should_be_previewable_with_previewable_widgets

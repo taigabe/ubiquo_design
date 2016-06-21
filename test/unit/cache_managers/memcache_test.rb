@@ -32,11 +32,11 @@ class UbiquoDesign::CacheManagers::MemcacheTest < ActiveSupport::TestCase
       UbiquoDesign::CacheManagers::Memcache.instance_variable_set("@cache","")
     end
     assert_raise UbiquoDesign::CacheManagers::Memcache::MemcacheNotAvailable do
-      Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "")
+      Ubiquo::Settings.context(:ubiquo_design).get(:memcache).merge!(:server => "")
       @manager.send(:connection)
     end
     assert_raise UbiquoDesign::CacheManagers::Memcache::MemcacheNotAvailable do
-      Ubiquo::Config.context(:ubiquo_design).get(:memcache).merge!(:server => "1985")
+      Ubiquo::Settings.context(:ubiquo_design).get(:memcache).merge!(:server => "1985")
       @manager.send(:connection)
      end
   end

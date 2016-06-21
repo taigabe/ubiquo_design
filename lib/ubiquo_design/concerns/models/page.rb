@@ -282,7 +282,7 @@ module UbiquoDesign::Concerns::Models::Page
 
   # Returns true if the page can be previewed.
   def is_previewable?
-    Ubiquo::Config.context(:ubiquo_design).get(:allow_page_preview) &&
+    Ubiquo::Settings.context(:ubiquo_design).get(:allow_page_preview) &&
       self.blocks.map(&:widgets).flatten.reject(&:is_previewable?).blank?
   end
 

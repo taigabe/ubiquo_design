@@ -5,7 +5,7 @@ module UbiquoDesign
     autoload :WidgetTranslation, "ubiquo_design/connectors/widget_translation"
     
     def self.load!
-      "UbiquoDesign::Connectors::#{Ubiquo::Config.context(:ubiquo_design).get(:connector).to_s.camelize}".constantize.load!
+      "UbiquoDesign::Connectors::#{Ubiquo::Settings.context(:ubiquo_design).get(:connector).to_s.camelize}".constantize.load!
     end
   end
 end

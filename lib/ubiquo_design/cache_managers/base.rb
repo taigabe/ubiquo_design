@@ -2,12 +2,12 @@ module UbiquoDesign
 
   # Return the manager class to use. You can override the default by setting
   # the :cache_manager_class in ubiquo config:
-  #   Ubiquo::Config.context(:ubiquo_design).set(
+  #   Ubiquo::Settings.context(:ubiquo_design).set(
   #     :cache_manager_class,
   #     UbiquoDesign::CacheManagers::Memcache
   #   )
   def self.cache_manager
-    Ubiquo::Config.context(:ubiquo_design).call(:cache_manager_class, self)
+    Ubiquo::Settings.context(:ubiquo_design).call(:cache_manager_class, self)
   end
 
   module CacheManagers

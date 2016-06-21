@@ -5,7 +5,7 @@ module UbiquoDesign
     # Memcache implementation for the cache manager
     class Memcache < UbiquoDesign::CacheManagers::Base
 
-      CONFIG = Ubiquo::Config.context(:ubiquo_design).get(:memcache)
+      CONFIG = Ubiquo::Settings.context(:ubiquo_design).get(:memcache)
       DATA_TIMEOUT = CONFIG[:timeout]
 
       # Exception class raised in situations where memcache is not available

@@ -96,7 +96,7 @@ module UbiquoDesign
 
           def uhook_static_section_widget(locale = nil)
             locale ||= Locale.current
-            block_type = Ubiquo::Config.context(:ubiquo_design).get(:block_type_for_static_section_widget)
+            block_type = Ubiquo::Settings.context(:ubiquo_design).get(:block_type_for_static_section_widget)
             block = self.blocks.select { |b| b.block_type == block_type }.first
             if block
               ::Widget.locale(locale).first(:conditions => {

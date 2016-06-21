@@ -1,7 +1,7 @@
 module Ubiquo::PagesHelper
 
   def page_filters
-    if Ubiquo::Config.context(:ubiquo_design).get(:page_string_filter_enabled)
+    if Ubiquo::Settings.context(:ubiquo_design).get(:page_string_filter_enabled)
       filters_for 'Page' do |f|
         f.text :caption => t('ubiquo.design.name')
       end

@@ -147,7 +147,7 @@ module UbiquoDesign::Concerns::Helpers::Ubiquo::DesignsHelper
   end
 
   def widget_tabs
-    case ::Ubiquo::Config.context(:ubiquo_design).get(:widget_tabs_mode)
+    case ::Ubiquo::Settings.context(:ubiquo_design).get(:widget_tabs_mode)
     when :auto
       ::Widget.groups.present? ? ::Widget.groups : @page.available_widgets_per_block
     when :groups
