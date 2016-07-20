@@ -1,6 +1,6 @@
 class Ubiquo::StaticPagesController < UbiquoController
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
-  access_control [:publish, :unpublish] => 'publish_pages'
+  access_control [:destroy, :unpublish] => 'remove_pages'
   before_filter :load_page_templates
   before_filter :load_page, :only => [:edit, :update, :destroy]  
   before_filter :load_parent_pages, :except => [:index, :destroy]
