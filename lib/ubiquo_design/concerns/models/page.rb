@@ -246,6 +246,10 @@ module UbiquoDesign::Concerns::Models::Page
       Ubiquo::Settings[:ubiquo_design][:page_can_be_expired?].call(self, user)
   end
 
+  def can_be_removed_by?(user)
+    key.blank? && user.has_permission?('remove_pages')
+  end
+
   # Returns true if the page has been published.
   def published?
     published_id

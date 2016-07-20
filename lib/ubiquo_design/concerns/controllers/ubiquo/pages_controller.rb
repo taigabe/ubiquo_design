@@ -3,6 +3,7 @@ module UbiquoDesign::Concerns::Controllers::Ubiquo::PagesController
 
   included do
     ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
+    access_control [:destroy] => 'remove_pages'
     before_filter :load_page_templates
     before_filter :load_page, :only => [:edit, :update, :destroy]
     before_filter :load_parent_pages, :only => [:new, :edit]
