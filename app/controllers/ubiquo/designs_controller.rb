@@ -3,6 +3,7 @@ class Ubiquo::DesignsController < UbiquoController
   include UbiquoDesign::RenderPage
   helper 'ubiquo/widgets'
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
+  access_control [:publish, :unpublish] => 'publish_pages'
   uses_tiny_mce(:options => default_tiny_mce_options.merge(:entities => ''))
 
   def show
