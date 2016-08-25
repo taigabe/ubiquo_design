@@ -15,16 +15,16 @@ ActiveSupport::Dependencies.send(custom_paths) << File.join(File.dirname(__FILE_
 Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :pages_elements_per_page
   config.add_inheritance :pages_elements_per_page, :elements_per_page
-  config.add :design_access_control, lambda{
+  config.add :design_access_control, lambda{ |_|
     access_control :DEFAULT => "design_management"
   }
-  config.add :design_permit, lambda{
+  config.add :design_permit, lambda{ |_|
     permit?("design_management")
   }
-  config.add :static_pages_permit, lambda{
+  config.add :static_pages_permit, lambda{ |_|
     permit?("static_pages_management")
   }
-  config.add :expiration_permit, lambda{
+  config.add :expiration_permit, lambda{ |_|
     permit?("expiration_management")
   }
   config.add :page_can_be_expired?, lambda {|page, user|
@@ -37,7 +37,7 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :allow_page_preview, true
   config.add :connector, :standard
 
-  config.add :cache_manager_class, lambda{
+  config.add :cache_manager_class, lambda{ |_|
     case Rails.env
     when 'test'
       UbiquoDesign::CacheManagers::RubyHash
@@ -61,7 +61,7 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
     }
   }
   config.add(:async_varnish_expiration, false)
-  config.add(:public_host, lambda{|options| 'replaceme.com'})
+  config.add(:public_host, lambda{ |options| 'replaceme.com'})
 end
 
 groups = Ubiquo::Settings.get :model_groups
