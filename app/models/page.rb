@@ -42,6 +42,7 @@ class Page < ActiveRecord::Base
   end
 
   include ActionController::UrlWriter
+  include UrlsHelper
 
   # Returns the sql conditions that determine that a page is the published instance
   def self.published_conditions
@@ -119,27 +120,37 @@ class Page < ActiveRecord::Base
     File.join(url_prefix(options), url_name)
   end
 
-  # Returns the full url
-  # Possible options:
-  #   :scope => scope where this page is being generated. It's not related to Scope!
   def absolute_url(options = {})
-    custom_url(options) || "http://#{File.join(host || "", url)}"
+    url = custom_absolute_url(get_current_scope, self)
+    url = url.present? ? url : url_for(options_for_url(options))
+    if key == 'detalle_noticia' || (kind == 'detalle' && scope_type == 'Web')
+      url = "#{url}/#{Time.zone.now.year}#{'%02d' % Time.zone.now.month}"
+    elsif key == 'hemeroteca_article' && scope_type == 'Publication'
+      publication_ids = Publication.all(:conditions => {:key => get_current_scope.key}).map(&:id)
+      last_edition = Edition.first(:conditions => {:publication_id => publication_ids})
+      url = "#{url.sub('/articles','')}/editions/#{last_edition.code}"
+    end
+    url
   end
 
   # Returns the appropiate host for this page.
   # To overwrite the page's locale use the +locale+`parameter
   def host(options = {})
-    Ubiquo::Settings[:ubiquo_design][:public_host].call(options)
+    host = Ubiquo::Settings[:ubiquo_design][:public_host].call(options)
+    if section.present? && section.subdomain.present?
+      "#{section.subdomain}.#{host}"
+      # Development env
+      # "#{section.subdomain}.#{host.sub('dev.','')}"
+    else
+      "www.#{host}"
+      # Development env
+      # host
+    end
   end
 
   # Returns any possible applicable prefix for the url, to be placed before url_name
   def url_prefix(options = {})
     ''
-  end
-
-  # Returns a string only if a page has its own rules to build its url
-  def custom_url(options = {})
-    url_for(options_for_url(options))
   end
 
   # Returns a hash with options to use in a url_for method to generate the url of self
@@ -152,7 +163,7 @@ class Page < ActiveRecord::Base
     {
       :controller => '/pages',
       :action => 'show',
-      :url => url,
+      :url => kind == 'portada' ? '' : url,
       :key => nil, # to overwrite current key in params
       :host => host
     }.merge(url_for_options)
@@ -187,8 +198,6 @@ class Page < ActiveRecord::Base
           :is_modified => false,
           :published_id => published_page.id
         )
-
-        expire
       end
       return true
     rescue StandardError => e
