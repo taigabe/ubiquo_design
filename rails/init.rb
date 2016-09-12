@@ -24,9 +24,6 @@ Ubiquo::Plugin.register(:ubiquo_design, directory, config) do |config|
   config.add :static_pages_permit, lambda{
     permit?("static_pages_management")
   }
-  config.add :expiration_permit, lambda{
-    permit?("expiration_management")
-  }
   config.add :page_can_be_expired?, lambda {|page, user|
     true
   }

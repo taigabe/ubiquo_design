@@ -95,15 +95,6 @@ class Ubiquo::PagesController < UbiquoController
 
   # GET /pages/expirations
   def expirations
-    respond_to do |format|
-      format.html do
-        if ubiquo_config_call :expiration_permit, {:context => :ubiquo_design}
-          render :action => 'expirations'
-        else
-          redirect_to ubiquo_pages_path
-        end
-      end
-    end
   end
 
   def expire_pages
