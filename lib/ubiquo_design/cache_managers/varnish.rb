@@ -96,6 +96,9 @@ module UbiquoDesign
           ban([url, "\\?"])
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"])
+          if options[:include_section_pages]
+            ban([url, "\/(?\!noticia)"], options)
+          end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
         end
@@ -185,11 +188,14 @@ module UbiquoDesign
           # Parse the url and separate the host and the path+query
           parsed_url_for_host = URI.parse(url.first)
           host = parsed_url_for_host.host
-          # For development env, uncomment port var and add it to base_url_without_host :#{port}
-          # port = parsed_url_for_host.port
 
           # delete the host from the base_url
-          base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
+          if Rails.env.development?
+            port = parsed_url_for_host.port
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{port}", '')
+          else
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
+          end
 
           # Varnish 2.1 required to double-escape in order to get it as a correct regexp
           # result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
