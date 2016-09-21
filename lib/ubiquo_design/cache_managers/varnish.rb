@@ -81,12 +81,12 @@ module UbiquoDesign
         end
 
         # Expires a +page+, with all its possibles urls and params
-        def expire_page(page)
+        def expire_page(page, options = {})
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
-          expire_url(page.absolute_url)
+          expire_url(page.absolute_url, nil, options)
         end
 
-        def expire_url(url, regexp = nil)
+        def expire_url(url, regexp = nil, options = {})
           Rails.logger.debug "Expiring url '#{url}' in Varnish"
           # We ban the url with the given regexp, if any
           ban([url, regexp]) if regexp
@@ -97,9 +97,7 @@ module UbiquoDesign
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"])
           # ban current month news
-          if section_news_request?(url) || hemeroteca_news_request?(url)
-            ban([url, "\*"])
-          end
+          ban([url, "\*"], options) if options[:include_child_pages]
         end
 
         # Overwrites the traditional model expiration to make use of the new storage of policies
@@ -179,7 +177,7 @@ module UbiquoDesign
         # regexp-escapable part and an already escaped one that is appended
         # after the final slash.
         # Note that +url+ is strictly interpreted, as '^' is prepended
-        def ban(url)
+        def ban(url, options = {})
           # Get the base url from the related page, without the possible
           # trailing slash. It is appended as optional later (to expire both)
           base_url = url.first.gsub(/\/$/, '')
@@ -187,7 +185,7 @@ module UbiquoDesign
           # Parse the url and separate the host and the path+query
           parsed_url_for_host = URI.parse(url.first)
           host = parsed_url_for_host.host
-          # For development env, uncomment port and add it to base_url_without_host :#{port}
+          # For development env, uncomment port var and add it to base_url_without_host :#{port}
           # port = parsed_url_for_host.port
 
           # delete the host from the base_url
@@ -196,12 +194,11 @@ module UbiquoDesign
           # Varnish 2.1 required to double-escape in order to get it as a correct regexp
           # result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
           # Varnish 3 needs it only escaped once
-          if section_news_request?(url.first) || hemeroteca_news_request?(url.first)
+          if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-
           varnish_request('BAN', result_url, host)
         end
 
@@ -221,14 +218,6 @@ module UbiquoDesign
           rescue
             Rails.logger.warn "Cache is not available, impossible to delete cache: "+ $!.inspect
           end
-        end
-
-        def section_news_request?(url)
-          url.last(6) == "#{Time.zone.now.year}#{'%02d' % Time.zone.now.month}"
-        end
-
-        def hemeroteca_news_request?(url)
-          url.last(3) == '-00'
         end
 
       end

@@ -28,7 +28,6 @@ class Ubiquo::DesignsController < UbiquoController
   def publish
     @page = Page.find(params[:page_id])
     if @page.publish
-      @page.expire
       flash[:notice] = t('ubiquo.design.page_published')
     else
       flash[:error] = t('ubiquo.design.page_publish_error')
