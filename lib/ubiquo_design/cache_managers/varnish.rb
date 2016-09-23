@@ -81,12 +81,12 @@ module UbiquoDesign
         end
 
         # Expires a +page+, with all its possibles urls and params
-        def expire_page(page)
+        def expire_page(page, options = {})
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
-          expire_url(page.absolute_url)
+          expire_url(page.absolute_url, nil, options)
         end
 
-        def expire_url(url, regexp = nil)
+        def expire_url(url, regexp = nil, options = {})
           Rails.logger.debug "Expiring url '#{url}' in Varnish"
           # We ban the url with the given regexp, if any
           ban([url, regexp]) if regexp
@@ -96,6 +96,11 @@ module UbiquoDesign
           ban([url, "\\?"])
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"])
+          if options[:include_section_pages]
+            ban([url, "\/(?\!noticia)"], options)
+          end
+          # ban current month news
+          ban([url, "\*"], options) if options[:include_child_pages]
         end
 
         # Overwrites the traditional model expiration to make use of the new storage of policies
@@ -175,7 +180,7 @@ module UbiquoDesign
         # regexp-escapable part and an already escaped one that is appended
         # after the final slash.
         # Note that +url+ is strictly interpreted, as '^' is prepended
-        def ban(url)
+        def ban(url, options = {})
           # Get the base url from the related page, without the possible
           # trailing slash. It is appended as optional later (to expire both)
           base_url = url.first.gsub(/\/$/, '')
@@ -185,27 +190,37 @@ module UbiquoDesign
           host = parsed_url_for_host.host
 
           # delete the host from the base_url
-          base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
+          if Rails.env.development?
+            port = parsed_url_for_host.port
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{port}", '')
+          else
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
+          end
 
           # Varnish 2.1 required to double-escape in order to get it as a correct regexp
           # result_url = Regexp.escape(base_url_without_host).gsub('\\'){'\\\\'} + '/?' + url.last
           # Varnish 3 needs it only escaped once
-          result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
-
+          if options[:include_child_pages]
+            result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
+          else
+            result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
+          end
           varnish_request('BAN', result_url, host)
         end
 
         # Sends a request with the required +method+ to the given +url+
         # The +host+ parameter, if supplied, is used as the "Host:" header
         def varnish_request method, url, host = nil
-          Rails.logger.debug "Varnish #{method} request for url #{url} and host #{host}"
-
           headers = {'Host' => host} if host
+          url = url.sub('http://', 'https://') if Settings[:application][:https_all]
+
+          Rails.logger.debug "Varnish #{method} request for url #{url} and host #{host}"
 
           begin
             ProxyServer.alive.each do |server|
-              http = Net::HTTP.new(server.host, server.port)
-              #http.set_debug_output($stderr)
+              http = Net::HTTP.new(server.host, server.port, :use_ssl => use_https)
+              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+              http.set_debug_output($stderr)
               http.send_request(method, url, nil, headers || {})
             end
           rescue
