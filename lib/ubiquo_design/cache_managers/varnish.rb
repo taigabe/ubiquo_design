@@ -93,9 +93,9 @@ module UbiquoDesign
           # We cannot simply ban url* since url could be a segment of
           # another page, so:
           # ban the url with params
-          ban([url, "\\?"])
+          ban([url, "\\?"], options)
           # ban the exact page url, with or without trailing slash
-          ban([url, "[\/]?$"])
+          ban([url, "[\/]?$"], options)
           if options[:include_section_pages]
             ban([url, "\/(?\!noticia)"], options)
           end
@@ -202,6 +202,8 @@ module UbiquoDesign
           # Varnish 3 needs it only escaped once
           if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
+          elsif options[:subdomain_portada]
+            result_url = '/$'
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
@@ -212,17 +214,14 @@ module UbiquoDesign
         # The +host+ parameter, if supplied, is used as the "Host:" header
         def varnish_request method, url, host = nil
           headers = {'Host' => host} if host
-          url = url.sub('http://', 'https://') if Settings[:application][:https_all]
 
           Rails.logger.debug "Varnish #{method} request for url #{url} and host #{host}"
 
           begin
-            ProxyServer.alive.each do |server|
-              http = Net::HTTP.new(server.host, server.port, :use_ssl => use_https)
-              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-              http.set_debug_output($stderr)
-              http.send_request(method, url, nil, headers || {})
-            end
+            http = Net::HTTP.new(Ubiquo::Settings[:application][:varnish_host],
+              Ubiquo::Settings[:application][:varnish_port])
+            #http.set_debug_output($stderr)
+            http.send_request(method, url, nil, headers || {})
           rescue
             Rails.logger.warn "Cache is not available, impossible to delete cache: "+ $!.inspect
           end
