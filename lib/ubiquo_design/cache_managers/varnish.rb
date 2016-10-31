@@ -95,7 +95,7 @@ module UbiquoDesign
           # ban the url with params
           ban([url, "\\?"], options)
           # ban the exact page url, with or without trailing slash
-          ban([url, "[\/]?$"], options)
+          ban([url, "[\/]?$"], options.merge(:warmup => true))
           if options[:include_section_pages]
             ban([url, "\/(?\!noticia)"], options)
           end
@@ -188,6 +188,7 @@ module UbiquoDesign
           # Parse the url and separate the host and the path+query
           parsed_url_for_host = URI.parse(url.first)
           host = parsed_url_for_host.host
+          warmup_url = options[:warmup] ? url.first : nil
 
           # delete the host from the base_url
           if Rails.env.development?
@@ -202,12 +203,13 @@ module UbiquoDesign
           # Varnish 3 needs it only escaped once
           if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
+            warmup_url = nil
           elsif options[:subdomain_portada]
             result_url = '/$'
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-          varnish_request('BAN', result_url, host)
+          varnish_request('BAN', result_url, warmup_url, host)
         end
 
         # Sends a request with the required +method+ to the given +url+
