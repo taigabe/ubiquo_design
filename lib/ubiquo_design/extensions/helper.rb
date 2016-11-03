@@ -17,10 +17,10 @@ module UbiquoDesign
           tab.text =  I18n.t("ubiquo.design.static_pages.title")
           tab.title =  I18n.t("ubiquo.design.static_pages.title")
           tab.highlights_on({:controller => "ubiquo/static_pages"})
-          tab.link = ubiquo_static_pages_path  
+          tab.link = ubiquo_static_pages_path
         end if ubiquo_config_call :static_pages_permit, {:context => :ubiquo_design}
       end
-      
+
       def render_generator_partial(name, options)
         render(options.merge(:partial => "/" + name))
       end
@@ -41,6 +41,8 @@ module UbiquoDesign
           :url => "#{page.url_name}/#{url_for_options.delete(:url)}".split('/'),
           :key => nil # to overwrite current key in params
         }
+        page_url_for_options.merge!(:host => page.host) if request.host != page.host
+        page_url_for_options.merge!(:port => URI(APPHOST).port) if Rails.env.development?
         url_for(page_url_for_options.merge(url_for_options))
       end
 
