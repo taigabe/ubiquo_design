@@ -9,14 +9,14 @@ class Ubiquo::PagesController < UbiquoController
   # GET /pages
   # GET /pages.xml
   def index
-    order_by = params[:order_by] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_order_field)
-    sort_order = params[:sort_order] || Ubiquo::Config.context(:ubiquo_design).get(:pages_default_sort_order)
+    params[:order_by] ||= Ubiquo::Config.context(:ubiquo_design).get(:pages_default_order_field)
+    params[:sort_order] ||= Ubiquo::Config.context(:ubiquo_design).get(:pages_default_sort_order)
 
     filters = { :text => params[:filter_text] }
-    per_page = Ubiquo::Config.context(:ubiquo_design).get(:pages_elements_per_page)
+    params[:per_page] = Ubiquo::Config.context(:ubiquo_design).get(:pages_elements_per_page)
 
-    @pages_pages, @pages = Page.paginate(:page => params[:page], :per_page => per_page) do
-      uhook_find_private_pages(filters, order_by, sort_order)
+    @pages_pages, @pages = Page.paginate(:page => params[:page], :per_page => params[:per_page]) do
+      uhook_find_private_pages(filters, params[:order_by], params[:sort_order])
     end
 
     respond_to do |format|
