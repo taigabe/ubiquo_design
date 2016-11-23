@@ -99,11 +99,7 @@ module UbiquoDesign
           # ban the url with params
           ban([url, "\\?"], options_without_child_slugs)
           # ban the exact page url, with or without trailing slash
-<<<<<<< 4a02f38141046a43133c842c4673943ca7b83cb0
-          ban([url, "[\/]?$"], options.merge(:warmup => true))
-=======
           ban([url, "[\/]?$"], options_without_child_slugs.merge(:warmup => true))
->>>>>>> Added cache ban to news in news pages
           if options[:include_section_pages]
             ban([url, "\/(?\!noticia)"], options_without_child_slugs)
           end
