@@ -85,6 +85,7 @@ module UbiquoDesign
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
           if options[:include_child_pages]
             options[:child_slugs] = page.updated_today_articles(:slug).map(&:slug)
+            options[:child_slugs].map! { |slug| "hemeroteca_articles/#{slug}" } if page.absolute_url =~ %r{.*/hemeroteca/.*$}
           end
           expire_url(page.absolute_url, nil, options)
         end
@@ -207,6 +208,7 @@ module UbiquoDesign
           # Varnish 3 needs it only escaped once
           if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
+            debugger
             warmup_url = if options[:child_slugs].try(:any?)
                             timestamp = today_timestamp(base_url)
                             new_url = url_without_timestamp(base_url)
