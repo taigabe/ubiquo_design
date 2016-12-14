@@ -82,11 +82,13 @@ module UbiquoDesign
 
         # Expires a +page+, with all its possibles urls and params
         def expire_page(page, options = {})
+          return unless page
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
           expire_url(page.absolute_url, nil, options)
         end
 
         def expire_url(url, regexp = nil, options = {})
+          return unless url
           Rails.logger.debug "Expiring url '#{url}' in Varnish"
           # We ban the url with the given regexp, if any
           ban([url, regexp]) if regexp
