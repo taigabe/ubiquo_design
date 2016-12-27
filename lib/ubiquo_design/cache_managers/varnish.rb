@@ -208,7 +208,7 @@ module UbiquoDesign
             warmup_url = nil
           elsif options[:subdomain_portada]
             result_url = '/$'
-            warmup_url = base_url.chomp('/' + base_url.split('/').last)
+            warmup_url = base_url
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
