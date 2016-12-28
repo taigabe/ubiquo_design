@@ -103,6 +103,9 @@ module UbiquoDesign
           end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
+
+          url.sub!('http://', 'https://') if Settings[:application][:https_all]
+          varnish_url_warmup(url)
         end
 
         # Overwrites the traditional model expiration to make use of the new storage of policies
@@ -207,12 +210,12 @@ module UbiquoDesign
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
             warmup_url = nil
           elsif options[:subdomain_portada]
-            result_url = '/$'
+            result_url = '(\/$|\/(es|en|eu|fr))$'
             warmup_url = base_url
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-          varnish_request('BAN', result_url, warmup_url, host)
+          varnish_request('BAN', result_url, host)
         end
 
         # Sends a request with the required +method+ to the given +url+
