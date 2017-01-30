@@ -82,6 +82,7 @@ module UbiquoDesign
 
         # Expires a +page+, with all its possibles urls and params
         def expire_page(page, options = {})
+          debugger
           return unless page
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
           if options[:include_child_pages]
@@ -216,6 +217,7 @@ module UbiquoDesign
             warmup_url = if options[:child_slugs].try(:any?)
                             timestamp = today_timestamp(base_url)
                             new_url = url_without_timestamp(base_url)
+                            debugger
                             options[:child_slugs].map { |slug| "#{new_url}#{timestamp}/#{slug}" }
                           else
                             nil
@@ -226,7 +228,7 @@ module UbiquoDesign
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-          varnish_request('BAN', result_url, host)
+          varnish_request('BAN', result_url, host, warmup_url)
         end
 
         # Sends a request with the required +method+ to the given +url+
