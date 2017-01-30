@@ -202,8 +202,7 @@ module UbiquoDesign
 
           # delete the host from the base_url
           if Rails.env.development?
-            port = parsed_url_for_host.port
-            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{port}", '')
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{Settings[:application][:varnish_port]}", '')
           else
             base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
           end
@@ -226,7 +225,7 @@ module UbiquoDesign
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-          varnish_request('BAN', result_url, host)
+          varnish_request('BAN', result_url, host, warmup_url)
         end
 
         # Sends a request with the required +method+ to the given +url+
