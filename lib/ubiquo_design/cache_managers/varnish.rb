@@ -208,7 +208,6 @@ module UbiquoDesign
           # Varnish 3 needs it only escaped once
           if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
-            debugger
             warmup_url = if options[:child_slugs].try(:any?)
                             timestamp = today_timestamp(base_url)
                             new_url = url_without_timestamp(base_url)
