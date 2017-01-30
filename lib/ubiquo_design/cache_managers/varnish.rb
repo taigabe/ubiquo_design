@@ -84,22 +84,27 @@ module UbiquoDesign
         def expire_page(page, options = {})
           return unless page
           Rails.logger.debug "Expiring page ##{page.id} in Varnish"
+          if options[:include_child_pages]
+            options[:child_slugs] = page.updated_today_articles(:slug).map(&:slug)
+            options[:child_slugs].map! { |slug| "hemeroteca_articles/#{slug}" } if page.absolute_url =~ %r{.*/hemeroteca/.*$}
+          end
           expire_url(page.absolute_url, nil, options)
         end
 
         def expire_url(url, regexp = nil, options = {})
           return unless url
           Rails.logger.debug "Expiring url '#{url}' in Varnish"
+          options_without_child_slugs = options.except(:child_slugs)
           # We ban the url with the given regexp, if any
           ban([url, regexp]) if regexp
           # We cannot simply ban url* since url could be a segment of
           # another page, so:
           # ban the url with params
-          ban([url, "\\?"], options)
+          ban([url, "\\?"], options_without_child_slugs)
           # ban the exact page url, with or without trailing slash
-          ban([url, "[\/]?$"], options.merge(:warmup => true))
+          ban([url, "[\/]?$"], options_without_child_slugs.merge(:warmup => true))
           if options[:include_section_pages]
-            ban([url, "\/(?\!noticia)"], options)
+            ban([url, "\/(?\!noticia)"], options_without_child_slugs)
           end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
@@ -208,7 +213,13 @@ module UbiquoDesign
           # Varnish 3 needs it only escaped once
           if options[:include_child_pages]
             result_url = '^' + Regexp.escape(base_url_without_host) + '/' + url.last
-            warmup_url = nil
+            warmup_url = if options[:child_slugs].try(:any?)
+                            timestamp = today_timestamp(base_url)
+                            new_url = url_without_timestamp(base_url)
+                            options[:child_slugs].map { |slug| "#{new_url}#{timestamp}/#{slug}" }
+                          else
+                            nil
+                          end
           elsif options[:subdomain_portada]
             result_url = '(\/$|\/(es|en|eu|fr))$'
             warmup_url = base_url
@@ -232,6 +243,28 @@ module UbiquoDesign
             http.send_request(method, url, nil, headers || {})
           rescue
             Rails.logger.warn "Cache is not available, impossible to delete cache: "+ $!.inspect
+          end
+        end
+
+        private
+
+        def timestamp_slug(url)
+          url[/([^\/]+)$/]
+        end
+
+        def url_without_timestamp(url)
+          url[/.*\//]
+        end
+
+        def today_timestamp(url)
+          current_timestamp = timestamp_slug(url)
+          case current_timestamp
+          when /^\d{4}-\d{2}-\d{2}$/
+            Time.zone.now.strftime("%Y-%m-%d")
+          when /^(\S*)_\d{4}-\d{2}-\d{2}-(\d{2})-(\d{2})$/
+            "#{$1}_#{Time.zone.now.strftime("%Y-%m-%d")}-#{$2}-#{$3}"
+          else
+            "#{current_timestamp}#{Time.zone.now.strftime('%d')}"
           end
         end
 

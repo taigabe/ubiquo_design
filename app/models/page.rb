@@ -376,7 +376,30 @@ class Page < ActiveRecord::Base
     end
   end
 
+  def updated_today_articles(select_params = '*')
+    if scope_type == 'Publication'
+      updated_today_publication_articles(select_params)
+    else
+      updated_today_section_articles(select_params)
+    end
+  end
+
   private
+
+  def updated_today_publication_articles(select_params)
+    scope_ids = Publication.find(scope_id).all_scope_ids
+    Article.starts_publication_today.scoped({:conditions => {:scope_id => scope_ids,
+                                                             :scope_type => scope_type},
+                                             :select => select_params.to_s})
+  end
+
+  def updated_today_section_articles(select_params)
+    sections_id = section.all_children.map(&:id)
+    sections_id << section.id
+    Article.starts_publication_today.scoped({ :joins => :article_sections,
+                                              :conditions => { 'article_sections.section_id' => sections_id},
+                                              :select => select_params.to_s})
+  end
 
   def compose_url_name_with_parent_url
     if self.parent
