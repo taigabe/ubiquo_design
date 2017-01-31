@@ -202,7 +202,8 @@ module UbiquoDesign
 
           # delete the host from the base_url
           if Rails.env.development?
-            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{Settings[:application][:varnish_port]}", '')
+            port = parsed_url_for_host.port
+            base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}:#{port}", '')
           else
             base_url_without_host = base_url.sub("#{parsed_url_for_host.scheme}://#{host}", '')
           end
