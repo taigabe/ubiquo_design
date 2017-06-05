@@ -49,10 +49,14 @@ class Ubiquo::DesignsController < UbiquoController
   private
 
   def set_preview_date
-    Thread.current[:preview_date] = params[:preview_date] || Time.zone.now
+    Thread.current[:preview_date] = preview_date_parsed
     yield
   ensure
     Thread.current[:preview_date] = nil
+  end
+
+  def preview_date_parsed
+    Time.zone.parse(params[:preview_date].gsub('/', '-')) if params[:preview_date]
   end
 
   def render_ubiquo_design_template(page)
