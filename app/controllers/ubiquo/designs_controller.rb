@@ -5,6 +5,7 @@ class Ubiquo::DesignsController < UbiquoController
   ubiquo_config_call :design_access_control, {:context => :ubiquo_design}
   access_control [:unpublish] => 'remove_pages'
   uses_tiny_mce(:options => default_tiny_mce_options.merge(:entities => ''))
+  around_filter :set_preview_date, :only => :preview
 
   def show
     @page = Page.find(params[:page_id])
@@ -46,6 +47,13 @@ class Ubiquo::DesignsController < UbiquoController
   end
 
   private
+
+  def set_preview_date
+    Thread.current[:preview_date] = params[:preview_date] || Time.zone.now
+    yield
+  ensure
+    Thread.current[:preview_date] = nil
+  end
 
   def render_ubiquo_design_template(page)
     template_file = Rails.root.join("app/views/page_templates/ubiquo/#{page.page_template}.html.erb")
