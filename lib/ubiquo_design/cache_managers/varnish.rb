@@ -233,7 +233,7 @@ module UbiquoDesign
 
         # Sends a request with the required +method+ to the given +url+
         # The +host+ parameter, if supplied, is used as the "Host:" header
-        def varnish_request method, url, host = nil
+        def varnish_request(method, url, host = nil, original_urls = nil, translate_all_locales = true)
           headers = {'Host' => host} if host
 
           Rails.logger.debug "Varnish #{method} request for url #{url} and host #{host}"
