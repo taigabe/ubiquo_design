@@ -35,6 +35,13 @@ class Widget < ActiveRecord::Base
               :conditions => ::Page.published_conditions,
               :include => {:block => :page}
 
+  named_scope :planified,
+              :conditions => ['(start_time IS NOT NULL AND end_time IS NOT NULL) OR (start_date IS NOT NULL AND end_date IS NOT NULL)']
+
+  named_scope :time_filtered_visible, :conditions => ['start_time IS NOT NULL AND end_time IS NOT NULL']
+
+  named_scope :date_filtered_visible, :conditions => ['start_date IS NOT NULL AND end_date IS NOT NULL']
+
   def without_page_expiration
     self.update_page_denied = true
     yield
@@ -153,7 +160,7 @@ class Widget < ActiveRecord::Base
   def expire(options = {})
     UbiquoDesign.cache_manager.expire(self, options)
   end
-  
+
   def self.clonation_exception(value)
     exceptions = clonation_exceptions + [value.to_sym]
     write_inheritable_attribute :clonation_exceptions, exceptions.uniq
