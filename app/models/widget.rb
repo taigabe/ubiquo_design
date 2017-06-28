@@ -39,17 +39,30 @@ class Widget < ActiveRecord::Base
   named_scope :date_filtered, :conditions => ['start_date IS NOT NULL AND end_date IS NOT NULL']
 
 
+  # Explanation about now()::time + interval '1 minutes'
+  # Example: widget.start_time = 11:00
+  # if we execute the operation at 10:55 + 5 the query won't find the widget
+  # because overlaps works like start_time <= time < end_time
+  # Therefore, we won't find the widget because the end_time is 11:00 is it must be
+  # less than the end_time. So, until the current time is 11:00 we won't be able
+  # to find the widget. Of course, the warmup job will be created but it could
+  # generate some race conditions and maybe the warmup job couldn't be triggered
+
+  # Adding the + 1 to the current time, the code works like this:
+  # - Now: 10:54 => (10:54 + 1) + 5 = 11:00 => (10:55 <= 11:00 < 11:00) => No widget
+  # - Now: 10:55 => (10:55 + 1) + 5 = 11:01 => (10:56 <= 11:00 < 11:01) => Widget found
   def self.time_filtered_visibility_start_in(interval = 5)
+
     self.published.
          time_filtered.
-         all(:conditions => ["(start_time::time, start_time::time) OVERLAPS (now()::time, interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+         all(:conditions => ["(start_time::time, start_time::time) OVERLAPS (now()::time + interval '1 minutes', interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
              :joins => {:block => :page})
   end
 
   def self.time_filtered_visibility_end_in(interval = 5)
     self.published.
          time_filtered.
-         all(:conditions => ["(end_time::time, end_time::time) OVERLAPS (now()::time, interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+         all(:conditions => ["(end_time::time, end_time::time) OVERLAPS (now()::time + interval '1 minutes', interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
              :joins => {:block => :page})
   end
 
