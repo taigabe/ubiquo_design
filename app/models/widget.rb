@@ -35,12 +35,37 @@ class Widget < ActiveRecord::Base
               :conditions => ::Page.published_conditions,
               :include => {:block => :page}
 
-  named_scope :planified,
-              :conditions => ['(start_time IS NOT NULL AND end_time IS NOT NULL) OR (start_date IS NOT NULL AND end_date IS NOT NULL)']
+  named_scope :time_filtered, :conditions => ['start_time IS NOT NULL AND end_time IS NOT NULL']
+  named_scope :date_filtered, :conditions => ['start_date IS NOT NULL AND end_date IS NOT NULL']
 
-  named_scope :time_filtered_visible, :conditions => ['start_time IS NOT NULL AND end_time IS NOT NULL']
 
-  named_scope :date_filtered_visible, :conditions => ['start_date IS NOT NULL AND end_date IS NOT NULL']
+  def self.time_filtered_visibility_start_in(interval = 5)
+    self.published.
+         time_filtered.
+         all(:conditions => ["(start_time::time, start_time::time) OVERLAPS (now()::time, interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+             :joins => {:block => :page})
+  end
+
+  def self.time_filtered_visibility_end_in(interval = 5)
+    self.published.
+         time_filtered.
+         all(:conditions => ["(end_time::time, end_time::time) OVERLAPS (now()::time, interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+             :joins => {:block => :page})
+  end
+
+  def self.date_filtered_visibility_start_at(date = 1.day.from_now)
+    self.published.
+         date_filtered.
+         all(:conditions => ["start_date::date = ? AND blocks.page_id IS NOT NULL", date.to_date],
+             :joins => {:block => :page})
+  end
+
+  def self.date_filtered_visibility_end_at(date = 1.day.from_now)
+    self.published.
+         date_filtered.
+         all(:conditions => ["end_date::date = ? AND blocks.page_id IS NOT NULL", date.to_date],
+             :joins => {:block => :page})
+  end
 
   def without_page_expiration
     self.update_page_denied = true
