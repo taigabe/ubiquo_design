@@ -24,14 +24,15 @@ module UbiquoDesign
 
     def render_page(page)
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
-
-      @blocks = page.blocks.collect do |block|
-        block_output = render_block(block.real_block, cached_widgets)
-        # Return if block is void (normally, a redirect ocurred)
-        return unless block_output
-        [block.block_type.to_sym, block_output.join]
-      end.to_hash
-      render_template_file(page.page_template, page.layout)
+      ignore_scope(page.multiple_scopes?) do
+        @blocks = page.blocks.collect do |block|
+          block_output = render_block(block.real_block, cached_widgets)
+          # Return if block is void (normally, a redirect ocurred)
+          return unless block_output
+          [block.block_type.to_sym, block_output.join]
+        end.to_hash
+        render_template_file(page.page_template, page.layout)
+      end
     end
 
 

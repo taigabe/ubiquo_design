@@ -384,6 +384,15 @@ class Page < ActiveRecord::Base
     end
   end
 
+  def multiple_scopes?
+    overriden_scopes.present?
+  end
+
+  def overriden_scopes
+    return if get_current_scope.scope_type == 'Publication'
+    ['Web', 'Minisite']
+  end
+
   private
 
   def updated_today_publication_articles(select_params)
