@@ -52,17 +52,18 @@ class Widget < ActiveRecord::Base
   # - Now: 10:54 => (10:54 + 1) + 5 = 11:00 => (10:55 <= 11:00 < 11:00) => No widget
   # - Now: 10:55 => (10:55 + 1) + 5 = 11:01 => (10:56 <= 11:00 < 11:01) => Widget found
   def self.time_filtered_visibility_start_in(interval = 5)
-
     self.published.
          time_filtered.
-         all(:conditions => ["(start_time::time, start_time::time) OVERLAPS (now()::time + interval '1 minutes', interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+         all(:conditions => ["(start_time::time, start_time::time) OVERLAPS (?, interval ?) AND blocks.page_id IS NOT NULL",
+                             Time.zone.now + 1.minute,  "#{interval} minutes"],
              :joins => {:block => :page})
   end
 
   def self.time_filtered_visibility_end_in(interval = 5)
     self.published.
          time_filtered.
-         all(:conditions => ["(end_time::time, end_time::time) OVERLAPS (now()::time + interval '1 minutes', interval ?) AND blocks.page_id IS NOT NULL", "#{interval} minutes"],
+         all(:conditions => ["(end_time::time, end_time::time) OVERLAPS (?, interval ?) AND blocks.page_id IS NOT NULL",
+                             Time.zone.now + 1.minute, "#{interval} minutes"],
              :joins => {:block => :page})
   end
 
