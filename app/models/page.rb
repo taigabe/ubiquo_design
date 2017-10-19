@@ -384,6 +384,21 @@ class Page < ActiveRecord::Base
     end
   end
 
+  # These changes come from https://trello.com/c/haCtzEz7
+  def multiple_scopes?
+    searchable_scopes.present?
+  end
+
+  # Now, if you are in 'Web' or 'Minisite' scope, and you perform, i.e an article
+  # search, the query is not restricted solely to you current scope. It will use several
+  # scopes in the search.
+  # This method returns which are the available scopes that will be used.
+  # At the moment only 'Web' and 'Minisite' use multiple scopes to make the queries.
+  def searchable_scopes
+    return if get_current_scope.scope_type == 'Publication'
+    ['Web', 'Minisite']
+  end
+
   private
 
   def updated_today_publication_articles(select_params)
