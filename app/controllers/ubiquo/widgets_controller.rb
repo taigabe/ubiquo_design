@@ -97,7 +97,7 @@ class Ubiquo::WidgetsController < UbiquoController
 
   def change_name
     @widget = Widget.find(params[:id])
-    @widget.update_attributes(:name => params[:value])
+    @widget.update_attribute(:name, params[:value]) if params[:value].present?
     respond_to do |format|
       format.js do
         js_response = render_to_string :update do |page|
