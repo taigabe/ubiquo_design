@@ -108,11 +108,6 @@ module UbiquoDesign
           end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
-
-          if Settings[:application][:https_all] && url =~ /http:\/\//
-            url.sub!('http://', 'https://')
-            varnish_url_warmup(url, !!options.fetch(:apply_on_every_locale, true))
-          end
         end
 
         # Overwrites the traditional model expiration to make use of the new storage of policies
