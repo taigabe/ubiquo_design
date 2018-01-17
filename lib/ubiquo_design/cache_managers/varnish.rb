@@ -96,23 +96,23 @@ module UbiquoDesign
           Rails.logger.debug "Expiring url '#{url}' in Varnish"
           options_without_child_slugs = options.except(:child_slugs)
           # We ban the url with the given regexp, if any
-          ban([url, regexp]) if regexp
+          ban([url, regexp], {:force_locale => options[:force_locale]}) if regexp
           # We cannot simply ban url* since url could be a segment of
           # another page, so:
           # ban the url with params
-          ban([url, "\\?"], options_without_child_slugs)
+          ban([url, "\\?"],
+              options_without_child_slugs.merge(:force_locale => options[:force_locale]))
           # ban the exact page url, with or without trailing slash
-          ban([url, "[\/]?$"], options_without_child_slugs.merge(:warmup => options[:warmup]))
+          ban([url, "[\/]?$"],
+              options_without_child_slugs.merge(
+                :warmup => options[:warmup],
+                :force_locale => options[:force_locale])
+              )
           if options[:include_section_pages]
             ban([url, "\/(?\!noticia)"], options_without_child_slugs.merge(:warmup => options[:warmup]))
           end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
-
-          if Settings[:application][:https_all] && url =~ /http:\/\//
-            url.sub!('http://', 'https://')
-            varnish_url_warmup(url, !!options.fetch(:apply_on_every_locale, true))
-          end
         end
 
         # Overwrites the traditional model expiration to make use of the new storage of policies
@@ -228,7 +228,9 @@ module UbiquoDesign
           else
             result_url = '^' + Regexp.escape(base_url_without_host) + '/?' + url.last
           end
-          varnish_request('BAN', result_url, host, warmup_url, !!options.fetch(:apply_on_every_locale, true))
+          varnish_request('BAN', result_url, host, warmup_url,
+                          !!options.fetch(:apply_on_every_locale, true),
+                          options[:force_locale])
         end
 
         # Sends a request with the required +method+ to the given +url+
