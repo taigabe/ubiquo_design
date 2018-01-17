@@ -105,11 +105,11 @@ module UbiquoDesign
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"],
               options_without_child_slugs.merge(
-                :warmup => true,
+                :warmup => options[:warmup],
                 :force_locale => options[:force_locale])
               )
           if options[:include_section_pages]
-            ban([url, "\/(?\!noticia)"], options_without_child_slugs)
+            ban([url, "\/(?\!noticia)"], options_without_child_slugs.merge(:warmup => options[:warmup]))
           end
           # ban current month news
           ban([url, "\*"], options) if options[:include_child_pages]
