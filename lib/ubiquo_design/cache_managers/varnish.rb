@@ -101,7 +101,9 @@ module UbiquoDesign
           # another page, so:
           # ban the url with params
           ban([url, "\\?"],
-              options_without_child_slugs.merge(:force_locale => options[:force_locale]))
+              options_without_child_slugs.merge(
+                :force_locale => options[:force_locale]
+              ).except(:warmup))
           # ban the exact page url, with or without trailing slash
           ban([url, "[\/]?$"],
               options_without_child_slugs.merge(
