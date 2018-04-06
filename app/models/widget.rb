@@ -225,6 +225,12 @@ class Widget < ActiveRecord::Base
     !clonation_exceptions.include?(relation_name.to_sym)
   end
 
+  def self.descendants_with_page_expiration
+    ObjectSpace.each_object(Class).select do |klass|
+      klass < self && klass.included_modules.include?(ExpireAfterPageExpiration)
+    end
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute
