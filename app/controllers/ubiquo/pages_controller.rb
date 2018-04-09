@@ -121,6 +121,7 @@ class Ubiquo::PagesController < UbiquoController
       # expiration of url
       if url.present?
         Page.expire_url(url)
+        Cache::UrlRelatedWidgetPagesExpirer.call(url, @template)
         page_names << @template.render(:partial => 'expired_page_name',
                                        :locals  => { :name => url })
       end
