@@ -227,7 +227,7 @@ class Widget < ActiveRecord::Base
 
   def self.descendants_with_page_expiration
     Widget.send(:subclasses).select do |klass|
-      klass < self && klass.included_modules.include?(ExpireAfterPageExpiration)
+      klass.included_modules.include?(ExpireAfterPageExpiration)
     end
   end
 
