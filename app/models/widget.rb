@@ -226,9 +226,7 @@ class Widget < ActiveRecord::Base
   end
 
   def self.descendants_with_page_expiration
-    Widget.send(:subclasses).select do |klass|
-      klass.included_modules.include?(ExpireAfterPageExpiration)
-    end
+    ['AutomaticMediaComponent']
   end
 
   private
