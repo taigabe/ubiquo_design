@@ -399,6 +399,11 @@ class Page < ActiveRecord::Base
     ['Web', 'Minisite']
   end
 
+  def get_scope
+    return if scope_type == 'Web'
+    scope_type.constantize.find(scope_id)
+  end
+
   private
 
   def updated_today_publication_articles(select_params)

@@ -225,6 +225,10 @@ class Widget < ActiveRecord::Base
     !clonation_exceptions.include?(relation_name.to_sym)
   end
 
+  def self.descendants_with_page_expiration
+    ['AutomaticMediaComponent']
+  end
+
   private
 
   # When a block is saved, the associated page must change its modified attribute
