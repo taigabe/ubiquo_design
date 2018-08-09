@@ -24,7 +24,6 @@ module UbiquoDesign
 
     def render_page(page)
       cached_widgets = UbiquoDesign.cache_manager.multi_get(page,:scope => self)
-
       @blocks = page.blocks.collect do |block|
         block_output = render_block(block.real_block, cached_widgets)
         # Return if block is void (normally, a redirect ocurred)
